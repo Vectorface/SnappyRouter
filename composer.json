@@ -1,0 +1,34 @@
+{
+    "name": "vectorface/snappy-router",
+    "description": "A quick and snappy routing framework.",
+    "keywords": [
+        "MVC", "routing", "router", "drinking bird"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Bruce",
+            "email": "dbruce@vectorface.com",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "VectorFace\\ServiceRouter": "./src",
+            "VectorFace\\ServiceRouterTests": "./tests"
+        }
+    },
+    "homepage": "https://github.com/Vectorface/snappy-router",
+    "support": {
+        "issues": "https://github.com/Vectorface/snappy-router/issues",
+        "source": "https://github.com/Vectorface/snappy-router"
+    },
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.2.*",
+        "squizlabs/php_codesniffer": "1.*"
+    }
+}
