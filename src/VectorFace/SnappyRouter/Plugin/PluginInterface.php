@@ -17,84 +17,52 @@ interface PluginInterface
     const METHOD_KEY_ALL = 'all';
 
     /**
-     * Invoked before the service router decides which handler will be used.
-     * @param array $handlers The array of possible handlers.
-     * @param string $path The URL path for the request.
-     * @param array $query The query parameters.
-     * @param array $post The post data.
-     * @param string $verb The HTTP verb used in the request.
+     * Invoked directly after the router decides which handler will be used.
+     * @param AbstractHandler $handler The handler selected by the router.
      */
-    public function preHandle(&$handlers, &$path, &$query, &$post, &$verb);
+    public function afterhandlerSelected($handler);
 
     /**
-     * Invoked after the service router has decided which handler will be used.
-     * @param array $handlers The array of possible handlers.
-     * @param HandlerInterface $handler The handler selected by the service router.
+     * Invoked before the handler decides which controller will be used.
+     * @param AbstractHandler $handler The handler selected by the router.
+     * @param AbstractRequest $request The request to be handled.
      */
-    public function postHandle(&$handlers, $handler);
+    public function beforeControllerSelected($handler, $request);
 
     /**
-     * Invoked before the service router decides which service will be used.
-     * @param HandlerInterface $handler The handler selected by the service router.
-     * @param ServiceProvider $serviceProvider The service provider used by the router.
+     * Invoked after the router has decided which controller will be used.
+     * @param AbstractHandler $handler The handler selected by the router.
+     * @param AbstractRequest $request The request to be handled.
+     * @param AbstractController $controller The controller determined to be used.
+     * @param string $action The name of the action that will be invoked.
      */
-    public function preService($handler, $serviceProvider);
+    public function afterControllerSelected($handler, $request, $controller, $action);
 
     /**
-     * Invoked after the service router has decided which service will be used.
-     * @param HandlerInterface $handler The handler selected by the service router.
-     * @param ServiceProvider $serviceProvider The service provider used by the router.
-     * @param string $service The service selected to provide the response.
-     * @param string $method The method that will be invoked.
+     * Invoked before the handler invokes the selected action.
+     * @param AbstractHandler $handler The handler selected by the router.
+     * @param AbstractRequest $request The request to be handled.
+     * @param AbstractController $controller The controller determined to be used.
+     * @param string $action The name of the action that will be invoked.
      */
-    public function postService($handler, $serviceProvider, &$service, &$method);
+    public function beforeActionInvoked($handler, $request, $controller, $action);
 
     /**
-     * Invoked before the service router invokes the actual service method.
-     * @param HandlerInterface $handler The handler selected by the service router.
-     * @param ServiceProvider $serviceProvider The service provider used by the router.
-     * @param string $service The service that will be used to provide the response.
-     * @param string $method The method that will be invoked.
+     * Invoked after the handler invoked the selected action.
+     * @param AbstractHandler $handler The handler selected by the router.
+     * @param AbstractRequest $request The request to be handled.
+     * @param AbstractController $controller The controller determined to be used.
+     * @param string $action The name of the action that will be invoked.
+     * @param mixed $response The response from the controller action.
      */
-    public function preInvoke($handler, $serviceProvider, &$service, &$method);
+    public function afterActionInvoked($handler, $request, $controller, $action, $response);
 
     /**
-     * Invoked after the service router has invoked the service method.
-     * @param HandlerInterface $handler The handler selected by the service router.
-     * @param ServiceProvider $serviceProvider The service provider used by the router.
-     * @param string $service The service that will be used to provide the response.
-     * @param string $method The method that will be invoked.
-     * @param RPCResponse $response The response object that will be going out.
-     */
-    public function postInvoke($handler, $serviceProvider, &$service, &$method, $response);
-
-    /**
-     * Invoked after the service router has invoked the service method.
-     * @param HandlerInterface $handler The handler selected by the service router.
-     * @param RPCResponse $response The response object that will be going out.
-     */
-    public function preEncode($handler, $response);
-
-    /**
-     * Invoked after the service router has invoked the service method.
-     * @param HandlerInterface $handler The handler selected by the service router.
-     * @param RPCResponse $response The response object that will be going out.
-     * @param string $responseString The response object as an encoded string.
-     */
-    public function postEncode($handler, $response, &$responseString);
-
-    /**
-     * Invoked if an exception is thrown during the routing phase.
-     * @param HandlerInterface $handler The handler selected by the service router. This could be
-     * null if the error occurred before the handler was selected.
-     * @param ServiceProvider $serviceProvider The service provider used by the router.
-     * @param RPCRequst $request The request being made. This could be null if the error occurred
-     * before the request was determined.
-     * @param RPCResponse $response The response being sent back. This could be null if the error
+     * Invoked if an exception is thrown during the route.
+     * @param AbstractHandler $handler The handler selected by the router.
      * @param Exception $exception The exception that was thrown.
-     * occurred before the response was determined.
      */
-    public function onError($handler, $serviceProvider, $request, $response, &$exception);
+    public function errorOccurred($handler, Exception $exception);
 
     /**
      * Returns a sortable number for sorting plugins by execution priority. A lower number indicates

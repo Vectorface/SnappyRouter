@@ -24,26 +24,19 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
         // an example configuration of the router
         $config = array(
             SnappyRouter::KEY_DI => 'VectorFace\SnappyRouter\Di\Di',
-            SnappyRouter::KEY_HANDLERS => array(),
+            SnappyRouter::KEY_HANDLERS => array(
+                'ControllerHandler' => 'VectorFace\SnappyRouter\Handler\ControllerHandler'
+            ),
             SnappyRouter::KEY_PLUGINS => array(),
             SnappyRouter::KEY_SERVICES => array()
         );
         // instantiate the router
         $serviceRouter = new SnappyRouter(new Config($config));
 
-        // public getters and setters
-        $serviceRouter->setHandlers(
-            $serviceRouter->getHandlers()
-        )->setPlugins(
-            $serviceRouter->getPlugins()
-        )->setServiceProvider(
-            $serviceRouter->getServiceProvider()
-        );
-
         // an example "jsoncall" request
         $path = '/engine/Tests/DummyTestService.php';
         $query = array('jsoncall' => 'testMethod');
-        $response = $serviceRouter->handleRoute($path, $query, '', 'get');
+        $response = $serviceRouter->handleHttpRoute($path, $query, '', 'get');
 
         $expectedResponse = array('response' => 'This is a dummy service.');
         $this->assertEquals(json_encode($expectedResponse), $response);
@@ -361,6 +354,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test that asserts we can load a service that is not in any namespace.
+     * @depends synopsis
      */
     public function testLoadingNonNamespacedService()
     {
@@ -390,6 +384,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test that an MVC controller can handle a full route.
+     * @depends synopsis
      */
     public function testMvcRoute()
     {
@@ -420,6 +415,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests that we have a working CLI route.
+     * @depends synopsis
      */
     public function testCLIRoute()
     {
@@ -447,6 +443,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests that we have a working CLI route.
+     * @depends synopsis
      * @expectedException \Exception
      * @expectedExceptionMessage No task registered for TestdummyTask
      */
@@ -471,6 +468,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests that we get an exception when there are missing CLI arguments.
+     * @depends synopsis
      * @expectedException casino\engine\ServiceRouter\Exception\InvalidServiceRouterHandlerException
      * @expectedExceptionMessage Unable to find suitable handler for CLI route.
      */
@@ -490,6 +488,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests all the various blacklist and whitelist possible configurations.
+     * @depends synopsis
      */
     public function testServicePluginCompatibilityList()
     {
@@ -543,10 +542,5 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
         $path = '/engine/Tests/DummyTestService.php';
         $query = array('jsoncall' => 'testMethod');
         $serviceRouter->handleRoute($path, $query, '', 'GET');
-    }
-
-    private function getSnappyRouterInstanceFromConfig($config)
-    {
-        return new SnappyRouter(new Config($config));
     }
 }

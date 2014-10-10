@@ -2,6 +2,14 @@
 
 namespace VectorFace\SnappyRouter;
 
+use \Exception;
+
+use VectorFace\SnappyRouter\Config\ConfigInterface;
+use VectorFace\SnappyRouter\Di\Di;
+use VectorFace\SnappyRouter\Di\DiInterface;
+use VectorFace\SnappyRouter\Exception\RouterExceptionInterface;
+use VectorFace\SnappyRouter\Response\AbstractResponse;
+
 /**
  * The main routing class that handles the full request.
  * @copyright Copyright (c) 2014, VectorFace, Inc.
@@ -30,7 +38,7 @@ class SnappyRouter
      * The constructor for the service router.
      * @param array $config The configuration array.
      */
-    public function __construct(Config\ConfigInterface $config)
+    public function __construct(ConfigInterface $config)
     {
         $this->config = $config;
 
@@ -38,8 +46,8 @@ class SnappyRouter
         $diClass = $this->config->get(self::KEY_DI);
         if (class_exists($diClass)) {
             $di = new $diClass();
-            if ($di instanceof Di\DiInterface) {
-                Di\Di::setDefault($di);
+            if ($di instanceof DiInterface) {
+                Di::setDefault($di);
             }
         }
         $this->parseConfig($this->config);
@@ -106,6 +114,21 @@ class SnappyRouter
     }
 
     /**
+     * Performs the actual routing. Determines whether we are running in a web
+     * environment or on the CLI and invokes the appropriate path.
+     */
+    public function handleRoute($sapi = null)
+    {
+        $sapi = is_string($sapi) ? $sapi : php_sapi_name();
+        switch ($sapi) {
+            case 'cli':
+                return;
+            default:
+                return;
+        }
+    }
+
+    /**
      * Performs the actual request.
      * @param string $path The URL path from the client.
      * @param array $query The query parameters as an array.
@@ -113,19 +136,17 @@ class SnappyRouter
      * @param string $verb The HTTP verb used in the request.
      * @return string Returns an encoded string to pass back to the client.
      */
-    public function handleRoute($path, $query, $post, $verb)
+    public function handleHttpRoute($path, $query, $post, $verb)
     {
         $activeHandler = null;
         try {
             // determine which handler should handle this path
-            $activeHandler = $this->performHandleStep($path, $query, $post, $verb);
-            $this->performServiceStep($activeHandler);
-            $response = $this->performInvokeStep($activeHandler);
-            http_response_code($response->getStatusCode());
-            $responseString = $this->performEncodeStep($activeHandler, $response);
-            return $responseString;
-        } catch (\Exception $e) {
-            if ($e instanceof Exception\RouterExceptionInterface) {
+            $activeHandler = $this->determineHandler($path, $query, $post, $verb);
+            return $activeHandler->performRoute();
+            /*
+            */
+        } catch (Exception $e) {
+            if ($e instanceof RouterExceptionInterface) {
                 http_response_code($e->getAssociatedStatusCode());
             } else {
                 http_response_code(Response\AbstractResponse::RESPONSE_SERVER_ERROR);
@@ -181,11 +202,8 @@ class SnappyRouter
      * @param string $verb The HTTP verb used in the request.
      * @return Returns the handler to be used for the route.
      */
-    protected function performHandleStep($path, $query, $post, $verb)
+    protected function determineHandler($path, $query, $post, $verb)
     {
-        // allow the plugins to invoke pre handle hooks
-        $this->invokePluginsHook('preHandle', array($this->getHandlers(), $path, $query, $post, $verb));
-
         // determine which handler should handle this path
         $activeHandler = null;
         foreach ($this->getHandlers() as $handler) {
@@ -292,26 +310,13 @@ class SnappyRouter
         return $responseString;
     }
 
-    // invokes the hook against all active plugins with the provided arguments
-    private function invokePluginsHook($hook, $args)
-    {
-        $plugins = $this->getPlugins();
-        array_walk($plugins, function ($plugin, $index) use ($hook, $args) {
-            // weird hack to allow passed by references call to call_user_func_array
-            $passedArgs = array();
-            foreach ($args as $key => &$value) {
-                $passedArgs[$key] = &$value;
-            }
-            call_user_func_array(array($plugin, $hook), $passedArgs);
-        });
-    }
-
     // parses the passed in config file
     private function parseConfig($config)
     {
         $handlers = $this->extractConfigArray($config, self::KEY_HANDLERS);
         $this->setupHandlers($handlers);
 
+        /*
         $plugins = $this->extractConfigArray($config, self::KEY_PLUGINS);
         $this->setupPlugins($plugins);
 
@@ -319,6 +324,7 @@ class SnappyRouter
         $this->setupServiceProvider($serviceProviderConfig, $config);
 
         $this->tasks = isset($config[self::KEY_TASKS]) ? $config[self::KEY_TASKS] : [];
+        */
     }
 
     // ensures we always get an array out of $config[$key]
@@ -394,13 +400,6 @@ class SnappyRouter
 
         if (!class_exists($className)) {
             throw new $exceptionClass('Class '.$className.' does not exist.');
-        }
-
-        $reflection = new $this->reflectionClass($className);
-        if (!$reflection->implementsInterface($interface)) {
-            throw new $exceptionClass(
-                'Class '.$className.' does not implement '.$interface
-            );
         }
 
         return new $className($options);

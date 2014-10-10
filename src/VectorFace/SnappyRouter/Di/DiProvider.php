@@ -17,7 +17,7 @@ interface DiProvider
      *        should use the cached version of the element (true by default).
      * @return Returns the DI element mapped to that key.
      */
-    protected function get($key, $useCache = true);
+    public function get($key, $useCache = true);
 
     /**
      * Sets an element in the DI container for the specified key.
