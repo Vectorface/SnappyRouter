@@ -13,11 +13,11 @@ class AbstractRequest implements RequestInterface
 
     /**
      * Constructor for the abstract request.
-     * @param AbstractController $controller The controller to be used.
+     * @param string $controller The controller to be used.
      * @param string $action The action to be invoked.
      * @param string $verb The HTTP verb used in the request.
      */
-    public function __construct(AbstractController $controller, $action, $verb)
+    public function __construct($controller, $action)
     {
         $this->setController($controller);
         $this->setAction($action);

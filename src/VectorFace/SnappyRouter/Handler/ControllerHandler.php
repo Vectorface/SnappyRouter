@@ -2,7 +2,9 @@
 
 namespace VectorFace\SnappyRouter\Handler;
 
+use VectorFace\SnappyRouter\Encoder\NullEncoder;
 use VectorFace\SnappyRouter\Request\HttpRequest as Request;
+use VectorFace\SnappyRouter\Di\Di;
 
 /*
 use casino\engine\ServiceRouter\Mvc\Request;
@@ -23,6 +25,8 @@ class ControllerHandler extends AbstractRequestHandler
     protected $decoder;
     protected $encoder;
 
+    private $routeParams;
+
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
      * @param string $path The URL path for the request.
@@ -37,32 +41,36 @@ class ControllerHandler extends AbstractRequestHandler
             $path = substr($path, 1);
         }
 
-        $pathComponents = explode('/', $path);
+        $pathComponents = array_map('trim', explode('/', $path));
         $pathComponentsCount = count($pathComponents);
 
-        $controller = 'index';
-        $action = 'index';
-        $params = [];
+        $controllerClass = 'index';
+        $actionName = 'index';
+        $this->routeParams = [];
         switch ($pathComponentsCount) {
             case 2:
-                $action = $pathComponents[1];
+                $actionName = $pathComponents[1];
                 // fall through is intentional
             case 1:
-                $controller = $pathComponents[0];
+                $controllerClass = $pathComponents[0];
                 break;
             default:
-                $controller = $pathComponents[0];
-                $action = $pathComponents[1];
-                $params = array_slice($pathComponents, 2);
+                $controllerClass = $pathComponents[0];
+                $actionName = $pathComponents[1];
+                $this->routeParams = array_slice($pathComponents, 2);
         }
 
-        if (empty($controller)) {
-            $controller = 'index';
+        if (empty($controllerClass)) {
+            $controllerClass = 'index';
         }
-        $controller = sprintf('%sController', ucfirst(trim($controller)));
-        $action = sprintf('%sAction', strtolower(trim($action)));
+        $controllerClass = ucfirst(strtolower(trim($controllerClass))).'Controller';
+        $actionName = strtolower(trim($actionName)).'Action';
 
-        $this->request = new Request($controller, $action, $verb, $params, $_POST, $_GET);
+        $this->request = new Request(
+            $controllerClass,
+            $actionName,
+            $verb
+        );
         return true;
     }
 
@@ -72,11 +80,48 @@ class ControllerHandler extends AbstractRequestHandler
      */
     public function performRoute()
     {
+        $controller = null;
+        $action = null;
+        $this->determineControllerAndAction($controller, $action);
+
+        var_dump($controller);
+
+        /*
         $this->performServiceStep($activeHandler);
         $response = $this->performInvokeStep($activeHandler);
         http_response_code($response->getStatusCode());
         $responseString = $this->performEncodeStep($activeHandler, $response);
         return $responseString;
+        */
+    }
+
+    private function determineControllerAndAction(&$controller, &$actionName)
+    {
+        $request = $this->getRequest();
+        $this->invokePluginsHook(
+            'beforeControllerSelected',
+            array($this, $request)
+        );
+
+        $controllerDiKey = $request->getController();
+        try {
+            $controller = $this->getServiceProvider()->getServiceInstance($controllerDiKey);
+            $actionName = $request->getAction();
+            if (!method_exists($controller, $actionName)) {
+                throw new HandlerExpection(sprintf(
+                    '%s does not have method %s',
+                    $controllerDiKey,
+                    $actionName
+                ));
+            }
+        } catch (Exception $e) {
+            throw new HandlerExpection($e->getMessage());
+        }
+
+        $this->invokePluginsHook(
+            'afterControllerSelected',
+            array($this, $request, $controller, $actionName)
+        );
     }
 
     /**

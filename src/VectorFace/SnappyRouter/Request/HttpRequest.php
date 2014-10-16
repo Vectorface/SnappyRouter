@@ -21,13 +21,13 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
 
     /**
      * Constructor for a request.
-     * @param string $service The service being requested.
-     * @param string $method The method being invoked.
+     * @param string $controller The controller being requested.
+     * @param string $action The action being invoked.
      * @param string $verb The HTTP verb used in the request.
      */
-    public function __construct($controller, $method, $verb)
+    public function __construct($controller, $action, $verb)
     {
-        parent::__construct($service, $method);
+        parent::__construct($controller, $action);
         $this->setVerb($verb);
         $this->input = array(
             self::INPUT_METHOD_QUERY  => array(),

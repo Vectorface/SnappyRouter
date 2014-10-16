@@ -5,6 +5,7 @@ namespace VectorFace\SnappyRouterTests;
 use VectorFace\SnappyRouter\SnappyRouter;
 use VectorFace\SnappyRouter\Config\Config;
 use VectorFace\SnappyRouter\Plugin\PluginInterface;
+use VectorFace\SnappyRouter\Handler\AbstractHandler;
 
 use \PHPUnit_Framework_TestCase;
 
@@ -25,16 +26,24 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
         $config = array(
             SnappyRouter::KEY_DI => 'VectorFace\SnappyRouter\Di\Di',
             SnappyRouter::KEY_HANDLERS => array(
-                'ControllerHandler' => 'VectorFace\SnappyRouter\Handler\ControllerHandler'
-            ),
-            SnappyRouter::KEY_PLUGINS => array(),
-            SnappyRouter::KEY_SERVICES => array()
+                'ControllerHandler' => array(
+                    AbstractHandler::KEY_CLASS => 'VectorFace\SnappyRouter\Handler\ControllerHandler',
+                    AbstractHandler::KEY_OPTIONS => array(
+                        AbstractHandler::KEY_SERVICES => array(
+                            'TestController' => 'VectorFace\SnappyRouterTests\Controller\TestDummyController'
+                        ),
+                        AbstractHandler::KEY_PLUGINS => array(
+
+                        )
+                    )
+                )
+            )
         );
         // instantiate the router
         $serviceRouter = new SnappyRouter(new Config($config));
 
-        // an example "jsoncall" request
-        $path = '/engine/Tests/DummyTestService.php';
+        // an example MVC request
+        $path = '/Test/test';
         $query = array('jsoncall' => 'testMethod');
         $response = $serviceRouter->handleHttpRoute($path, $query, '', 'get');
 

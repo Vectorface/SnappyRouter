@@ -4,6 +4,7 @@ namespace VectorFace\SnappyRouter\Handler;
 
 use VectorFace\SnappyRouter\Di\Di;
 use VectorFace\SnappyRouter\Di\DiProvider;
+use VectorFace\SnappyRouter\Di\ServiceProvider;
 
 /**
  * The base class for all handlers.
@@ -12,8 +13,20 @@ use VectorFace\SnappyRouter\Di\DiProvider;
  */
 abstract class AbstractHandler implements DiProvider
 {
+    const KEY_CLASS    = 'class';
+    const KEY_FILE     = 'file';
+    const KEY_OPTIONS  = 'options';
+    const KEY_SERVICES = 'services';
+    const KEY_PLUGINS  = 'plugins';
+
     /** an array of handler-specific options */
     protected $options;
+
+    /** a sorted array of handler plugins */
+    private $plugins;
+
+    /** the service provider to use */
+    private $serviceProvider;
 
     /**
      * Constructor for the class.
@@ -22,6 +35,15 @@ abstract class AbstractHandler implements DiProvider
     public function __construct($options)
     {
         $this->options = $options;
+        $this->plugins = array();
+        if (isset($options[self::KEY_PLUGINS])) {
+            $this->plugins = $this->sortPlugins((array)$options[self::KEY_PLUGINS]);
+        }
+        $services = array();
+        if (isset($options[self::KEY_SERVICES])) {
+            $services = (array)$options[self::KEY_SERVICES];
+        }
+        $this->serviceProvider = new ServiceProvider($services);
     }
 
     /**
@@ -48,8 +70,44 @@ abstract class AbstractHandler implements DiProvider
     }
 
     /**
+     * Returns the active service provider for this handler.
+     * @return ServiceProvider The active service provider for this handler.
+     */
+    public function getServiceProvider()
+    {
+        return $this->serviceProvider;
+    }
+
+    /**
      * Performs the actual routing.
      * @return Returns the result of the route.
      */
     abstract public function performRoute();
+
+    /**
+     * Returns the array of plugins registered with this handler.
+     */
+    public function getPlugins()
+    {
+        return $this->plugins;
+    }
+
+    // sorts the list of plugins according to their execution order
+    private function sortPlugins($plugins)
+    {
+        usort($plugins, function ($a, $b) {
+            return $a->getExecutionOrder() - $b->getExecutionOrder();
+        });
+        return $plugins;
+    }
+
+    /**
+     * Invokes the plugin hook against all the listed plugins.
+     */
+    public function invokePluginsHook($hook, $args)
+    {
+        foreach ($this->getPlugins() as $plugin) {
+            call_user_func_array(array($plugin, $hook), $args);
+        }
+    }
 }
