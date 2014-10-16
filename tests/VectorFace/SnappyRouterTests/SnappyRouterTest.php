@@ -1,11 +1,11 @@
 <?php
 
-namespace VectorFace\SnappyRouterTests;
+namespace Vectorface\SnappyRouterTests;
 
-use VectorFace\SnappyRouter\SnappyRouter;
-use VectorFace\SnappyRouter\Config\Config;
-use VectorFace\SnappyRouter\Plugin\PluginInterface;
-use VectorFace\SnappyRouter\Handler\AbstractHandler;
+use Vectorface\SnappyRouter\SnappyRouter;
+use Vectorface\SnappyRouter\Config\Config;
+use Vectorface\SnappyRouter\Plugin\PluginInterface;
+use Vectorface\SnappyRouter\Handler\AbstractHandler;
 
 use \PHPUnit_Framework_TestCase;
 
@@ -24,13 +24,13 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
     {
         // an example configuration of the router
         $config = array(
-            SnappyRouter::KEY_DI => 'VectorFace\SnappyRouter\Di\Di',
+            SnappyRouter::KEY_DI => 'Vectorface\SnappyRouter\Di\Di',
             SnappyRouter::KEY_HANDLERS => array(
                 'ControllerHandler' => array(
-                    AbstractHandler::KEY_CLASS => 'VectorFace\SnappyRouter\Handler\ControllerHandler',
+                    AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\ControllerHandler',
                     AbstractHandler::KEY_OPTIONS => array(
                         AbstractHandler::KEY_SERVICES => array(
-                            'TestController' => 'VectorFace\SnappyRouterTests\Controller\TestDummyController'
+                            'TestController' => 'Vectorface\SnappyRouterTests\Controller\TestDummyController'
                         ),
                         AbstractHandler::KEY_PLUGINS => array(
 

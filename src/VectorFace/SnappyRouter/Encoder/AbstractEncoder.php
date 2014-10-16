@@ -1,8 +1,8 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Encoder;
+namespace Vectorface\SnappyRouter\Encoder;
 
-use VectorFace\SnappyRouter\Response\Response;
+use Vectorface\SnappyRouter\Response\Response;
 
 /**
  * An abstract base class for all encoders. Extend this class to implement a

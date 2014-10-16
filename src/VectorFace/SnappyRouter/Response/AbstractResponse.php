@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Response;
+namespace Vectorface\SnappyRouter\Response;
 
 /**
  * An abstract class that defines a basic constructor for the response as well

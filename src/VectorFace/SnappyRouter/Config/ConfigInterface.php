@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Config;
+namespace Vectorface\SnappyRouter\Config;
 
 /**
  * An interface that must be implemented by any class wishing to provide

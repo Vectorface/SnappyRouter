@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Config;
+namespace Vectorface\SnappyRouter\Config;
 
 use \ArrayAccess;
 

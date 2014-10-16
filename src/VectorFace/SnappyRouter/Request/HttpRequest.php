@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Request;
+namespace Vectorface\SnappyRouter\Request;
 
 /**
  * A class representing an controller-modelled web request.

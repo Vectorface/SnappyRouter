@@ -1,17 +1,17 @@
 <?php
 
-namespace VectorFace\SnappyRouter;
+namespace Vectorface\SnappyRouter;
 
 use \Exception;
 
-use VectorFace\SnappyRouter\Config\ConfigInterface;
-use VectorFace\SnappyRouter\Di\Di;
-use VectorFace\SnappyRouter\Di\DiInterface;
-use VectorFace\SnappyRouter\Exception\HandlerException;
-use VectorFace\SnappyRouter\Exception\RouterExceptionInterface;
-use VectorFace\SnappyRouter\Handler\AbstractHandler;
-use VectorFace\SnappyRouter\Response\AbstractResponse;
-use VectorFace\SnappyRouter\Response\Response;
+use Vectorface\SnappyRouter\Config\ConfigInterface;
+use Vectorface\SnappyRouter\Di\Di;
+use Vectorface\SnappyRouter\Di\DiInterface;
+use Vectorface\SnappyRouter\Exception\HandlerException;
+use Vectorface\SnappyRouter\Exception\RouterExceptionInterface;
+use Vectorface\SnappyRouter\Handler\AbstractHandler;
+use Vectorface\SnappyRouter\Response\AbstractResponse;
+use Vectorface\SnappyRouter\Response\Response;
 
 /**
  * The main routing class that handles the full request.

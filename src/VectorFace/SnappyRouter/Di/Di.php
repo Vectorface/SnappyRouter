@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Di;
+namespace Vectorface\SnappyRouter\Di;
 
 use \Exception;
 

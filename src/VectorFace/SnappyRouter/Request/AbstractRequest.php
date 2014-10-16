@@ -1,8 +1,8 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Request;
+namespace Vectorface\SnappyRouter\Request;
 
-use VectorFace\SnappyRouter\Controller\AbstractController;
+use Vectorface\SnappyRouter\Controller\AbstractController;
 
 class AbstractRequest implements RequestInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Exception;
+namespace Vectorface\SnappyRouter\Exception;
 
 /**
  * An exception indicating the requested service is not registered with the

@@ -1,9 +1,9 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Encoder;
+namespace Vectorface\SnappyRouter\Encoder;
 
-use VectorFace\SnappyRouter\Response\Response;
-use VectorFace\SnappyRouter\Exception\EncoderException;
+use Vectorface\SnappyRouter\Response\Response;
+use Vectorface\SnappyRouter\Exception\EncoderException;
 
 /**
  * Encodes the response in the JSON format.

@@ -1,11 +1,11 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Exception;
+namespace Vectorface\SnappyRouter\Exception;
 
 // use casino\engine\ServiceRouter\RPCResponse;
 use \Exception;
 
-use VectorFace\SnappyRouter\Response\AbstractResponse;
+use Vectorface\SnappyRouter\Response\AbstractResponse;
 
 /**
  * A base class for all general server side internal exceptions.

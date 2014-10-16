@@ -1,8 +1,8 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Encoder;
+namespace Vectorface\SnappyRouter\Encoder;
 
-use VectorFace\SnappyRouter\Response\Response;
+use Vectorface\SnappyRouter\Response\Response;
 
 /**
  * An encoder that simply returns the response object directly.

@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Exception;
+namespace Vectorface\SnappyRouter\Exception;
 
 /**
  * An interface for all router exceptions.

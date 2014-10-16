@@ -15,8 +15,8 @@
     ],
     "autoload": {
         "psr-0": {
-            "VectorFace\\SnappyRouter": "./src",
-            "VectorFace\\SnappyRouterTests": "./tests"
+            "Vectorface\\SnappyRouter": "./src",
+            "Vectorface\\SnappyRouterTests": "./tests"
         }
     },
     "homepage": "https://github.com/Vectorface/snappy-router",

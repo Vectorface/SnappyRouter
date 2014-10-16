@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Response;
+namespace Vectorface\SnappyRouter\Response;
 
 /**
  * The response to be returned to the client.

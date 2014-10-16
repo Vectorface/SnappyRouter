@@ -1,10 +1,10 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Handler;
+namespace Vectorface\SnappyRouter\Handler;
 
-use VectorFace\SnappyRouter\Encoder\NullEncoder;
-use VectorFace\SnappyRouter\Request\HttpRequest as Request;
-use VectorFace\SnappyRouter\Di\Di;
+use Vectorface\SnappyRouter\Encoder\NullEncoder;
+use Vectorface\SnappyRouter\Request\HttpRequest as Request;
+use Vectorface\SnappyRouter\Di\Di;
 
 /*
 use casino\engine\ServiceRouter\Mvc\Request;

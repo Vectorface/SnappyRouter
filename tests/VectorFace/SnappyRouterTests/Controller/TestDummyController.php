@@ -1,8 +1,8 @@
 <?php
 
-namespace VectorFace\SnappyRouterTests\Controller;
+namespace Vectorface\SnappyRouterTests\Controller;
 
-use VectorFace\SnappyRouter\Controller\AbstractController;
+use Vectorface\SnappyRouter\Controller\AbstractController;
 
 class TestDummyController extends AbstractController
 {

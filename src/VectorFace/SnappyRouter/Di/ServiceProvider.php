@@ -1,8 +1,8 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Di;
+namespace Vectorface\SnappyRouter\Di;
 
-use VectorFace\SnappyRouter\Exception\ServiceNotRegisteredException;
+use Vectorface\SnappyRouter\Exception\ServiceNotRegisteredException;
 
 /**
  * A service provider providing dependency injection capabilities to the

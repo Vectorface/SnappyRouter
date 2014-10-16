@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Di;
+namespace Vectorface\SnappyRouter\Di;
 
 /**
  * An interface that exposes the main DI container methods. Implemented by

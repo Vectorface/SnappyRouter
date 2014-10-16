@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Response;
+namespace Vectorface\SnappyRouter\Response;
 
 /**
  * The interface that any response from the router will implement.

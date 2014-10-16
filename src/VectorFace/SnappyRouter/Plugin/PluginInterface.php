@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Plugin;
+namespace Vectorface\SnappyRouter\Plugin;
 
 /**
  * The interface for a SnappyRouter plugin.

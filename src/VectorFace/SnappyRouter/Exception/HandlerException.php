@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Exception;
+namespace Vectorface\SnappyRouter\Exception;
 
 /**
  * An exception indicating an issue with a handler.

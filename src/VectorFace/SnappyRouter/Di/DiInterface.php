@@ -1,6 +1,6 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Di;
+namespace Vectorface\SnappyRouter\Di;
 
 /**
  * An interface for any class wishing to provide a dependency injection

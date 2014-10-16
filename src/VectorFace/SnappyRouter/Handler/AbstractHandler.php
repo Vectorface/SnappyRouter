@@ -1,10 +1,10 @@
 <?php
 
-namespace VectorFace\SnappyRouter\Handler;
+namespace Vectorface\SnappyRouter\Handler;
 
-use VectorFace\SnappyRouter\Di\Di;
-use VectorFace\SnappyRouter\Di\DiProvider;
-use VectorFace\SnappyRouter\Di\ServiceProvider;
+use Vectorface\SnappyRouter\Di\Di;
+use Vectorface\SnappyRouter\Di\DiProvider;
+use Vectorface\SnappyRouter\Di\ServiceProvider;
 
 /**
  * The base class for all handlers.
