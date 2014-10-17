@@ -32,7 +32,11 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
                             'TestController' => 'Vectorface\SnappyRouterTests\Controller\TestDummyController'
                         ),
                         AbstractHandler::KEY_PLUGINS => array(
-
+                            'TestPlugin'     => array(
+                                AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouterTests\Plugin\TestPlugin',
+                                AbstractHandler::KEY_OPTIONS => array()
+                            ),
+                            'AnotherPlugin'  => 'Vectorface\SnappyRouterTests\Plugin\TestPlugin'
                         )
                     )
                 )

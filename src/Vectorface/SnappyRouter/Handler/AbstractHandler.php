@@ -5,6 +5,7 @@ namespace Vectorface\SnappyRouter\Handler;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Di\DiProvider;
 use Vectorface\SnappyRouter\Di\ServiceProvider;
+use Vectorface\SnappyRouter\Exception\PluginException;
 
 /**
  * The base class for all handlers.
@@ -36,7 +37,7 @@ abstract class AbstractHandler implements DiProvider
         $this->options = $options;
         $this->plugins = array();
         if (isset($options[self::KEY_PLUGINS])) {
-            $this->plugins = $this->sortPlugins((array)$options[self::KEY_PLUGINS]);
+            $this->setPlugins((array)$options[self::KEY_PLUGINS]);
         }
         $services = array();
         if (isset($options[self::KEY_SERVICES])) {
@@ -89,6 +90,34 @@ abstract class AbstractHandler implements DiProvider
     public function getPlugins()
     {
         return $this->plugins;
+    }
+
+    /**
+     * Sets the current list of plugins.
+     * @param array $plugins The array of plugins.
+     * @return AbstractHandler Returns $this.
+     */
+    public function setPlugins($plugins)
+    {
+        $this->plugins = array();
+        foreach ($plugins as $key => $plugin) {
+            $pluginClass = $plugin;
+            if (is_array($plugin)) {
+                if (!isset($plugin[AbstractHandler::KEY_CLASS])) {
+                    throw new PluginException('Invalid or missing class for plugin '.$key);
+                } else if (!class_exists($plugin[AbstractHandler::KEY_CLASS])) {
+                    throw new PluginException('Invalid or missing class for plugin '.$key);
+                }
+                $pluginClass = $plugin[AbstractHandler::KEY_CLASS];
+            }
+            $options = array();
+            if (isset($plugin[AbstractHandler::KEY_OPTIONS])) {
+                $options = (array($plugin[AbstractHandler::KEY_OPTIONS]));
+            }
+            $this->plugins[] = new $pluginClass($options);
+        }
+        $this->plugins = $this->sortPlugins($this->plugins);
+        return $this;
     }
 
     // sorts the list of plugins according to their execution order

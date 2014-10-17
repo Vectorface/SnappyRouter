@@ -73,4 +73,38 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
 
         $handler->performRoute();
     }
+
+    /**
+     * Tests that an exception is thrown if the handler has a plugin missing
+     * the class field.
+     * @expectedException Vectorface\SnappyRouter\Exception\PluginException
+     * @expectedExceptionMessage Invalid or missing class for plugin TestPlugin
+     */
+    public function testMissingClassOnPlugin()
+    {
+        $options = array(
+            AbstractHandler::KEY_PLUGINS => array(
+                'TestPlugin' => array()
+            )
+        );
+        $handler = new ControllerHandler($options);
+    }
+
+    /**
+     * Tests that an exception is thrown if the handler lists a non-existant
+     * plugin class.
+     * @expectedException Vectorface\SnappyRouter\Exception\PluginException
+     * @expectedExceptionMessage Invalid or missing class for plugin TestPlugin
+     */
+    public function testInvalidClassOnPlugin()
+    {
+        $options = array(
+            AbstractHandler::KEY_PLUGINS => array(
+                'TestPlugin' => array(
+                    'class' => 'Vectorface\SnappyRouter\Plugin\NonExistantPlugin'
+                )
+            )
+        );
+        $handler = new ControllerHandler($options);
+    }
 }
