@@ -10,19 +10,6 @@ interface HttpRequestInterface {
     public function getVerb();
 
     /**
-     * Returns all the route parameters for the current request.
-     * @return array Returns the route parameters as an array.
-     */
-    public function getRouteParams();
-
-    /**
-     * Sets all the route parameters for the current request.
-     * @param array $routeParams The route parameters for the request.
-     * @return Request Returns $this.
-     */
-    public function setRouteParams($routeParams);
-
-    /**
      * Sets the HTTP verb used in the request.
      * @param string $verb The HTTP verb used in the request.
      * @return RequestInterface Returns $this.

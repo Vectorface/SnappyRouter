@@ -66,7 +66,12 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      */
     public function getQuery($param, $defaultValue = null, $filters = [])
     {
-        return $this->fetchInputValue($this->queryData, $param, $defaultValue, $filters);
+        return $this->fetchInputValue(
+            $this->input[self::INPUT_METHOD_QUERY],
+            $param,
+            $defaultValue,
+            $filters
+        );
     }
 
     /**
@@ -76,7 +81,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      */
     public function setQuery($queryData)
     {
-        $this->input[self::INPUT_METHOD_QUERY];
+        $this->input[self::INPUT_METHOD_QUERY] = (array)$queryData;
         return $this;
     }
 
@@ -90,7 +95,12 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      */
     public function getPost($param, $defaultValue = null, $filters = [])
     {
-        return $this->fetchInputValue($this->postData, $param, $defaultValue, $filters);
+        return $this->fetchInputValue(
+            $this->input[self::INPUT_METHOD_POST],
+            $param,
+            $defaultValue,
+            $filters
+        );
     }
 
     /**
@@ -100,27 +110,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      */
     public function setPost($postData)
     {
-        $this->input[self::INPUT_METHOD_POST] = $postData;
-        return $this;
-    }
-
-    /**
-     * Returns all the route parameters for the current request.
-     * @return array Returns the route parameters as an array.
-     */
-    public function getRouteParams()
-    {
-        return $this->input[self::INPUT_METHOD_PARAMS];
-    }
-
-    /**
-     * Sets all the route parameters for the current request.
-     * @param array $routeParams The route parameters for the request.
-     * @return Request Returns $this.
-     */
-    public function setRouteParams($routeParams)
-    {
-        $this->input[self::INPUT_METHOD_PARAMS] = $routeParams;
+        $this->input[self::INPUT_METHOD_POST] = (array)$postData;
         return $this;
     }
 

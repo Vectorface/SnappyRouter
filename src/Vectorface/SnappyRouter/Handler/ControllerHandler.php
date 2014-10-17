@@ -2,19 +2,15 @@
 
 namespace Vectorface\SnappyRouter\Handler;
 
+use \Exception;
 use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Di\Di;
+use Vectorface\SnappyRouter\Encoder\EncoderInterface;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
+use Vectorface\SnappyRouter\Exception\HandlerException;
 use Vectorface\SnappyRouter\Request\HttpRequest as Request;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
 use Vectorface\SnappyRouter\Response\Response;
-
-/*
-use casino\engine\ServiceRouter\Mvc\Request;
-use casino\engine\ServiceRouter\Encoder\ResponseEncoderInterface;
-use casino\engine\ServiceRouter\Encoder\NullEncoder;
-use casino\engine\ServiceRouter\Decoder\NullDecoder;
-*/
 
 /**
  * Handles MVC requests mapping URIs like /controller/action/param1/param2/...
@@ -44,13 +40,15 @@ class ControllerHandler extends AbstractRequestHandler
             $path = substr($path, 1);
         }
 
-        $pathComponents = array_map('trim', explode('/', $path));
+        $pathComponents = array_filter(array_map('trim', explode('/', $path)), 'strlen');
         $pathComponentsCount = count($pathComponents);
 
         $controllerClass = 'index';
         $actionName = 'index';
         $this->routeParams = [];
         switch ($pathComponentsCount) {
+            case 0:
+                break;
             case 2:
                 $actionName = $pathComponents[1];
                 // fall through is intentional
@@ -61,10 +59,6 @@ class ControllerHandler extends AbstractRequestHandler
                 $controllerClass = $pathComponents[0];
                 $actionName = $pathComponents[1];
                 $this->routeParams = array_slice($pathComponents, 2);
-        }
-
-        if (empty($controllerClass)) {
-            $controllerClass = 'index';
         }
         $controllerClass = ucfirst(strtolower(trim($controllerClass))).'Controller';
         $actionName = strtolower(trim($actionName)).'Action';
@@ -113,14 +107,14 @@ class ControllerHandler extends AbstractRequestHandler
             $controller = $this->getServiceProvider()->getServiceInstance($controllerDiKey);
             $actionName = $request->getAction();
             if (!method_exists($controller, $actionName)) {
-                throw new HandlerExpection(sprintf(
+                throw new HandlerException(sprintf(
                     '%s does not have method %s',
                     $controllerDiKey,
                     $actionName
                 ));
             }
         } catch (Exception $e) {
-            throw new HandlerExpection($e->getMessage());
+            throw new HandlerException($e->getMessage());
         }
 
         $this->invokePluginsHook(
@@ -162,8 +156,8 @@ class ControllerHandler extends AbstractRequestHandler
     }
 
     /**
-     * Returns the response encoder. By default, this will return a JSONResponseEncoder.
-     * @return Returns an ResponseEncoderInterface object.
+     * Returns the active response encoder.
+     * @return EncoderInterface Returns the response encoder.
      */
     public function getEncoder()
     {
@@ -177,37 +171,12 @@ class ControllerHandler extends AbstractRequestHandler
 
     /**
      * Sets the encoder to be used by this handler (overriding the default).
-     * @param ResponseEncoderInterface $encoder The encoder to be used.
+     * @param EncoderInterface $encoder The encoder to be used.
      * @return Returns $this.
      */
-    public function setEncoder(ResponseEncoderInterface $encoder)
+    public function setEncoder(EncoderInterface $encoder)
     {
         $this->encoder = $encoder;
-        return $this;
-    }
-
-    /**
-     * Returns the response decoder. By default, this will return a JSONRequestDecoder.
-     * @return Returns an ResponseDecoderInterface object.
-     */
-    public function getDecoder()
-    {
-        if (isset($this->decoder)) {
-            return $this->decoder;
-        }
-
-        $this->decoder = new NullDecoder();
-        return $this->decoder;
-    }
-
-    /**
-     * Sets the decoder to be used by this handler.
-     * @param ResponseDecoderInterface $decoder The decoder to be used.
-     * @return Returns $this.
-     */
-    public function setDecoder($decoder)
-    {
-        $this->decoder = $decoder;
         return $this;
     }
 }

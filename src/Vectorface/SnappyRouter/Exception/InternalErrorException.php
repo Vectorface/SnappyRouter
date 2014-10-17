@@ -2,9 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Exception;
 
-// use casino\engine\ServiceRouter\RPCResponse;
 use \Exception;
-
 use Vectorface\SnappyRouter\Response\AbstractResponse;
 
 /**

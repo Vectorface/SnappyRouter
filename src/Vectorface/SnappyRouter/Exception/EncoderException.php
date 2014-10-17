@@ -3,12 +3,11 @@
 namespace Vectorface\SnappyRouter\Exception;
 
 /**
- * An exception indicating the requested service is not registered with the
- * provider.
+ * An exception indicating an issue with an encoder.
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class ServiceNotRegisteredException extends InternalErrorException
+class EncoderException extends InternalErrorException
 {
 
 }

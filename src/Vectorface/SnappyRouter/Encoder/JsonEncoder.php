@@ -19,16 +19,16 @@ class JsonEncoder extends AbstractEncoder
     public function encode(AbstractResponse $response)
     {
         $responseObject = $response->getResponseObject();
-        if (is_array($responseObject) || is_scalar($responseObject)) {
+        if (null === $responseObject || is_array($responseObject) || is_scalar($responseObject)) {
             return json_encode($responseObject);
         } elseif (is_object($responseObject)) {
             if (method_exists($responseObject, 'jsonSerialize')) {
-                return json_encode($responseObject);
+                return json_encode($responseObject->jsonSerialize());
             } else {
                 return json_encode(get_object_vars($responseObject));
             }
         } else {
-            throw new EncoderException('Unable to encode as JSON.');
+            throw new EncoderException('Unable to encode response as JSON.');
         }
     }
 }

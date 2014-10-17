@@ -11,7 +11,7 @@
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src/Vectorface/SnappyRouter</directory>
+            <directory addUncoveredFilesFromWhitelist="true">./src/Vectorface/SnappyRouter</directory>
         </whitelist>
     </filter>
 </phpunit>
