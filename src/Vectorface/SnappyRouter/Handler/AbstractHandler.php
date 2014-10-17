@@ -14,7 +14,6 @@ use Vectorface\SnappyRouter\Di\ServiceProvider;
 abstract class AbstractHandler implements DiProvider
 {
     const KEY_CLASS    = 'class';
-    const KEY_FILE     = 'file';
     const KEY_OPTIONS  = 'options';
     const KEY_SERVICES = 'services';
     const KEY_PLUGINS  = 'plugins';

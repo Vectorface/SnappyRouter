@@ -20,14 +20,17 @@ interface PluginInterface
      * Invoked directly after the router decides which handler will be used.
      * @param AbstractHandler $handler The handler selected by the router.
      */
-    public function afterhandlerSelected($handler);
+    public function afterhandlerSelected(AbstractHandler $handler);
 
     /**
      * Invoked before the handler decides which controller will be used.
      * @param AbstractHandler $handler The handler selected by the router.
      * @param AbstractRequest $request The request to be handled.
      */
-    public function beforeControllerSelected($handler, $request);
+    public function beforeControllerSelected(
+        AbstractHandler $handler,
+        AbstractRequest $request
+    );
 
     /**
      * Invoked after the router has decided which controller will be used.
@@ -36,7 +39,12 @@ interface PluginInterface
      * @param AbstractController $controller The controller determined to be used.
      * @param string $action The name of the action that will be invoked.
      */
-    public function afterControllerSelected($handler, $request, $controller, $action);
+    public function afterControllerSelected(
+        AbstractHandler $handler,
+        AbstractRequest $request,
+        AbstractController $controller,
+        $action
+    );
 
     /**
      * Invoked before the handler invokes the selected action.
@@ -45,7 +53,12 @@ interface PluginInterface
      * @param AbstractController $controller The controller determined to be used.
      * @param string $action The name of the action that will be invoked.
      */
-    public function beforeActionInvoked($handler, $request, $controller, $action);
+    public function beforeActionInvoked(
+        AbstractHandler $handler,
+        AbstractRequest $request,
+        AbstractController $controller,
+        $action
+    );
 
     /**
      * Invoked after the handler invoked the selected action.
@@ -55,14 +68,20 @@ interface PluginInterface
      * @param string $action The name of the action that will be invoked.
      * @param mixed $response The response from the controller action.
      */
-    public function afterActionInvoked($handler, $request, $controller, $action, $response);
+    public function afterActionInvoked(
+        AbstractHandler $handler,
+        AbstractRequest $request,
+        AbstractController $controller,
+        $action,
+        $response
+    );
 
     /**
      * Invoked if an exception is thrown during the route.
      * @param AbstractHandler $handler The handler selected by the router.
      * @param Exception $exception The exception that was thrown.
      */
-    public function errorOccurred($handler, Exception $exception);
+    public function errorOccurred(AbstractHandler $handler, Exception $exception);
 
     /**
      * Returns a sortable number for sorting plugins by execution priority. A lower number indicates

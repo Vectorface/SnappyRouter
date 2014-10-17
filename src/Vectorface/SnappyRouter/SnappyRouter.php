@@ -35,16 +35,7 @@ class SnappyRouter
     public function __construct(ConfigInterface $config)
     {
         $this->config = $config;
-
-        // setup the DI layer
-        $diClass = $this->config->get(self::KEY_DI);
-        if (class_exists($diClass)) {
-            $di = new $diClass();
-            if ($di instanceof DiInterface) {
-                Di::setDefault($di);
-            }
-        }
-        $this->parseConfig($this->config);
+        $this->parseConfig();
     }
 
     /**
@@ -54,32 +45,6 @@ class SnappyRouter
     public function getHandlers()
     {
         return $this->handlers;
-    }
-
-    /**
-     * Sets the array of registered handlers.
-     * @param array $handlers A new array of handlers.
-     * @return Returns $this.
-     */
-    public function setHandlers($handlers)
-    {
-        $this->handlers = $handlers;
-        return $this;
-    }
-
-    /**
-     * Performs the actual routing. Determines whether we are running in a web
-     * environment or on the CLI and invokes the appropriate path.
-     */
-    public function handleRoute($sapi = null)
-    {
-        $sapi = is_string($sapi) ? $sapi : php_sapi_name();
-        switch ($sapi) {
-            case 'cli':
-                return;
-            default:
-                return;
-        }
     }
 
     /**
@@ -123,34 +88,6 @@ class SnappyRouter
     }
 
     /**
-     * Handles a CLI route.
-     * @param array $args The array of CLI arguments.
-     */
-    /*
-    public function handleCLIRoute($args)
-    {
-        // determine which handler should handle this path
-        $activeHandler = $this->performCLIHandleStep($args);
-        if (null === $activeHandler) {
-            throw new InvalidServiceRouterHandlerException(
-                'Unable to find suitable handler for CLI route.'
-            );
-        }
-        $request = $activeHandler->getRequest();
-        $taskName = $request->getService();
-        if (!isset($this->tasks[$taskName])) {
-            throw new \Exception('No task registered for '.$taskName);
-        }
-        $task = new $this->tasks[$taskName];
-        if ($task instanceof BaseTask) {
-            $task->init($this->config);
-        }
-        $action = $request->getMethod();
-        $task->$action($request->getArguments());
-    }
-    */
-
-    /**
      * Performs the standard "handle" step of the routing process.
      * @param string $path The web request path.
      * @param array $query The array of query parameters.
@@ -172,29 +109,22 @@ class SnappyRouter
     }
 
     // parses the passed in config file
-    private function parseConfig($config)
+    private function parseConfig()
     {
-        $handlers = $this->extractConfigArray($config, self::KEY_HANDLERS);
-        $this->setupHandlers($handlers);
+        // setup the DI layer
+        $diClass = $this->config->get(self::KEY_DI);
+        if (class_exists($diClass)) {
+            $di = new $diClass();
+            if ($di instanceof DiInterface) {
+                Di::setDefault($di);
+            }
+        }
+        $this->setupHandlers(
+            $this->config->get(self::KEY_HANDLERS, array())
+        );
     }
 
-    // ensures we always get an array out of $config[$key]
-    private function extractConfigArray($config, $key)
-    {
-        if (!isset($config[$key])) {
-            return array();
-        }
-
-        if (is_array($config[$key])) {
-            return $config[$key];
-        } elseif (is_object($config[$key])) {
-            return (array)$config[$key];
-        } else {
-            return array();
-        }
-    }
-
-    // helps to setup the array of handlers
+    // helper to setup the array of handlers
     private function setupHandlers($handlers)
     {
         $this->handlers = array();
@@ -209,10 +139,6 @@ class SnappyRouter
                 $handlerClass = $handlerDetails[AbstractHandler::KEY_CLASS];
             }
 
-            if (isset($handlerDetails[AbstractHandler::KEY_FILE])) {
-                require_once $handlerDetails[AbstractHandler::KEY_FILE];
-            }
-
             if (!class_exists($handlerClass)) {
                 throw new Exception(
                     'Cannot instantiate instance of '.$handlerDetails[AbstractHandler::KEY_CLASS]
@@ -221,19 +147,4 @@ class SnappyRouter
             $this->handlers[] = new $handlerClass($options);
         }
     }
-
-    // filters out the list of plugins that may not be compatible with the given
-    // service and method based on the plugin's own blacklist/whitelist
-    /*
-    private function filterPluginsForServiceAndMethod($service, $method)
-    {
-        $pluginsList = [];
-        foreach ($this->getPlugins() as $plugin) {
-            if ($plugin->supportsServiceAndMethod($service, $method)) {
-                $pluginsList[] = $plugin;
-            }
-        }
-        $this->plugins = $pluginsList;
-    }
-    */
 }

@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Encoder;
 
-use Vectorface\SnappyRouter\Response\Response;
+use Vectorface\SnappyRouter\Response\AbstractResponse;
 use Vectorface\SnappyRouter\Exception\EncoderException;
 
 /**
@@ -13,10 +13,10 @@ use Vectorface\SnappyRouter\Exception\EncoderException;
 class JsonEncoder extends AbstractEncoder
 {
     /**
-     * @param Response $response The response to be encoded.
+     * @param AbstractResponse $response The response to be encoded.
      * @return (string) Returns the response encoded as a string.
      */
-    public function encode(Response $response)
+    public function encode(AbstractResponse $response)
     {
         $responseObject = $response->getResponseObject();
         if (is_array($responseObject) || is_scalar($responseObject)) {

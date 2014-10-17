@@ -33,11 +33,7 @@ class ServiceProvider extends Di
      */
     public function getService($key)
     {
-        try {
-            return $this->get($key);
-        } catch (Exception $e) {
-            throw new ServiceNotRegisteredException('No service was found for key: '.$key);
-        }
+        return $this->get($key);
     }
 
     /**
@@ -68,24 +64,13 @@ class ServiceProvider extends Di
             return $this->instanceCache[$key];
         }
 
-        $serviceClass = null;
-        try {
-            $serviceClass = $this->get($key);
-        } catch (Exception $e) {
-            throw new ServiceNotRegisteredException('No service was found for key: '.$key);
+        $serviceClass = $this->get($key);
+        if (!class_exists($serviceClass)) {
+            require_once $serviceClass;
+            $serviceClass = $key;
         }
 
-        if (class_exists($serviceClass)) {
-            // the value must be a namespaced class so return a direct instance of it
-            $instance = new $serviceClass();
-        } else {
-            // we attempt to include the file and assume the key is the class name
-            @require_once $serviceClass;
-            if (!class_exists($key)) {
-                throw new ServiceNotRegisteredException('Cannot find object instance: '.$key);
-            }
-            $instance = new $key();
-        }
+        $instance = new $serviceClass();
 
         if ($useCache) {
             $this->instanceCache[$key] = $instance;

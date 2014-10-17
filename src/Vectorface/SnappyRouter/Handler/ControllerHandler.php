@@ -2,9 +2,12 @@
 
 namespace Vectorface\SnappyRouter\Handler;
 
+use Vectorface\SnappyRouter\Controller\AbstractController;
+use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
 use Vectorface\SnappyRouter\Request\HttpRequest as Request;
-use Vectorface\SnappyRouter\Di\Di;
+use Vectorface\SnappyRouter\Response\AbstractResponse;
+use Vectorface\SnappyRouter\Response\Response;
 
 /*
 use casino\engine\ServiceRouter\Mvc\Request;
@@ -83,18 +86,20 @@ class ControllerHandler extends AbstractRequestHandler
         $controller = null;
         $action = null;
         $this->determineControllerAndAction($controller, $action);
-
-        var_dump($controller);
-
-        /*
-        $this->performServiceStep($activeHandler);
-        $response = $this->performInvokeStep($activeHandler);
+        $response = $this->invokeControllerAction($controller, $action);
+        if (!($response instanceof AbstractResponse)) {
+            $response = new Response($response);
+        }
         http_response_code($response->getStatusCode());
-        $responseString = $this->performEncodeStep($activeHandler, $response);
-        return $responseString;
-        */
+        return $this->getEncoder()->encode($response);
     }
 
+    /**
+     * Determines the exact controller instance and action name to be invoked
+     * by the request.
+     * @param mixed $controller The controller passed by reference.
+     * @param mixed $actionName The action name passed by reference.
+     */
     private function determineControllerAndAction(&$controller, &$actionName)
     {
         $request = $this->getRequest();
@@ -122,6 +127,28 @@ class ControllerHandler extends AbstractRequestHandler
             'afterControllerSelected',
             array($this, $request, $controller, $actionName)
         );
+
+        $controller->initialize($request);
+    }
+
+    /**
+     * Invokes the actual controller action and returns the response.
+     * @param AbstractController $controller The controller to use.
+     * @param string $action The action to invoke.
+     * @return mixed Returns the response from the action.
+     */
+    private function invokeControllerAction(AbstractController $controller, $action)
+    {
+        $this->invokePluginsHook(
+            'beforeActionInvoked',
+            array($this, $this->getRequest(), $controller, $action)
+        );
+        $response = $controller->$action($this->routeParams);
+        $this->invokePluginsHook(
+            'afterActionInvoked',
+            array($this, $this->getRequest(), $controller, $action, $response)
+        );
+        return $response;
     }
 
     /**

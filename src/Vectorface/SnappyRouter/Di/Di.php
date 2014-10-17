@@ -86,8 +86,8 @@ class DI implements DiInterface
     }
 
     /**
-     * Returns an array of all registered elements (their keys).
-     * @return An array of all registered elements (their keys).
+     * Returns an array of all registered keys.
+     * @return An array of all registered keys.
      */
     public function allRegisteredElements()
     {

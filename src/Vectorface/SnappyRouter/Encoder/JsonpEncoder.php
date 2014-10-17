@@ -1,6 +1,8 @@
 <?php
 
-namespace casino\engine\ServiceRouter\Encoder;
+namespace Vectorface\SnappyRouter\Encoder;
+
+use Vectorface\SnappyRouter\Response\AbstractResponse;
 
 /**
  * Encodes the response in the JSON-P format.
@@ -20,16 +22,16 @@ class JsonpEncoder extends JsonEncoder
     {
         parent::__construct($options);
         $this->clientMethod = 'method';
-        if (isset($options['clientMethod']) && is_string($options['clientMethod']) {
+        if (isset($options['clientMethod']) && is_string($options['clientMethod'])) {
             $this->clientMethod = $options['clientMethod'];
         }
     }
 
     /**
-     * @param RPCResponse $response The response to be encoded.
+     * @param AbstractResponse $response The response to be encoded.
      * @return Returns the response encoded in JSON.
      */
-    public function encode($response)
+    public function encode(AbstractResponse $response)
     {
         $response = parent::encode($response);
         return sprintf('%s(%s);', $this->clientMethod, $response);

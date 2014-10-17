@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Encoder;
 
-use Vectorface\SnappyRouter\Response\Response;
+use Vectorface\SnappyRouter\Response\AbstractResponse;
 
 /**
  * An interface to for all encoders. It is highly recommended to extend the
@@ -13,8 +13,8 @@ use Vectorface\SnappyRouter\Response\Response;
 interface EncoderInterface
 {
     /**
-     * @param Response $response The response to be encoded.
+     * @param AbstractResponse $response The response to be encoded.
      * @return (string) Returns the response encoded as a string.
      */
-    public function encode(Response $response);
+    public function encode(AbstractResponse $response);
 }

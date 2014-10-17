@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Encoder;
 
-use Vectorface\SnappyRouter\Response\Response;
+use Vectorface\SnappyRouter\Response\AbstractResponse;
 
 /**
  * An abstract base class for all encoders. Extend this class to implement a
@@ -25,8 +25,8 @@ abstract class AbstractEncoder implements EncoderInterface
     }
 
     /**
-     * @param Response $response The response to be encoded.
+     * @param AbstractResponse $response The response to be encoded.
      * @return (string) Returns the response encoded as a string.
      */
-    abstract public function encode(Response $response);
+    abstract public function encode(AbstractResponse $response);
 }
