@@ -2,7 +2,8 @@
 
 namespace Vectorface\SnappyRouter\Request;
 
-interface HttpRequestInterface {
+interface HttpRequestInterface
+{
     /**
      * Returns the HTTP verb used in the request.
      * @return string The HTTP verb used in the request.
