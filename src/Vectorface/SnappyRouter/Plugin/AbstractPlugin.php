@@ -49,8 +49,7 @@ abstract class AbstractPlugin implements PluginInterface
     public function beforeControllerSelected(
         AbstractHandler $handler,
         AbstractRequest $request
-    )
-    {
+    ) {
 
     }
 
@@ -66,8 +65,7 @@ abstract class AbstractPlugin implements PluginInterface
         AbstractRequest $request,
         AbstractController $controller,
         $action
-    )
-    {
+    ) {
 
     }
 
@@ -83,8 +81,7 @@ abstract class AbstractPlugin implements PluginInterface
         AbstractRequest $request,
         AbstractController $controller,
         $action
-    )
-    {
+    ) {
 
     }
 
@@ -102,8 +99,7 @@ abstract class AbstractPlugin implements PluginInterface
         AbstractController $controller,
         $action,
         $response
-    )
-    {
+    ) {
 
     }
 

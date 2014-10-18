@@ -105,7 +105,7 @@ abstract class AbstractHandler implements DiProvider
             if (is_array($plugin)) {
                 if (!isset($plugin[AbstractHandler::KEY_CLASS])) {
                     throw new PluginException('Invalid or missing class for plugin '.$key);
-                } else if (!class_exists($plugin[AbstractHandler::KEY_CLASS])) {
+                } elseif (!class_exists($plugin[AbstractHandler::KEY_CLASS])) {
                     throw new PluginException('Invalid or missing class for plugin '.$key);
                 }
                 $pluginClass = $plugin[AbstractHandler::KEY_CLASS];
