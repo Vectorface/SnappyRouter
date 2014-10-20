@@ -18,10 +18,10 @@ class ConfigTest extends PHPUnit_Framework_TestCase
      */
     public function synopsis()
     {
-        $arrayConfig = [
+        $arrayConfig = array(
             'key1' => 'value1',
             'key2' => 'value2'
-        ];
+        );
 
         // initialize the class from an array
         $config = new Config($arrayConfig);
@@ -55,7 +55,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testExceptionThrownWhenConfigIsAppended()
     {
-        $config = new Config([]);
+        $config = new Config(array());
         $config[] = 'new value';
     }
 }

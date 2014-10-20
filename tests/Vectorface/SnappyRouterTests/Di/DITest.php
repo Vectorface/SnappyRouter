@@ -32,7 +32,7 @@ class DiTest extends PHPUnit_Framework_TestCase
         );
         $this->assertTrue($di->hasElement($key));
         $this->assertEquals(
-            [$key],
+            array($key),
             $di->allRegisteredElements()
         );
     }
@@ -42,20 +42,20 @@ class DiTest extends PHPUnit_Framework_TestCase
      */
     public function setAndGetServiceProvider()
     {
-        return [
-            [
+        return array(
+            array(
                 'HelloWorldService',
                 'Hello world!',
                 'Hello world!'
-            ],
-            [
+            ),
+            array(
                 'HelloWorldService',
                 function () {
                     return 'Hello world!';
                 },
                 'Hello world!'
-            ]
-        ];
+            )
+        );
     }
 
     /**

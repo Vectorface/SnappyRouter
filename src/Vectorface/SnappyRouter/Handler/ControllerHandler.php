@@ -45,7 +45,7 @@ class ControllerHandler extends AbstractRequestHandler
 
         $controllerClass = 'index';
         $actionName = 'index';
-        $this->routeParams = [];
+        $this->routeParams = array();
         switch ($pathComponentsCount) {
             case 0:
                 break;

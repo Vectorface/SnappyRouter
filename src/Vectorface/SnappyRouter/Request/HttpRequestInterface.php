@@ -25,7 +25,7 @@ interface HttpRequestInterface
      * @return Returns the data from the GET parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
-    public function getQuery($param, $defaultValue = null, $filters = []);
+    public function getQuery($param, $defaultValue = null, $filters = array());
 
     /**
      * Sets all the QUERY data for the current request.
@@ -42,7 +42,7 @@ interface HttpRequestInterface
      * @return Returns the data from the POST parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
-    public function getPost($param, $defaultValue = null, $filters = []);
+    public function getPost($param, $defaultValue = null, $filters = array());
 
     /**
      * Sets all the POST data for the current request.

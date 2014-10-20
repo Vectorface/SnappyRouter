@@ -64,7 +64,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      * @return Returns the data from the GET parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
-    public function getQuery($param, $defaultValue = null, $filters = [])
+    public function getQuery($param, $defaultValue = null, $filters = array())
     {
         return $this->fetchInputValue(
             $this->input[self::INPUT_METHOD_QUERY],
@@ -93,7 +93,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      * @return Returns the data from the POST parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
-    public function getPost($param, $defaultValue = null, $filters = [])
+    public function getPost($param, $defaultValue = null, $filters = array())
     {
         return $this->fetchInputValue(
             $this->input[self::INPUT_METHOD_POST],
@@ -151,7 +151,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     private function applyInputFilters($value, $filters)
     {
         if (!is_array($filters)) {
-            $filters = [$filters];
+            $filters = array($filters);
         }
         foreach ($filters as $filter) {
             switch ($filter) {

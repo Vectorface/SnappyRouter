@@ -40,30 +40,4 @@ abstract class AbstractResponse implements ResponseInterface
         $this->setResponseObject($responseObject);
         $this->setStatusCode($statusCode);
     }
-
-    /**
-     * Returns the serializeable response object.
-     * @return The serializeable response object.
-     */
-    abstract public function getResponseObject();
-
-    /**
-     * Sets the serializeable response object.
-     * @param mixed $responseObject The serializeable response object.
-     * @return Returns $this.
-     */
-    abstract public function setResponseObject($responseObject);
-
-    /**
-     * Returns the HTTP status code associated with this response.
-     * @return The HTTP status code associated with this response.
-     */
-    abstract public function getStatusCode();
-
-    /**
-     * Sets the HTTP status code associated with this response.
-     * @param int $statusCode The HTTP status code associated with this response.
-     * @return Returns $this.
-     */
-    abstract public function setStatusCode($statusCode);
 }

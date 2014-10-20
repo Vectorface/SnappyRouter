@@ -23,10 +23,4 @@ abstract class AbstractEncoder implements EncoderInterface
     {
         $this->options = (array)$options;
     }
-
-    /**
-     * @param AbstractResponse $response The response to be encoded.
-     * @return (string) Returns the response encoded as a string.
-     */
-    abstract public function encode(AbstractResponse $response);
 }
