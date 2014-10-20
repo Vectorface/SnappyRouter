@@ -65,7 +65,12 @@ class SnappyRouter
                 'afterHandlerSelected',
                 array($activeHandler)
             );
-            return $activeHandler->performRoute();
+            $response = $activeHandler->performRoute();
+            $activeHandler->invokePluginsHook(
+                'afterFullRouteInvoked',
+                array($activeHandler)
+            );
+            return $response;
         } catch (Exception $e) {
             if ($e instanceof RouterExceptionInterface) {
                 http_response_code($e->getAssociatedStatusCode());

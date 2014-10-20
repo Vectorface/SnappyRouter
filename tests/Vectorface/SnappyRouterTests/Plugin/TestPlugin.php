@@ -2,9 +2,9 @@
 
 namespace Vectorface\SnappyRouterTests\Plugin;
 
-use Vectorface\SnappyRouter\Plugin\AbstractPlugin;
+use Vectorface\SnappyRouter\Plugin\AbstractControllerPlugin;
 
-class TestPlugin extends AbstractPlugin
+class TestPlugin extends AbstractControllerPlugin
 {
 
 }
