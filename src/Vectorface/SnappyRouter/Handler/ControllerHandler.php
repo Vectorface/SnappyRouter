@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouter\Handler;
 
 use \Exception;
+use Vectorface\SnappyRouter\http_response_code;
 use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Encoder\EncoderInterface;
