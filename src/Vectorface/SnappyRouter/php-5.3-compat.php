@@ -5,7 +5,8 @@ use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
 
 if (!function_exists('http_response_code')) {
-    function http_response_code($code = null) {
+    function http_response_code($code = null)
+    {
         $diKey = 'currentResponseCode';
         if (null === $code) {
             try {
