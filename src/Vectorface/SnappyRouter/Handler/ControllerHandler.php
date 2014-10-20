@@ -3,7 +3,6 @@
 namespace Vectorface\SnappyRouter\Handler;
 
 use \Exception;
-use Vectorface\SnappyRouter\http_response_code;
 use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Encoder\EncoderInterface;
@@ -85,7 +84,7 @@ class ControllerHandler extends AbstractRequestHandler
         if (!($response instanceof AbstractResponse)) {
             $response = new Response($response);
         }
-        http_response_code($response->getStatusCode());
+        \Vectorface\SnappyRouter\http_response_code($response->getStatusCode());
         return $this->getEncoder()->encode($response);
     }
 
