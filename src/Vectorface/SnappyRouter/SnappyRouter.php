@@ -49,11 +49,15 @@ class SnappyRouter
     /**
      * Handles the standard route. Determines the execution environment
      * and makes the appropriate call.
+     * @param string $environment An optional environment variable, if not
+     *        specified, the method will fallback to php_sapi_name().
      * @return string Returns the encoded response string.
      */
-    public function handleRoute()
+    public function handleRoute($environment = null)
     {
-        $environment = php_sapi_name();
+        if (null === $environment) {
+            $environment = php_sapi_name();
+        }
         switch ($environment) {
             case 'cli' :
                 break;
