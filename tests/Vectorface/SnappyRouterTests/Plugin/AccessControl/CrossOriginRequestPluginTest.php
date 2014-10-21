@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouterTests\Plugin\AccessControl;
 
 use \PHPUnit_Framework_TestCase;
+use Vectorface\SnappyRouter\Exception\AccessDeniedException;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 use Vectorface\SnappyRouter\Plugin\AccessControl\CrossOriginRequestPlugin;
 use Vectorface\SnappyRouter\Request\HttpRequest;
@@ -108,8 +109,6 @@ class CrossOriginRequestPluginTest extends PHPUnit_Framework_TestCase
     /**
      * Tests that we get an access denied exception if a cross origin request
      * is generated but we are missing a whitelist.
-     * @expectedException Vectorface\SnappyRouter\Exception\AccessDeniedException
-     * @expectedExceptionMessage Cross origin access denied to TestDummyController and action testAction
      */
     public function testAccessDeniedWithMissingWhitelist()
     {
@@ -122,7 +121,12 @@ class CrossOriginRequestPluginTest extends PHPUnit_Framework_TestCase
         $request = new HttpRequest('TestDummyController', $action, 'GET');
 
         $plugin = new CrossOriginRequestPlugin(array());
-        $plugin->afterControllerSelected($handler, $request, $controller, $action);
+        try {
+            $plugin->afterControllerSelected($handler, $request, $controller, $action);
+            $this->fail();
+        } catch (AccessDeniedException $e) {
+            $this->assertEquals(403, $e->getAssociatedStatusCode());
+        }
     }
 
     /**
