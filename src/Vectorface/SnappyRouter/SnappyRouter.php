@@ -59,9 +59,9 @@ class SnappyRouter
             $environment = php_sapi_name();
         }
         switch ($environment) {
-            case 'cli' :
+            case 'cli':
                 break;
-            default :
+            default:
                 $queryPos = strpos($_SERVER['REQUEST_URI'], '?');
                 $path = (false === $queryPos) ? $_SERVER['REQUEST_URI'] : substr($_SERVER['REQUEST_URI'], 0, $queryPos);
                 return $this->handleHttpRoute(
