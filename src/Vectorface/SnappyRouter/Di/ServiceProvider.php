@@ -65,9 +65,18 @@ class ServiceProvider extends Di
         }
 
         $serviceClass = $this->get($key);
-        if (!class_exists($serviceClass)) {
-            require_once $serviceClass;
-            $serviceClass = $key;
+        if (is_string($serviceClass)) {
+            if (!class_exists($serviceClass)) {
+                require_once $serviceClass;
+                $serviceClass = $key;
+            }
+        } elseif (is_array($serviceClass)) {
+            if (isset($serviceClass['class'])) {
+                $serviceClass = $serviceClass['class'];
+            }
+            if (isset($serviceClass['file'])) {
+                require_once $serviceClass['file'];
+            }
         }
 
         $instance = new $serviceClass();
