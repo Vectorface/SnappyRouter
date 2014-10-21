@@ -131,6 +131,8 @@ abstract class AbstractHandler implements DiProvider
 
     /**
      * Invokes the plugin hook against all the listed plugins.
+     * @param string $hook The hook to invoke.
+     * @param array $args The arguments to pass to the call.
      */
     public function invokePluginsHook($hook, $args)
     {

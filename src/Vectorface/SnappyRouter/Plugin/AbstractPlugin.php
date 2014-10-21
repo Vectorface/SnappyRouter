@@ -36,7 +36,7 @@ abstract class AbstractPlugin implements PluginInterface
      * Invoked directly after the router decides which handler will be used.
      * @param AbstractHandler $handler The handler selected by the router.
      */
-    public function afterhandlerSelected(AbstractHandler $handler)
+    public function afterHandlerSelected(AbstractHandler $handler)
     {
 
     }
