@@ -71,11 +71,11 @@ class ServiceProvider extends Di
                 $serviceClass = $key;
             }
         } elseif (is_array($serviceClass)) {
-            if (isset($serviceClass['class'])) {
-                $serviceClass = $serviceClass['class'];
-            }
             if (isset($serviceClass['file'])) {
                 require_once $serviceClass['file'];
+            }
+            if (isset($serviceClass['class'])) {
+                $serviceClass = $serviceClass['class'];
             }
         }
 
