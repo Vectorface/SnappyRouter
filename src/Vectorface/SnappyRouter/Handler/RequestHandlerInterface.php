@@ -24,7 +24,7 @@ interface RequestHandlerInterface
 
     /**
      * Provides the handler with an opportunity to perform any last minute
-     * error handling logic. The returned value will be serialized by the 
+     * error handling logic. The returned value will be serialized by the
      * handler's encoder.
      * @param Exception $e The exception that was thrown.
      * @return Returns a serializable value that will be encoded and returned
