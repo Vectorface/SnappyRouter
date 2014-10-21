@@ -145,7 +145,7 @@ class SnappyRouter
 
             if (!class_exists($handlerClass)) {
                 throw new Exception(
-                    'Cannot instantiate instance of '.$handlerDetails[AbstractHandler::KEY_CLASS]
+                    'Cannot instantiate instance of '.$handlerClass
                 );
             }
             $this->handlers[] = new $handlerClass($options);
