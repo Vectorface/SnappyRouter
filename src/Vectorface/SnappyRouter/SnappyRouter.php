@@ -47,6 +47,29 @@ class SnappyRouter
     }
 
     /**
+     * Handles the standard route. Determines the execution environment
+     * and makes the appropriate call.
+     * @return string Returns the encoded response string.
+     */
+    public function handleRoute()
+    {
+        $environment = php_sapi_name();
+        switch ($environment) {
+            case 'cli' :
+                break;
+            default :
+                $queryPos = strpos($_SERVER['REQUEST_URI'], '?');
+                $path = (false === $queryPos) ? $_SERVER['REQUEST_URI'] : substr($_SERVER['REQUEST_URI'], 0, $queryPos);
+                return $this->handleHttpRoute(
+                    $path,
+                    $_GET,
+                    $_POST,
+                    $_SERVER['REQUEST_METHOD']
+                );
+        }
+    }
+
+    /**
      * Performs the actual request.
      * @param string $path The URL path from the client.
      * @param array $query The query parameters as an array.
