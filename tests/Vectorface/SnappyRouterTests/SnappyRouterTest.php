@@ -56,12 +56,17 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
         $router = new SnappyRouter(new Config($config));
 
         // an example MVC request
-        $path = '/Test/test';
-        $query = array('jsoncall' => 'testMethod');
-        $response = $router->handleHttpRoute($path, $query, '', 'get');
+        $_SERVER['REQUEST_URI'] = '/Test/test';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_GET['param'] = 'value';
+        $response = $router->handleRoute('apache2handler');
 
         $expectedResponse = 'This is a test service.';
         $this->assertEquals($expectedResponse, $response);
+
+        unset($_SERVER['REQUEST_URI']);
+        $_GET = [];
+        $_POST = [];
     }
 
     /**
@@ -117,5 +122,14 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
 
         $expectedResponse = 'No handler responded to request.';
         $this->assertEquals($expectedResponse, $response);
+    }
+
+    /**
+     * Tests that the CLI route currently just returns null.
+     */
+    public function testCliRouteNotImplemented()
+    {
+        $router = new SnappyRouter(new Config(array()));
+        $this->assertNull($router->handleRoute());
     }
 }

@@ -68,7 +68,7 @@ class SnappyRouter
                     $path,
                     $_GET,
                     $_POST,
-                    $_SERVER['REQUEST_METHOD']
+                    isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET'
                 );
         }
     }
