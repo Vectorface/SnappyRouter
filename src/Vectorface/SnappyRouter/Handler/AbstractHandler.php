@@ -137,7 +137,9 @@ abstract class AbstractHandler implements DiProvider
     public function invokePluginsHook($hook, $args)
     {
         foreach ($this->getPlugins() as $plugin) {
-            call_user_func_array(array($plugin, $hook), $args);
+            if (method_exists($plugin, $hook)) {
+                call_user_func_array(array($plugin, $hook), $args);
+            }
         }
     }
 }
