@@ -63,7 +63,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     {
         $options = array(
             AbstractHandler::KEY_SERVICES => array(
-                'TestController' => 'VectorFace\SnappyRouterTests\Controller\TestDummyController'
+                'TestController' => 'Vectorface\SnappyRouterTests\Controller\TestDummyController'
             )
         );
         $handler = new ControllerHandler($options);
