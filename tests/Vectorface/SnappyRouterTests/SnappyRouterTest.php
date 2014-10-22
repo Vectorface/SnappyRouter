@@ -65,8 +65,8 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResponse, $response);
 
         unset($_SERVER['REQUEST_URI']);
-        $_GET = [];
-        $_POST = [];
+        $_GET = array();
+        $_POST = array();
     }
 
     /**
