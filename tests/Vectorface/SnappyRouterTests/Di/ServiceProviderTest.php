@@ -27,9 +27,20 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
         // public setters (object chaining)
         $services = array_merge(
             $config,
-            array('AnotherService' => '/path/to/anotherService.php')
+            array(
+                'AnotherService' => '/path/to/anotherService.php',
+                'AnotherServiceForFileClass' => null
+            )
         );
+
         $serviceProvider->setService('AnotherService', '/path/to/anotherService.php');
+        $serviceProvider->setService(
+            'AnotherServiceForFileClass',
+            array(
+                'file' => 'tests/Vectorface/SnappyRouterTests/Controller/NonNamespacedController.php',
+                'class' => 'NonNamespacedController',
+            )
+        );
 
         // public getters
         $this->assertEquals(
@@ -45,9 +56,16 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
             'Vectorface\SnappyRouterTests\Controller\TestDummyController',
             $serviceProvider->getServiceInstance('TestController')
         );
+
+        //Tests instanceCache
         $this->assertInstanceOf(
             'Vectorface\SnappyRouterTests\Controller\TestDummyController',
             $serviceProvider->getServiceInstance('TestController')
+        );
+
+        $this->assertInstanceOf(
+            'NonNamespacedController',
+            $serviceProvider->getServiceInstance('AnotherServiceForFileClass')
         );
     }
 
