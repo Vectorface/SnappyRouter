@@ -3,7 +3,7 @@
 namespace Vectorface\SnappyRouter\Handler;
 
 use Vectorface\SnappyRouter\Di\Di;
-use Vectorface\SnappyRouter\Di\DiProvider;
+use Vectorface\SnappyRouter\Di\DiProviderInterface;
 use Vectorface\SnappyRouter\Di\ServiceProvider;
 use Vectorface\SnappyRouter\Exception\PluginException;
 
@@ -12,7 +12,7 @@ use Vectorface\SnappyRouter\Exception\PluginException;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-abstract class AbstractHandler implements DiProvider
+abstract class AbstractHandler implements DiProviderInterface
 {
     const KEY_CLASS    = 'class';
     const KEY_OPTIONS  = 'options';

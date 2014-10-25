@@ -8,7 +8,7 @@ namespace Vectorface\SnappyRouter\Di;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-interface DiProvider
+interface DiProviderInterface
 {
     /**
      * Retrieve an element from the DI container.
