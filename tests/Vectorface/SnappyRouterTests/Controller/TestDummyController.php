@@ -21,4 +21,9 @@ class TestDummyController extends AbstractController
     {
         throw new Exception('A generic exception.');
     }
+
+    public function defaultAction()
+    {
+
+    }
 }

@@ -3,6 +3,8 @@
 namespace Vectorface\SnappyRouterTests\Handler;
 
 use \PHPUnit_Framework_TestCase;
+use Vectorface\SnappyRouter\SnappyRouter;
+use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 
@@ -106,5 +108,35 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
             )
         );
         $handler = new ControllerHandler($options);
+    }
+
+    /**
+     * Tests that the default action of a controller is to render a default
+     * view from the view engine.
+     */
+    public function testRenderDefaultView()
+    {
+        $routerOptions = array(
+            SnappyRouter::KEY_DI => 'Vectorface\SnappyRouter\Di\Di',
+            SnappyRouter::KEY_HANDLERS => array(
+                'ControllerHandler' => array(
+                    AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\ControllerHandler',
+                    AbstractHandler::KEY_OPTIONS => array(
+                        AbstractHandler::KEY_SERVICES => array(
+                            'TestController' => 'Vectorface\SnappyRouterTests\Controller\TestDummyController'
+                        ),
+                        ControllerHandler::KEY_VIEWS => array(
+                            ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
+                        )
+                    )
+                )
+            )
+        );
+        $router = new SnappyRouter(new Config($routerOptions));
+
+        $path = '/test/default';
+        $response = $router->handleHttpRoute($path, array(), array(), 'GET');
+        $expected = file_get_contents(__DIR__.'/../Controller/Views/test/default.twig');
+        $this->assertEquals($expected, $response);
     }
 }

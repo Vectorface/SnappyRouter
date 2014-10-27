@@ -20,6 +20,10 @@ use Vectorface\SnappyRouter\Response\Response;
  */
 class ControllerHandler extends AbstractRequestHandler
 {
+
+    const KEY_VIEWS = 'views';
+    const KEY_VIEWS_PATH = 'path';
+
     protected $request;
     protected $decoder;
     protected $encoder;
@@ -77,13 +81,15 @@ class ControllerHandler extends AbstractRequestHandler
      */
     public function performRoute()
     {
+        // pass the various configurations to the DI layer
+        $viewConfig = isset($this->options[ControllerHandler::KEY_VIEWS]) ?
+            (array) $this->options[ControllerHandler::KEY_VIEWS] : array();
+        $this->set(ControllerHandler::KEY_VIEWS, $viewConfig);
+
         $controller = null;
         $action = null;
         $this->determineControllerAndAction($controller, $action);
         $response = $this->invokeControllerAction($controller, $action);
-        if (!($response instanceof AbstractResponse)) {
-            $response = new Response($response);
-        }
         \Vectorface\SnappyRouter\http_response_code($response->getStatusCode());
         return $this->getEncoder()->encode($response);
     }
@@ -122,14 +128,22 @@ class ControllerHandler extends AbstractRequestHandler
             array($this, $request, $controller, $actionName)
         );
 
-        $controller->initialize($request);
+        // generate a default view by convention
+        $controllerName = substr($controllerDiKey, 0, strlen($controllerDiKey) - 10);
+        $viewActionName = substr($actionName, 0, strlen($actionName) - 6);
+        $defaultView = sprintf(
+            '%s/%s.twig',
+            strtolower($controllerName),
+            strtolower($viewActionName)
+        );
+        $controller->initialize($request, $defaultView);
     }
 
     /**
      * Invokes the actual controller action and returns the response.
      * @param AbstractController $controller The controller to use.
      * @param string $action The action to invoke.
-     * @return mixed Returns the response from the action.
+     * @return AbstractResponse Returns the response from the action.
      */
     private function invokeControllerAction(AbstractController $controller, $action)
     {
@@ -138,6 +152,20 @@ class ControllerHandler extends AbstractRequestHandler
             array($this, $this->getRequest(), $controller, $action)
         );
         $response = $controller->$action($this->routeParams);
+        // returning null in the method is the same as returning an empty array
+        if (null === $response) {
+            $response = array();
+        }
+        // merge the existing array with the view environment variables and
+        // render the default view
+        if (is_array($response)) {
+            $response = $controller->renderView($response);
+        }
+        // whatever we have as a response needs to be encapsulated in an
+        // AbstractResponse object
+        if (!($response instanceof AbstractResponse)) {
+            $response = new Response($response);
+        }
         $this->invokePluginsHook(
             'afterActionInvoked',
             array($this, $this->getRequest(), $controller, $action, $response)
