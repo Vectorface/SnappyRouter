@@ -21,7 +21,7 @@ abstract class AbstractController implements DiProviderInterface
     private $request;
 
     /** The array of view context variables. */
-    private $viewContext;
+    protected $viewContext;
 
     /** The default view to render if no view is specified */
     private $defaultView;

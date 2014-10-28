@@ -21,10 +21,16 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
      */
     public function synopsis()
     {
-        $options = array();
+        $options = array(
+            ControllerHandler::KEY_BASE_PATH => '/',
+            AbstractHandler::KEY_SERVICES => array(
+                'ControllerController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController',
+                'IndexController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+            )
+        );
         $handler = new ControllerHandler($options);
 
-        $path = '/controller/action/param1/param2';
+        $path = '/controller/default/param1/param2';
         $query = array('id' => '1234');
         $post  = array('key' => 'value');
 
@@ -32,7 +38,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($handler->isAppropriate($path, $query, $post, 'POST'));
         $request = $handler->getRequest();
         $this->assertEquals('ControllerController', $request->getController());
-        $this->assertEquals('actionAction', $request->getAction());
+        $this->assertEquals('defaultAction', $request->getAction());
         $this->assertEquals('POST', $request->getVerb());
 
         // a route with only an action, no params
@@ -56,16 +62,28 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests the handler returns false for a route to an unknown controller.
+     */
+    public function testRouteToNonExistantController()
+    {
+        $options = array();
+        $handler = new ControllerHandler($options);
+
+        $path = '/test/test';
+        $this->assertFalse($handler->isAppropriate($path, array(), array(), 'GET'));
+    }
+
+    /**
      * Tests that an exception is thrown if we try to route to a controller
      * action that does not exist.
-     * @expectedException Vectorface\SnappyRouter\Exception\HandlerException
+     * @expectedException Vectorface\SnappyRouter\Exception\ResourceNotFoundException
      * @expectedExceptionMessage TestController does not have method notexistsAction
      */
     public function testRouteToNonExistantControllerAction()
     {
         $options = array(
             AbstractHandler::KEY_SERVICES => array(
-                'TestController' => 'Vectorface\SnappyRouterTests\Controller\TestDummyController'
+                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             )
         );
         $handler = new ControllerHandler($options);
@@ -103,7 +121,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
         $options = array(
             AbstractHandler::KEY_PLUGINS => array(
                 'TestPlugin' => array(
-                    'class' => 'Vectorface\SnappyRouter\Plugin\NonExistantPlugin'
+                    'class' => 'Vectorface\\SnappyRouter\\Plugin\\NonExistantPlugin'
                 )
             )
         );
@@ -117,13 +135,13 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testRenderDefaultView()
     {
         $routerOptions = array(
-            SnappyRouter::KEY_DI => 'Vectorface\SnappyRouter\Di\Di',
+            SnappyRouter::KEY_DI => 'Vectorface\\SnappyRouter\\Di\\Di',
             SnappyRouter::KEY_HANDLERS => array(
                 'ControllerHandler' => array(
-                    AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\ControllerHandler',
+                    AbstractHandler::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handler\\ControllerHandler',
                     AbstractHandler::KEY_OPTIONS => array(
                         AbstractHandler::KEY_SERVICES => array(
-                            'TestController' => 'Vectorface\SnappyRouterTests\Controller\TestDummyController'
+                            'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
                         ),
                         ControllerHandler::KEY_VIEWS => array(
                             ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'

@@ -6,6 +6,7 @@ use Vectorface\SnappyRouter\SnappyRouter;
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Plugin\PluginInterface;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
+use Vectorface\SnappyRouter\Handler\ControllerHandler;
 
 use \PHPUnit_Framework_TestCase;
 
@@ -28,6 +29,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
                 'ControllerHandler' => array(
                     AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\ControllerHandler',
                     AbstractHandler::KEY_OPTIONS => array(
+                        ControllerHandler::KEY_BASE_PATH => '/',
                         AbstractHandler::KEY_SERVICES => array(
                             'TestController' => 'Vectorface\SnappyRouterTests\Controller\TestDummyController'
                         ),
@@ -97,9 +99,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
         $path = '/Test/test';
         $query = array('jsoncall' => 'testMethod');
         $response = $router->handleHttpRoute($path, $query, '', 'get');
-
-        $expectedResponse = 'No handler responded to request.';
-        $this->assertEquals($expectedResponse, $response);
+        $this->assertEquals('', $response);
     }
 
     /**

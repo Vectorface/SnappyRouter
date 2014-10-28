@@ -6,7 +6,7 @@ use \Exception;
 use Vectorface\SnappyRouter\Config\ConfigInterface;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Di\DiInterface;
-use Vectorface\SnappyRouter\Exception\HandlerException;
+use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\Exception\RouterExceptionInterface;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
@@ -136,7 +136,7 @@ class SnappyRouter
             }
         }
 
-        throw new HandlerException('No handler responded to request.');
+        throw new ResourceNotFoundException();
     }
 
     // parses the passed in config file

@@ -12,6 +12,12 @@ use Vectorface\SnappyRouter\Controller\AbstractController;
  */
 class TestDummyController extends AbstractController
 {
+
+    public function indexAction()
+    {
+
+    }
+
     public function testAction()
     {
         return 'This is a test service.';

@@ -8,7 +8,8 @@ use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Encoder\EncoderInterface;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
 use Vectorface\SnappyRouter\Exception\HandlerException;
-use Vectorface\SnappyRouter\Request\HttpRequest as Request;
+use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
+use Vectorface\SnappyRouter\Request\HttpRequest;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
 use Vectorface\SnappyRouter\Response\Response;
 
@@ -21,6 +22,7 @@ use Vectorface\SnappyRouter\Response\Response;
 class ControllerHandler extends AbstractRequestHandler
 {
 
+    const KEY_BASE_PATH = 'basePath';
     const KEY_VIEWS = 'views';
     const KEY_VIEWS_PATH = 'path';
 
@@ -40,17 +42,17 @@ class ControllerHandler extends AbstractRequestHandler
      */
     public function isAppropriate($path, $query, $post, $verb)
     {
+        // remove the leading base path option if present
+        if (isset($this->options[self::KEY_BASE_PATH])) {
+            $pos = strpos($path, $this->options[self::KEY_BASE_PATH]);
+            if (false !== $pos) {
+                $path = substr($path, $pos + strlen($this->options[self::KEY_BASE_PATH]));
+            }
+        }
+
         // remove the leading /
         if (0 === strpos($path, '/')) {
             $path = substr($path, 1);
-        }
-
-        // remove the leading base path option if present
-        if (isset($this->options['basePath'])) {
-            $pos = strpos($path, $this->options['basePath']);
-            if (false !== $pos) {
-                $path = substr($path, $pos + strlen($this->options['basePath']));
-            }
         }
 
         // split the path components to find the controller, action and route parameters
@@ -78,7 +80,14 @@ class ControllerHandler extends AbstractRequestHandler
         $controllerClass = ucfirst(strtolower(trim($controllerClass))).'Controller';
         $actionName = strtolower(trim($actionName)).'Action';
 
-        $this->request = new Request(
+        // ensure we actually handle the controller for this application
+        try {
+            $this->getServiceProvider()->getServiceInstance($controllerClass);
+        } catch (Exception $e) {
+            return false;
+        }
+
+        $this->request = new HttpRequest(
             $controllerClass,
             $actionName,
             $verb
@@ -96,6 +105,10 @@ class ControllerHandler extends AbstractRequestHandler
         $viewConfig = isset($this->options[ControllerHandler::KEY_VIEWS]) ?
             (array) $this->options[ControllerHandler::KEY_VIEWS] : array();
         $this->set(ControllerHandler::KEY_VIEWS, $viewConfig);
+
+        if (isset($this->options[self::KEY_BASE_PATH])) {
+            $this->set(self::KEY_BASE_PATH, $this->options[self::KEY_BASE_PATH]);
+        }
 
         $controller = null;
         $action = null;
@@ -120,20 +133,15 @@ class ControllerHandler extends AbstractRequestHandler
         );
 
         $controllerDiKey = $request->getController();
-        try {
-            $controller = $this->getServiceProvider()->getServiceInstance($controllerDiKey);
-            $actionName = $request->getAction();
-            if (!method_exists($controller, $actionName)) {
-                throw new HandlerException(sprintf(
-                    '%s does not have method %s',
-                    $controllerDiKey,
-                    $actionName
-                ));
-            }
-        } catch (Exception $e) {
-            throw new HandlerException($e->getMessage());
+        $controller = $this->getServiceProvider()->getServiceInstance($controllerDiKey);
+        $actionName = $request->getAction();
+        if (!method_exists($controller, $actionName)) {
+            throw new ResourceNotFoundException(sprintf(
+                '%s does not have method %s',
+                $controllerDiKey,
+                $actionName
+            ));
         }
-
         $this->invokePluginsHook(
             'afterControllerSelected',
             array($this, $request, $controller, $actionName)
