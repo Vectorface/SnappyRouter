@@ -17,7 +17,10 @@
         "psr-0": {
             "Vectorface\\SnappyRouter": "./src",
             "Vectorface\\SnappyRouterTests": "./tests"
-        }
+        },
+        "files": [
+            "./src/Vectorface/SnappyRouter/php-5.3-compat.php"
+        ]
     },
     "homepage": "https://github.com/Vectorface/snappy-router",
     "support": {

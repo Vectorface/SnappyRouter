@@ -40,13 +40,24 @@ class ControllerHandler extends AbstractRequestHandler
      */
     public function isAppropriate($path, $query, $post, $verb)
     {
+        // remove the leading /
         if (0 === strpos($path, '/')) {
             $path = substr($path, 1);
         }
 
+        // remove the leading base path option if present
+        if (isset($this->options['basePath'])) {
+            $pos = strpos($path, $this->options['basePath']);
+            if (false !== $pos) {
+                $path = substr($path, $pos + strlen($this->options['basePath']));
+            }
+        }
+
+        // split the path components to find the controller, action and route parameters
         $pathComponents = array_filter(array_map('trim', explode('/', $path)), 'strlen');
         $pathComponentsCount = count($pathComponents);
 
+        // default values if not present
         $controllerClass = 'index';
         $actionName = 'index';
         $this->routeParams = array();
