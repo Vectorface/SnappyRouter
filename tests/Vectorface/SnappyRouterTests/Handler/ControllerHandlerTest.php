@@ -40,6 +40,8 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('ControllerController', $request->getController());
         $this->assertEquals('defaultAction', $request->getAction());
         $this->assertEquals('POST', $request->getVerb());
+        $this->assertFalse($request->isGet());
+        $this->assertTrue($request->isPost());
 
         // a route with only an action, no params
         $this->assertTrue($handler->isAppropriate('/controller/action/', $query, $post, 'POST'));

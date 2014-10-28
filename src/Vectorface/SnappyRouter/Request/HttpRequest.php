@@ -57,6 +57,26 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     }
 
     /**
+     * Returns true if the request is a GET request and false otherwise.
+     * @return bool Returns true if the request is a GET request and false
+     *         otherwise.
+     */
+    public function isGet()
+    {
+        return ('GET' === strtoupper($this->getVerb()));
+    }
+
+    /**
+     * Returns true if the request is a POST request and false otherwise.
+     * @return bool Returns true if the request is a POST request and false
+     *         otherwise.
+     */
+    public function isPost()
+    {
+        return ('POST' === strtoupper($this->getVerb()));
+    }
+
+    /**
      * Returns the GET data parameter associated with the specified key.
      * @param string $param The GET data parameter.
      * @param mixed $defaultValue The default value to use when the key is not present.

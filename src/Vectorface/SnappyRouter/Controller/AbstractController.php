@@ -67,6 +67,15 @@ abstract class AbstractController implements DiProviderInterface
     }
 
     /**
+     * Returns the request object.
+     * @return HttpRequest The request object.
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
      * Retrieve an element from the DI container.
      * @param string $key The DI key.
      * @param boolean $useCache (optional) An optional indicating whether we

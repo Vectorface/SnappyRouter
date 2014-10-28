@@ -20,6 +20,7 @@ class TestDummyController extends AbstractController
 
     public function testAction()
     {
+        $this->getRequest();
         return 'This is a test service.';
     }
 
