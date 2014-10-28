@@ -92,6 +92,8 @@ class ControllerHandler extends AbstractRequestHandler
             $actionName,
             $verb
         );
+        $this->request->setQuery($query);
+        $this->request->setPost($post);
         return true;
     }
 
