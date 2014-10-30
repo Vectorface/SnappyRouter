@@ -14,4 +14,7 @@
             <directory addUncoveredFilesFromWhitelist="true">./src/Vectorface/SnappyRouter</directory>
         </whitelist>
     </filter>
+    <php>
+        <ini name="register_argc_argv" value="On" />
+    </php>
 </phpunit>

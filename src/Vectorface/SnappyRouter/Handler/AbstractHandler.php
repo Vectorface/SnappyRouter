@@ -79,12 +79,6 @@ abstract class AbstractHandler implements DiProviderInterface
     }
 
     /**
-     * Performs the actual routing.
-     * @return Returns the result of the route.
-     */
-    abstract public function performRoute();
-
-    /**
      * Returns the array of plugins registered with this handler.
      */
     public function getPlugins()
@@ -142,4 +136,17 @@ abstract class AbstractHandler implements DiProviderInterface
             }
         }
     }
+
+    /**
+     * Performs the actual routing.
+     * @return Returns the result of the route.
+     */
+    abstract public function performRoute();
+
+    /**
+     * Returns whether a handler should function in a CLI environment.
+     * @return bool Returns true if the handler should function in a CLI
+     *         environment and false otherwise.
+     */
+    abstract public function isCliHandler();
 }

@@ -26,6 +26,9 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
         return array(
             SnappyRouter::KEY_DI => 'Vectorface\SnappyRouter\Di\Di',
             SnappyRouter::KEY_HANDLERS => array(
+                'BogusCliHandler' => array(
+                    AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\CliTaskHandler'
+                ),
                 'ControllerHandler' => array(
                     AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\ControllerHandler',
                     AbstractHandler::KEY_OPTIONS => array(
@@ -39,6 +42,14 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
                                 AbstractHandler::KEY_OPTIONS => array()
                             ),
                             'AnotherPlugin'  => 'Vectorface\SnappyRouterTests\Plugin\TestPlugin'
+                        )
+                    )
+                ),
+                'CliHandler' => array(
+                    AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\CliTaskHandler',
+                    AbstractHandler::KEY_OPTIONS => array(
+                        'tasks' => array(
+                            'TestTask' => 'Vectorface\SnappyRouterTests\Task\DummyTestTask'
                         )
                     )
                 )
@@ -125,11 +136,69 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests that the CLI route currently just returns null.
+     * Tests that the CLI routing functionality works.
      */
-    public function testCliRouteNotImplemented()
+    public function testStandardCliRoute()
     {
-        $router = new SnappyRouter(new Config(array()));
-        $this->assertNull($router->handleRoute());
+        $config = $this->getStandardConfig();
+        $router = new SnappyRouter(new Config($config));
+
+        $_SERVER['argv'] = array(
+            'dummyScript.php',
+            '--task',
+            'TestTask',
+            '--action',
+            'testMethod'
+        );
+        $_SERVER['argc'] = count($_SERVER['argv']);
+        $response = $router->handleRoute();
+
+        $expected = 'Hello World'.PHP_EOL;
+        $this->assertEquals($expected, $response);
+    }
+
+    /**
+     * Tests a CLI route that throws an exception.
+     */
+    public function testCliRouteWithException()
+    {
+        $config = $this->getStandardConfig();
+        $router = new SnappyRouter(new Config($config));
+
+        $_SERVER['argv'] = array(
+            'dummyScript.php',
+            '--task',
+            'TestTask',
+            '--action',
+            'throwsException'
+        );
+        $_SERVER['argc'] = count($_SERVER['argv']);
+        $response = $router->handleRoute();
+
+        $expected = 'An exception was thrown.'.PHP_EOL;
+        $this->assertEquals($expected, $response);
+    }
+
+    /**
+     * Tests that a CLI route with no appropriate handlers throws an
+     * exception.
+     */
+    public function testCliRouteWithNoHandler()
+    {
+        $config = $this->getStandardConfig();
+        $router = new SnappyRouter(new Config($config));
+
+        $_SERVER['argv'] = array(
+            'dummyScript.php',
+            '--task',
+            'NotDefinedTask',
+            '--action',
+            'anyAction'
+        );
+        $_SERVER['argc'] = count($_SERVER['argv']);
+        $response = $router->handleRoute();
+
+        $expected = 'No CLI handler registered.'.PHP_EOL;
+        $this->assertEquals($expected, $response);
     }
 }

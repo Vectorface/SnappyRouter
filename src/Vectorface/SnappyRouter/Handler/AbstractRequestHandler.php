@@ -24,4 +24,14 @@ abstract class AbstractRequestHandler extends AbstractHandler implements Request
     {
         return $e->getMessage();
     }
+
+    /**
+     * Returns whether a handler should function in a CLI environment.
+     * @return bool Returns true if the handler should function in a CLI
+     *         environment and false otherwise.
+     */
+    public function isCliHandler()
+    {
+        return false;
+    }
 }

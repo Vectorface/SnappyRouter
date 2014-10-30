@@ -49,7 +49,7 @@ class SnappyRouter
     /**
      * Handles the standard route. Determines the execution environment
      * and makes the appropriate call.
-     * @param string $environment An optional environment variable, if not
+     * @param string $environment (optional) An optional environment variable, if not
      *        specified, the method will fallback to php_sapi_name().
      * @return string Returns the encoded response string.
      */
@@ -58,9 +58,11 @@ class SnappyRouter
         if (null === $environment) {
             $environment = php_sapi_name();
         }
+
         switch ($environment) {
             case 'cli':
-                break;
+                $components = empty($_SERVER['argv']) ? array() : $_SERVER['argv'];
+                return $this->handleCliRoute($components).PHP_EOL;
             default:
                 $queryPos = strpos($_SERVER['REQUEST_URI'], '?');
                 $path = (false === $queryPos) ? $_SERVER['REQUEST_URI'] : substr($_SERVER['REQUEST_URI'], 0, $queryPos);
@@ -118,6 +120,26 @@ class SnappyRouter
         }
     }
 
+    public function handleCliRoute($cliComponents)
+    {
+        $activeHandler = null;
+        try {
+            $activeHandler = $this->determineCliHandler($cliComponents);
+            $activeHandler->invokePluginsHook(
+                'afterHandlerSelected',
+                array($activeHandler)
+            );
+            $response = $activeHandler->performRoute();
+            $activeHandler->invokePluginsHook(
+                'afterFullRouteInvoked',
+                array($activeHandler)
+            );
+            return $response;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     /**
      * Performs the standard "handle" step of the routing process.
      * @param string $path The web request path.
@@ -129,14 +151,33 @@ class SnappyRouter
     private function determineHandler($path, $query, $post, $verb)
     {
         // determine which handler should handle this path
-        $activeHandler = null;
         foreach ($this->getHandlers() as $handler) {
-            if (true === $handler->isAppropriate($path, $query, $post, $verb)) {
+            if (true === $handler->isCliHandler()) {
+                continue;
+            } elseif (true === $handler->isAppropriate($path, $query, $post, $verb)) {
                 return $handler;
             }
         }
 
         throw new ResourceNotFoundException();
+    }
+
+    /**
+     * Determines which CLI handler to use.
+     * @param array $components The CLI path components.
+     * @return AbstractCliHandler Returns the handler.
+     */
+    private function determineCliHandler($components)
+    {
+        foreach ($this->getHandlers() as $handler) {
+            if (false === $handler->isCliHandler()) {
+                continue;
+            } elseif (true === $handler->isAppropriate($components)) {
+                return $handler;
+            }
+        }
+
+        throw new ResourceNotFoundException('No CLI handler registered.');
     }
 
     // parses the passed in config file
