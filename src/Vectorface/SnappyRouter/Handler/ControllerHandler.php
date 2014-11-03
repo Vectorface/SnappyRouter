@@ -7,6 +7,7 @@ use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Encoder\EncoderInterface;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
+use Vectorface\SnappyRouter\Encoder\TwigViewEncoder;
 use Vectorface\SnappyRouter\Exception\HandlerException;
 use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\Request\HttpRequest;
@@ -30,7 +31,7 @@ class ControllerHandler extends AbstractRequestHandler
     protected $decoder;
     protected $encoder;
 
-    private $routeParams;
+    protected $routeParams;
 
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
@@ -44,10 +45,7 @@ class ControllerHandler extends AbstractRequestHandler
     {
         // remove the leading base path option if present
         if (isset($this->options[self::KEY_BASE_PATH])) {
-            $pos = strpos($path, $this->options[self::KEY_BASE_PATH]);
-            if (false !== $pos) {
-                $path = substr($path, $pos + strlen($this->options[self::KEY_BASE_PATH]));
-            }
+            $path = $this->extractPathFromBasePath($path, $this->options[self::KEY_BASE_PATH]);
         }
 
         // remove the leading /
@@ -77,8 +75,15 @@ class ControllerHandler extends AbstractRequestHandler
                 $actionName = $pathComponents[1];
                 $this->routeParams = array_slice($pathComponents, 2);
         }
-        $controllerClass = ucfirst(strtolower(trim($controllerClass))).'Controller';
-        $actionName = strtolower(trim($actionName)).'Action';
+        $controllerClass = strtolower($controllerClass);
+        $actionName = strtolower($actionName);
+        $defaultView = sprintf(
+            '%s/%s.twig',
+            $controllerClass,
+            $actionName
+        );
+        $controllerClass = ucfirst($controllerClass).'Controller';
+        $actionName = $actionName.'Action';
 
         // ensure we actually handle the controller for this application
         try {
@@ -87,6 +92,17 @@ class ControllerHandler extends AbstractRequestHandler
             return false;
         }
 
+        // configure the view encoder if they specify a view option
+        if (isset($this->options[self::KEY_VIEWS])) {
+            $this->encoder = new TwigViewEncoder(
+                $this->options[self::KEY_VIEWS],
+                $defaultView
+            );
+        } else {
+            $this->encoder = new NullEncoder();
+        }
+
+        // configure the request object
         $this->request = new HttpRequest(
             $controllerClass,
             $actionName,
@@ -94,6 +110,8 @@ class ControllerHandler extends AbstractRequestHandler
         );
         $this->request->setQuery($query);
         $this->request->setPost($post);
+
+        // return that we will handle this request
         return true;
     }
 
@@ -103,21 +121,54 @@ class ControllerHandler extends AbstractRequestHandler
      */
     public function performRoute()
     {
-        // pass the various configurations to the DI layer
-        $viewConfig = isset($this->options[ControllerHandler::KEY_VIEWS]) ?
-            (array) $this->options[ControllerHandler::KEY_VIEWS] : array();
-        $this->set(ControllerHandler::KEY_VIEWS, $viewConfig);
-
-        if (isset($this->options[self::KEY_BASE_PATH])) {
-            $this->set(self::KEY_BASE_PATH, $this->options[self::KEY_BASE_PATH]);
-        }
-
         $controller = null;
         $action = null;
         $this->determineControllerAndAction($controller, $action);
         $response = $this->invokeControllerAction($controller, $action);
         \Vectorface\SnappyRouter\http_response_code($response->getStatusCode());
         return $this->getEncoder()->encode($response);
+    }
+
+    /**
+     * Returns a request object extracted from the request details (path, query, etc). The method
+     * isAppropriate() must have returned true, otherwise this method should return null.
+     * @return Returns a Request object or null if this handler is not appropriate.
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Returns the active response encoder.
+     * @return EncoderInterface Returns the response encoder.
+     */
+    public function getEncoder()
+    {
+        return $this->encoder;
+    }
+
+    /**
+     * Sets the encoder to be used by this handler (overriding the default).
+     * @param EncoderInterface $encoder The encoder to be used.
+     * @return Returns $this.
+     */
+    public function setEncoder(EncoderInterface $encoder)
+    {
+        $this->encoder = $encoder;
+        return $this;
+    }
+
+    /**
+     * Returns the new path with the base path extracted.
+     * @param string $path The full path.
+     * @param string $basePath The base path to extract.
+     * @return string Returns the new path with the base path removed.
+     */
+    protected function extractPathFromBasePath($path, $basePath)
+    {
+        $pos = strpos($path, $basePath);
+        return (false === $pos) ? $path : substr($path, $pos + strlen($basePath));
     }
 
     /**
@@ -148,16 +199,7 @@ class ControllerHandler extends AbstractRequestHandler
             'afterControllerSelected',
             array($this, $request, $controller, $actionName)
         );
-
-        // generate a default view by convention
-        $controllerName = substr($controllerDiKey, 0, strlen($controllerDiKey) - 10);
-        $viewActionName = substr($actionName, 0, strlen($actionName) - 6);
-        $defaultView = sprintf(
-            '%s/%s.twig',
-            strtolower($controllerName),
-            strtolower($viewActionName)
-        );
-        $controller->initialize($request, $defaultView);
+        $controller->initialize($request, $this);
     }
 
     /**
@@ -166,22 +208,27 @@ class ControllerHandler extends AbstractRequestHandler
      * @param string $action The action to invoke.
      * @return AbstractResponse Returns the response from the action.
      */
-    private function invokeControllerAction(AbstractController $controller, $action)
+    protected function invokeControllerAction(AbstractController $controller, $action)
     {
         $this->invokePluginsHook(
             'beforeActionInvoked',
             array($this, $this->getRequest(), $controller, $action)
         );
         $response = $controller->$action($this->routeParams);
-        // returning null in the method is the same as returning an empty array
         if (null === $response) {
+            // if the action returns null, we simply render the default view
             $response = array();
+        } elseif (!is_string($response)) {
+            // if they don't return a string, try to use whatever is returned
+            // as variables to the view renderer
+            $response = (array)$response;
         }
-        // merge the existing array with the view environment variables and
-        // render the default view
+
+        // merge the response variables with the existing view context
         if (is_array($response)) {
-            $response = $controller->renderView($response);
+            $response = array_merge($controller->getViewContext(), $response);
         }
+
         // whatever we have as a response needs to be encapsulated in an
         // AbstractResponse object
         if (!($response instanceof AbstractResponse)) {
@@ -192,40 +239,5 @@ class ControllerHandler extends AbstractRequestHandler
             array($this, $this->getRequest(), $controller, $action, $response)
         );
         return $response;
-    }
-
-    /**
-     * Returns a request object extracted from the request details (path, query, etc). The method
-     * isAppropriate() must have returned true, otherwise this method should return null.
-     * @return Returns a Request object or null if this handler is not appropriate.
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Returns the active response encoder.
-     * @return EncoderInterface Returns the response encoder.
-     */
-    public function getEncoder()
-    {
-        if (isset($this->encoder)) {
-            return $this->encoder;
-        }
-
-        $this->encoder = new NullEncoder();
-        return $this->encoder;
-    }
-
-    /**
-     * Sets the encoder to be used by this handler (overriding the default).
-     * @param EncoderInterface $encoder The encoder to be used.
-     * @return Returns $this.
-     */
-    public function setEncoder(EncoderInterface $encoder)
-    {
-        $this->encoder = $encoder;
-        return $this;
     }
 }

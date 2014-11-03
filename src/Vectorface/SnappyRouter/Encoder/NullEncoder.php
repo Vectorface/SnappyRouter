@@ -13,10 +13,14 @@ class NullEncoder extends AbstractEncoder
 {
     /**
      * @param AbstractResponse $response The response to be encoded.
-     * @return (string) Returns the response encoded as a string.
+     * @return string Returns the response encoded as a string.
      */
     public function encode(AbstractResponse $response)
     {
-        return (string)$response->getResponseObject();
+        if (is_string($response->getResponseObject())) {
+            return $response->getResponseObject();
+        } else {
+            return '';
+        }
     }
 }

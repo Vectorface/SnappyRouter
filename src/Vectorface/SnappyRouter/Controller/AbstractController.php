@@ -5,7 +5,7 @@ namespace Vectorface\SnappyRouter\Controller;
 use \Exception;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Di\DiProviderInterface;
-use Vectorface\SnappyRouter\Handler\ControllerHandler;
+use Vectorface\SnappyRouter\Handler\AbstractRequestHandler;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 
 /**
@@ -23,47 +23,38 @@ abstract class AbstractController implements DiProviderInterface
     /** The array of view context variables. */
     protected $viewContext;
 
-    /** The default view to render if no view is specified */
-    private $defaultView;
+    /** The handler being used by the router. */
+    protected $handler;
 
     /**
      * This method is called before invoking any specific controller action.
      * Override this method to provide your own logic for the subclass but
      * ensure you make a call to parent::initialize() as well.
      * @param HttpRequest $request The web request being made.
-     * @param string $defaultView The default view to render.
+     * @param AbstractRequestHandler The handler the router is using.
      * @return AbstractController Returns $this.
      */
-    public function initialize(HttpRequest $request, $defaultView)
+    public function initialize(HttpRequest $request, AbstractRequestHandler $handler)
     {
         $this->request = $request;
-        $this->defaultView = $defaultView;
+        $this->handler = $handler;
         $this->viewContext = array();
-
-        // initialize the view environment
-        $viewConfig = $this->get(ControllerHandler::KEY_VIEWS);
-        if (!empty($viewConfig)) {
-            $loader = new \Twig_Loader_Filesystem($viewConfig[ControllerHandler::KEY_VIEWS_PATH]);
-            $this->set(self::KEY_VIEW_ENVIRONMENT, new \Twig_Environment($loader, $viewConfig));
-        }
         return $this;
     }
 
     /**
      * Renders the view for the given controller and action.
-     * @param string $controller The controller to render.
-     * @param string $action The action to render.
-     * @param array $params (optional) An array of additional parameters to add
+     * @param array $viewVariables An array of additional parameters to add
      *        to the existing view context.
+     * @param string $template The name of the view template.
      * @return Returns the rendered view as a string.
      */
-    public function renderView($viewVariables, $view = null)
+    public function renderView($viewVariables, $template)
     {
-        if (null === $view) {
-            $view = $this->defaultView;
-        }
-        $template = $this->get(self::KEY_VIEW_ENVIRONMENT)->loadTemplate($view);
-        return $template->render(array_merge($this->viewContext, $viewVariables));
+        return $this->handler->getEncoder()->renderView(
+            $template,
+            array_merge($this->viewContext, (array)$viewVariables)
+        );
     }
 
     /**
@@ -73,6 +64,15 @@ abstract class AbstractController implements DiProviderInterface
     public function getRequest()
     {
         return $this->request;
+    }
+
+    /**
+     * Returns the view context.
+     * @return array The view context.
+     */
+    public function getViewContext()
+    {
+        return $this->viewContext;
     }
 
     /**

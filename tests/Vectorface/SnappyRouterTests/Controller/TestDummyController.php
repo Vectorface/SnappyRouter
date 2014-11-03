@@ -20,7 +20,6 @@ class TestDummyController extends AbstractController
 
     public function testAction()
     {
-        $this->getRequest();
         return 'This is a test service.';
     }
 
@@ -31,6 +30,22 @@ class TestDummyController extends AbstractController
 
     public function defaultAction()
     {
+        // ensure some abstract methods work
+        $this->set('request', $this->getRequest());
+        $this->get('request');
+    }
 
+    public function arrayAction()
+    {
+        $this->viewContext['variable'] = 'broken';
+        return array('variable' => 'test');
+    }
+
+    public function otherViewAction()
+    {
+        return $this->renderView(
+            array('variable' => 'test'),
+            'test/array.twig'
+        );
     }
 }

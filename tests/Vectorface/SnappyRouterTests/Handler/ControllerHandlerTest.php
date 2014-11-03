@@ -131,6 +131,24 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests that an invalid view configuration throws an exception.
+     * @expectedException Vectorface\SnappyRouter\Exception\InternalErrorException
+     * @expectedExceptionMessage View environment missing views path.
+     */
+    public function testInvalidViewConfiguration()
+    {
+        $options = array(
+            ControllerHandler::KEY_BASE_PATH => '/',
+            AbstractHandler::KEY_SERVICES => array(
+                'ControllerController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController',
+            ),
+            ControllerHandler::KEY_VIEWS => array()
+        );
+        $handler = new ControllerHandler($options);
+        $handler->isAppropriate('/controller', array(), array(), 'GET');
+    }
+
+    /**
      * Tests that the default action of a controller is to render a default
      * view from the view engine.
      */
@@ -158,5 +176,61 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
         $response = $router->handleHttpRoute($path, array(), array(), 'GET');
         $expected = file_get_contents(__DIR__.'/../Controller/Views/test/default.twig');
         $this->assertEquals($expected, $response);
+    }
+
+    /**
+     * Tests that when an action returns a string, the string is rendered
+     * without going through the view engine.
+     */
+    public function testActionReturnsString()
+    {
+        $options = array(
+            AbstractHandler::KEY_SERVICES => array(
+                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+            ),
+            ControllerHandler::KEY_VIEWS => array(
+                ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
+            )
+        );
+        $handler = new ControllerHandler($options);
+        $this->assertTrue($handler->isAppropriate('/test/test', array(), array(), 'GET'));
+        $this->assertEquals('This is a test service.', $handler->performRoute());
+    }
+
+    /**
+     * Tests that when an action returns an array, the twig view is rendered
+     * with the array values as the variables in the view.
+     */
+    public function testActionReturnsArray()
+    {
+        $options = array(
+            AbstractHandler::KEY_SERVICES => array(
+                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+            ),
+            ControllerHandler::KEY_VIEWS => array(
+                ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
+            )
+        );
+        $handler = new ControllerHandler($options);
+        $this->assertTrue($handler->isAppropriate('/test/array', array(), array(), 'GET'));
+        $this->assertEquals('This is a test service.', $handler->performRoute());
+    }
+
+    /**
+     * Tests that an action can render a different view that its default.
+     */
+    public function testActionRendersNonDefaultView()
+    {
+        $options = array(
+            AbstractHandler::KEY_SERVICES => array(
+                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+            ),
+            ControllerHandler::KEY_VIEWS => array(
+                ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
+            )
+        );
+        $handler = new ControllerHandler($options);
+        $this->assertTrue($handler->isAppropriate('/test/otherView', array(), array(), 'GET'));
+        $this->assertEquals('This is a test service.', $handler->performRoute());
     }
 }
