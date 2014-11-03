@@ -4,6 +4,8 @@ namespace Vectorface\SnappyRouter\Plugin;
 
 use \Exception;
 use Vectorface\SnappyRouter\Controller\AbstractController;
+use Vectorface\SnappyRouter\Di\Di;
+use Vectorface\SnappyRouter\Di\DiProviderInterface;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Request\AbstractRequest;
 
@@ -13,7 +15,7 @@ use Vectorface\SnappyRouter\Request\AbstractRequest;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-abstract class AbstractPlugin implements PluginInterface
+abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
 {
     /** the default priority of a plugin */
     const PRIORITY_DEFAULT = 1000;
@@ -136,5 +138,28 @@ abstract class AbstractPlugin implements PluginInterface
                 return false;
             }
         }
+    }
+
+    /**
+     * Retrieve an element from the DI container.
+     * @param string $key The DI key.
+     * @param boolean $useCache (optional) An optional indicating whether we
+     *        should use the cached version of the element (true by default).
+     * @return Returns the DI element mapped to that key.
+     */
+    public function get($key, $useCache = true)
+    {
+        return Di::getDefault()->get($key, $useCache);
+    }
+
+    /**
+     * Sets an element in the DI container for the specified key.
+     * @param string $key The DI key.
+     * @param mixed  $element The DI element to store.
+     * @return Di Returns the Di instance.
+     */
+    public function set($key, $element)
+    {
+        return Di::getDefault()->set($key, $element);
     }
 }
