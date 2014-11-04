@@ -56,7 +56,7 @@ class SnappyRouter
     public function handleRoute($environment = null)
     {
         if (null === $environment) {
-            $environment = php_sapi_name();
+            $environment = PHP_SAPI;
         }
 
         switch ($environment) {
