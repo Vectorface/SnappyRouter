@@ -88,7 +88,7 @@ class SnappyRouter
         $activeHandler = null;
         try {
             // determine which handler should handle this path
-            $activeHandler = $this->determineHandler($path, $query, $post, $verb);
+            $activeHandler = $this->determineHandler(false, array($path, $query, $post, $verb));
             // invoke the initial plugin hook
             $activeHandler->invokePluginsHook(
                 'afterHandlerSelected',
@@ -124,7 +124,7 @@ class SnappyRouter
     {
         $activeHandler = null;
         try {
-            $activeHandler = $this->determineCliHandler($cliComponents);
+            $activeHandler = $this->determineHandler(true, array($cliComponents));
             $activeHandler->invokePluginsHook(
                 'afterHandlerSelected',
                 array($activeHandler)
@@ -141,43 +141,24 @@ class SnappyRouter
     }
 
     /**
-     * Performs the standard "handle" step of the routing process.
-     * @param string $path The web request path.
-     * @param array $query The array of query parameters.
-     * @param array $post The array of post parameters.
-     * @param string $verb The HTTP verb used in the request.
+     * Determines which handler is appropriate for this request.
+     *
+     * @param bool $isCli True for CLI handlers, false otherwise.
+     * @param array $checkParams An array parameters for the handler isAppropriate method.
      * @return Returns the handler to be used for the route.
      */
-    private function determineHandler($path, $query, $post, $verb)
+    private function determineHandler($isCli, $checkParams)
     {
         // determine which handler should handle this path
         foreach ($this->getHandlers() as $handler) {
-            if (true === $handler->isCliHandler()) {
+            if ($isCli !== $handler->isCliHandler()) {
                 continue;
-            } elseif (true === $handler->isAppropriate($path, $query, $post, $verb)) {
+            } elseif (true === call_user_func_array(array($handler, isAppropriate), $checkParams)) {
                 return $handler;
             }
         }
 
-        throw new ResourceNotFoundException();
-    }
-
-    /**
-     * Determines which CLI handler to use.
-     * @param array $components The CLI path components.
-     * @return AbstractCliHandler Returns the handler.
-     */
-    private function determineCliHandler($components)
-    {
-        foreach ($this->getHandlers() as $handler) {
-            if (false === $handler->isCliHandler()) {
-                continue;
-            } elseif (true === $handler->isAppropriate($components)) {
-                return $handler;
-            }
-        }
-
-        throw new ResourceNotFoundException('No CLI handler registered.');
+        throw new ResourceNotFoundException($isCli ? 'No CLI handler registered.' : '');
     }
 
     // parses the passed in config file
