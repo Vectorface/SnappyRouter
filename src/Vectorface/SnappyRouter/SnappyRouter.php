@@ -62,21 +62,21 @@ class SnappyRouter
         switch ($environment) {
             case 'cli':
                 $components = empty($_SERVER['argv']) ? array() : $_SERVER['argv'];
-                return $this->handleCliRoute($components).PHP_EOL;
+                return $this->invokeHandler(true, array($components)) . PHP_EOL;
             default:
                 $queryPos = strpos($_SERVER['REQUEST_URI'], '?');
                 $path = (false === $queryPos) ? $_SERVER['REQUEST_URI'] : substr($_SERVER['REQUEST_URI'], 0, $queryPos);
-                return $this->handleHttpRoute(
+                return $this->invokeHandler(false, array(
                     $path,
                     $_GET,
                     $_POST,
                     isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET'
-                );
+                ));
         }
     }
 
     /**
-     * Performs the actual request.
+     * Backwards compatibility wrapper. Handles routing for HTTP requests.
      * @param string $path The URL path from the client.
      * @param array $query The query parameters as an array.
      * @param string $post The raw post data as a string.
@@ -85,10 +85,32 @@ class SnappyRouter
      */
     public function handleHttpRoute($path, $query, $post, $verb)
     {
+        return $this->invokeHandler(false, array($path, $query, $post, $verb));
+    }
+
+    /**
+     * Backwards compatibility wrapper. Handles routing for CLI requests.
+     * @param array $components Command-line arguments.
+     * @return string Returns the response string.
+     */
+    public function handleCliRoute($components)
+    {
+        return $this->invokeHandler(true, array($components));
+    }
+
+    /**
+     * Determines which handler is appropriate for this request.
+     *
+     * @param bool $isCli True for CLI handlers, false otherwise.
+     * @param array $handlerParams An array parameters required by the handler.
+     * @return Returns the handler to be used for the route.
+     */
+    private function invokeHandler($isCli, $handlerParams)
+    {
         $activeHandler = null;
         try {
             // determine which handler should handle this path
-            $activeHandler = $this->determineHandler(false, array($path, $query, $post, $verb));
+            $activeHandler = $this->determineHandler($isCli, $handlerParams);
             // invoke the initial plugin hook
             $activeHandler->invokePluginsHook(
                 'afterHandlerSelected',
@@ -101,42 +123,26 @@ class SnappyRouter
             );
             return $response;
         } catch (Exception $e) {
-            if ($e instanceof RouterExceptionInterface) {
-                http_response_code($e->getAssociatedStatusCode());
-            } else {
-                http_response_code(AbstractResponse::RESPONSE_SERVER_ERROR);
-            }
             $responseString = $e->getMessage();
-            if (null !== $activeHandler) {
-                $activeHandler->invokePluginsHook(
-                    'errorOccurred',
-                    array($activeHandler, $e)
-                );
-                $responseString = $activeHandler->getEncoder()->encode(
-                    new Response($activeHandler->handleException($e))
-                );
-            }
-            return $responseString;
-        }
-    }
 
-    public function handleCliRoute($cliComponents)
-    {
-        $activeHandler = null;
-        try {
-            $activeHandler = $this->determineHandler(true, array($cliComponents));
-            $activeHandler->invokePluginsHook(
-                'afterHandlerSelected',
-                array($activeHandler)
-            );
-            $response = $activeHandler->performRoute();
-            $activeHandler->invokePluginsHook(
-                'afterFullRouteInvoked',
-                array($activeHandler)
-            );
-            return $response;
-        } catch (Exception $e) {
-            return $e->getMessage();
+            if (!$isCli) {
+                if ($e instanceof RouterExceptionInterface) {
+                    http_response_code($e->getAssociatedStatusCode());
+                } else {
+                    http_response_code(AbstractResponse::RESPONSE_SERVER_ERROR);
+                }
+                if (null !== $activeHandler) {
+                    $activeHandler->invokePluginsHook(
+                        'errorOccurred',
+                        array($activeHandler, $e)
+                    );
+                    $responseString = $activeHandler->getEncoder()->encode(
+                        new Response($activeHandler->handleException($e))
+                    );
+                }
+            }
+
+            return $responseString;
         }
     }
 
@@ -153,7 +159,7 @@ class SnappyRouter
         foreach ($this->getHandlers() as $handler) {
             if ($isCli !== $handler->isCliHandler()) {
                 continue;
-            } elseif (true === call_user_func_array(array($handler, isAppropriate), $checkParams)) {
+            } elseif (true === call_user_func_array(array($handler, 'isAppropriate'), $checkParams)) {
                 return $handler;
             }
         }
