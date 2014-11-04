@@ -29,6 +29,10 @@ class NullEncoderTest extends AbstractEncoderTest
             array(
                 'test1234',
                 'test1234'
+            ),
+            array(
+                '',
+                null
             )
         );
     }

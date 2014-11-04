@@ -27,7 +27,8 @@ class RestHandlerTest extends PHPUnit_Framework_TestCase
         );
         $handler = new RestHandler($options);
         $this->assertTrue($handler->isAppropriate('/v1/test', array(), array(), 'GET'));
-        $this->assertEquals('', $handler->performRoute());
+        $result = json_decode($handler->performRoute());
+        $this->assertTrue(empty($result));
     }
 
     /**
