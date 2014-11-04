@@ -41,6 +41,15 @@ class TwigViewEncoder extends AbstractEncoder
     }
 
     /**
+     * Returns the Twig view environment.
+     * @return Twig_Environment The configured twig environment.
+     */
+    public function getViewEnvironment()
+    {
+        return $this->viewEnvironment;
+    }
+
+    /**
      * @param AbstractResponse $response The response to be encoded.
      * @return string Returns the response encoded as a string.
      */
@@ -66,7 +75,7 @@ class TwigViewEncoder extends AbstractEncoder
      */
     public function renderView($template, $variables)
     {
-        return $this->viewEnvironment->loadTemplate(
+        return $this->getViewEnvironment()->loadTemplate(
             $template
         )->render(
             (array)$variables
