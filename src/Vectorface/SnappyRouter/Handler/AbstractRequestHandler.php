@@ -3,6 +3,8 @@
 namespace Vectorface\SnappyRouter\Handler;
 
 use \Exception;
+use Vectorface\SnappyRouter\Exception\RouterExceptionInterface;
+use Vectorface\SnappyRouter\Response\AbstractResponse;
 
 /**
  * The base class for all handlers that implement a request/response style of
@@ -22,7 +24,12 @@ abstract class AbstractRequestHandler extends AbstractHandler implements Request
      */
     public function handleException(Exception $e)
     {
-        return $e->getMessage();
+        $responseCode = AbstractResponse::RESPONSE_SERVER_ERROR;
+        if ($e instanceof RouterExceptionInterface) {
+            $responseCode = $e->getAssociatedStatusCode();
+        }
+        \Vectorface\SnappyRouter\http_response_code($responseCode);
+        return parent::handleException($e);
     }
 
     /**

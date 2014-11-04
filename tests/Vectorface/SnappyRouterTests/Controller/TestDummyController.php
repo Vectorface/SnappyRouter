@@ -4,6 +4,7 @@ namespace Vectorface\SnappyRouterTests\Controller;
 
 use \Exception;
 use Vectorface\SnappyRouter\Controller\AbstractController;
+use Vectorface\SnappyRouter\Exception\InternalErrorException;
 
 /**
  * A test controller for testing the router.
@@ -25,7 +26,7 @@ class TestDummyController extends AbstractController
 
     public function genericExceptionAction()
     {
-        throw new Exception('A generic exception.');
+        throw new InternalErrorException('A generic exception.');
     }
 
     public function defaultAction()

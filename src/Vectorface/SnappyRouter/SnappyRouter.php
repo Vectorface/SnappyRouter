@@ -62,30 +62,40 @@ class SnappyRouter
         switch ($environment) {
             case 'cli':
                 $components = empty($_SERVER['argv']) ? array() : $_SERVER['argv'];
-                return $this->invokeHandler(true, array($components)) . PHP_EOL;
+                return $this->handleCliRoute($components).PHP_EOL;
             default:
                 $queryPos = strpos($_SERVER['REQUEST_URI'], '?');
                 $path = (false === $queryPos) ? $_SERVER['REQUEST_URI'] : substr($_SERVER['REQUEST_URI'], 0, $queryPos);
-                return $this->invokeHandler(false, array(
+                return $this->handleHttpRoute(
                     $path,
                     $_GET,
                     $_POST,
                     isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET'
-                ));
+                );
         }
     }
 
     /**
-     * Backwards compatibility wrapper. Handles routing for HTTP requests.
+     * Handles routing an HTTP request directly.
      * @param string $path The URL path from the client.
      * @param array $query The query parameters as an array.
-     * @param string $post The raw post data as a string.
+     * @param array $post The post data as an array.
      * @param string $verb The HTTP verb used in the request.
      * @return string Returns an encoded string to pass back to the client.
      */
     public function handleHttpRoute($path, $query, $post, $verb)
     {
         return $this->invokeHandler(false, array($path, $query, $post, $verb));
+    }
+
+    /**
+     * Handles routing a CLI request directly.
+     * @param array $pathComponents The array of path components to the CLI script.
+     * @return string Returns an encoded string to be output to the CLI.
+     */
+    public function handleCliRoute($pathComponents)
+    {
+        return $this->invokeHandler(true, array($pathComponents));
     }
 
     /**
@@ -113,26 +123,26 @@ class SnappyRouter
             );
             return $response;
         } catch (Exception $e) {
-            $responseString = $e->getMessage();
-
-            if (!$isCli) {
-                if ($e instanceof RouterExceptionInterface) {
-                    http_response_code($e->getAssociatedStatusCode());
-                } else {
-                    http_response_code(AbstractResponse::RESPONSE_SERVER_ERROR);
-                }
-                if (null !== $activeHandler) {
-                    $activeHandler->invokePluginsHook(
-                        'errorOccurred',
-                        array($activeHandler, $e)
-                    );
-                    $responseString = $activeHandler->getEncoder()->encode(
-                        new Response($activeHandler->handleException($e))
-                    );
-                }
+            // if we have a valid handler give it a chance to handle the error
+            if (null !== $activeHandler) {
+                $activeHandler->invokePluginsHook(
+                    'errorOccurred',
+                    array($activeHandler, $e)
+                );
+                return $activeHandler->getEncoder()->encode(
+                    new Response($activeHandler->handleException($e))
+                );
             }
 
-            return $responseString;
+            // if not on the command line, set an HTTP response code
+            if (!$isCli) {
+                $responseCode = AbstractResponse::RESPONSE_SERVER_ERROR;
+                if ($e instanceof RouterExceptionInterface) {
+                    $responseCode = $e->getAssociatedStatusCode();
+                }
+                \Vectorface\SnappyRouter\http_response_code($responseCode);
+            }
+            return $e->getMessage();
         }
     }
 
@@ -149,7 +159,9 @@ class SnappyRouter
         foreach ($this->getHandlers() as $handler) {
             if ($isCli !== $handler->isCliHandler()) {
                 continue;
-            } elseif (true === call_user_func_array(array($handler, 'isAppropriate'), $checkParams)) {
+            }
+            $callback = array($handler, 'isAppropriate');
+            if (true === call_user_func_array($callback, $checkParams)) {
                 return $handler;
             }
         }

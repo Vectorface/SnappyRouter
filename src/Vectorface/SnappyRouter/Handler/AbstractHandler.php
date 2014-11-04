@@ -2,9 +2,11 @@
 
 namespace Vectorface\SnappyRouter\Handler;
 
+use \Exception;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Di\DiProviderInterface;
 use Vectorface\SnappyRouter\Di\ServiceProvider;
+use Vectorface\SnappyRouter\Encoder\NullEncoder;
 use Vectorface\SnappyRouter\Exception\PluginException;
 
 /**
@@ -149,4 +151,26 @@ abstract class AbstractHandler implements DiProviderInterface
      *         environment and false otherwise.
      */
     abstract public function isCliHandler();
+
+    /**
+     * Returns the active response encoder.
+     * @return EncoderInterface Returns the response encoder.
+     */
+    public function getEncoder()
+    {
+        return new NullEncoder();
+    }
+
+    /**
+     * Provides the handler with an opportunity to perform any last minute
+     * error handling logic. The returned value will be serialized by the
+     * handler's encoder.
+     * @param Exception $e The exception that was thrown.
+     * @return Returns a serializable value that will be encoded and returned
+     *         to the client.
+     */
+    public function handleException(Exception $e)
+    {
+        return $e->getMessage();
+    }
 }
