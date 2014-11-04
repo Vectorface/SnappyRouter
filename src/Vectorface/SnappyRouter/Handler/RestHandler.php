@@ -2,6 +2,8 @@
 
 namespace Vectorface\SnappyRouter\Handler;
 
+use Vectorface\SnappyRouter\Encoder\JsonEncoder;
+
 /**
  * Handles REST-like URLs like '/api/v2/users/1/details'.
  * @copyright Copyright (c) 2014, VectorFace, Inc.
@@ -84,5 +86,14 @@ class RestHandler extends ControllerHandler
     {
         $this->routeParams[self::KEY_API_VERSION] = $this->apiVersion;
         return parent::performRoute();
+    }
+
+    /**
+     * Returns the active response encoder.
+     * @return EncoderInterface Returns the response encoder.
+     */
+    public function getEncoder()
+    {
+        return new JsonEncoder();
     }
 }
