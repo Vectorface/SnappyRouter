@@ -89,16 +89,6 @@ class SnappyRouter
     }
 
     /**
-     * Backwards compatibility wrapper. Handles routing for CLI requests.
-     * @param array $components Command-line arguments.
-     * @return string Returns the response string.
-     */
-    public function handleCliRoute($components)
-    {
-        return $this->invokeHandler(true, array($components));
-    }
-
-    /**
      * Determines which handler is appropriate for this request.
      *
      * @param bool $isCli True for CLI handlers, false otherwise.
