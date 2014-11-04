@@ -44,8 +44,9 @@ class ControllerHandler extends AbstractRequestHandler
     public function isAppropriate($path, $query, $post, $verb)
     {
         // remove the leading base path option if present
-        if (isset($this->options[self::KEY_BASE_PATH])) {
-            $path = $this->extractPathFromBasePath($path, $this->options[self::KEY_BASE_PATH]);
+        $options = $this->getOptions();
+        if (isset($options[self::KEY_BASE_PATH])) {
+            $path = $this->extractPathFromBasePath($path, $options[self::KEY_BASE_PATH]);
         }
 
         // remove the leading /
@@ -93,9 +94,9 @@ class ControllerHandler extends AbstractRequestHandler
         }
 
         // configure the view encoder if they specify a view option
-        if (isset($this->options[self::KEY_VIEWS])) {
+        if (isset($options[self::KEY_VIEWS])) {
             $this->encoder = new TwigViewEncoder(
-                $this->options[self::KEY_VIEWS],
+                $options[self::KEY_VIEWS],
                 $defaultView
             );
         } else {

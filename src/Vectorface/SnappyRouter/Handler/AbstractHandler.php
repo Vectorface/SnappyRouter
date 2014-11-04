@@ -173,4 +173,13 @@ abstract class AbstractHandler implements DiProviderInterface
     {
         return $e->getMessage();
     }
+
+    /**
+     * Returns the array of options.
+     * @return array $options The array of options.
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
 }
