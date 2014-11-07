@@ -10,20 +10,18 @@ use Vectorface\SnappyRouter\Di\DiProviderInterface;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class AbstractTask implements DiProviderInterface
+class AbstractTask implements DiProviderInterface, TaskInterface
 {
     // an array of cli handler options
     private $options;
 
     /**
-     * Initializes the task with an array of options.
-     * @param array $options The array of options.
-     * @return AbstractTask Returns $this.
+     * Initializes the cli task from the given configuration.
+     * @param array $options The task options.
      */
     public function init($options)
     {
         $this->setOptions($options);
-        return $this;
     }
 
     /**

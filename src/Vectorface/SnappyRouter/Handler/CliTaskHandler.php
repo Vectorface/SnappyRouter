@@ -4,6 +4,7 @@ namespace Vectorface\SnappyRouter\Handler;
 
 use \Exception;
 use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
+use Vectorface\SnappyRouter\Task\TaskInterface;
 
 /**
  * A CLI handler for task/action scripts.
@@ -51,7 +52,9 @@ class CliTaskHandler extends AbstractCliHandler
         }
 
         // call the task's init function
-        $task->init($this->options);
+        if ($task instanceof TaskInterface) {
+            $task->init($this->options);
+        }
 
         $taskParams = array_splice($_SERVER['argv'], 5);
         $action = $this->options['action'];
