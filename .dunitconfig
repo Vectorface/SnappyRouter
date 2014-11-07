@@ -8,7 +8,7 @@ DUNIT_PHPVERSION="5.3 5.4 5.5 5.6"
 DUNIT_DOCKERIMAGE="vectorface/php"
 
 # a flag indicating whether to run the syntax check
-DUNIT_PHPSYNTAX=true
+DUNIT_PHPSYNTAX=false
 # the syntax command to execute
 DUNIT_PHPSYNTAXCOMMAND="find /opt/source -type f -name \"*.php\" !  -path \"*/vendor/*\" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v 'No syntax errors'"
 
