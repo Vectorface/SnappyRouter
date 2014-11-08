@@ -9,7 +9,7 @@ use \Exception;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class DI implements DiInterface
+class Di implements DiInterface
 {
     private $elements; // a cache of instantiated elements
     private $elementMap; // the map between keys and their elements
