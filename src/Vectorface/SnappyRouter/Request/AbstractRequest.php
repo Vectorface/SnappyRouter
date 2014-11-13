@@ -25,7 +25,7 @@ class AbstractRequest implements RequestInterface
 
     /**
      * Returns the controller to be used in the request.
-     * @return AbstractController Returns the controller to be used in the request.
+     * @return string Returns the controller DI key to be used in the request.
      */
     public function getController()
     {
@@ -34,7 +34,7 @@ class AbstractRequest implements RequestInterface
 
     /**
      * Sets the controller to be used in the request.
-     * @param AbstractController $controller The controller to be used in the request.
+     * @param string $controller The controller DI key to be used in the request.
      * @return RequestInterface Returns $this.
      */
     public function setController($controller)

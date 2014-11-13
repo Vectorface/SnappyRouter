@@ -63,6 +63,7 @@ class HttpBasicAuthenticationPluginTest extends PHPUnit_Framework_TestCase
             $plugin->afterHandlerSelected($ignored);
             $this->fail("Callback expected to return false auth result. UnauthorizedException expected.");
         } catch (UnauthorizedException $e) {
+            // we expect the exception to be thrown
         }
 
         /* With a true result, preInvoke should pass through. */
