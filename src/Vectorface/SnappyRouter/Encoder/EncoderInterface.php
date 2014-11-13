@@ -14,7 +14,7 @@ interface EncoderInterface
 {
     /**
      * @param AbstractResponse $response The response to be encoded.
-     * @return (string) Returns the response encoded as a string.
+     * @return string Returns the response encoded as a string.
      */
     public function encode(AbstractResponse $response);
 }

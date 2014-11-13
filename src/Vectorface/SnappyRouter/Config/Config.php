@@ -95,7 +95,7 @@ class Config implements ArrayAccess, ConfigInterface
 
     /**
      * Returns an array representation of the whole configuration.
-     * @return An array representation of the whole configuration.
+     * @return array An array representation of the whole configuration.
      */
     public function toArray()
     {

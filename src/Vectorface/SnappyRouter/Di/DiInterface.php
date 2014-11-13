@@ -15,7 +15,7 @@ interface DiInterface
      * @param string $element The key for the element.
      * @param boolean $useCache An optional flag for whether we can use the
      *        cached version of the element (defaults to true).
-     * @return Returns the associated element.
+     * @return mixed Returns the associated element.
      * @throws \Exception Throws an exception if no element is registered for
      *                    the given key.
      */
@@ -27,20 +27,20 @@ interface DiInterface
      * @param string $element The key for the specified element.
      * @param mixed $value The specified element. This can be an instance of the
      *        element or a callback to be invoked.
-     * @return Returns $this.
+     * @return DiInterface Returns $this.
      */
     public function set($element, $value);
 
     /**
      * Returns whether or not a given element has been registered.
      * @param string $element The key for the element.
-     * @return Returns true if the element is registered and false otherwise.
+     * @return boolean Returns true if the element is registered and false otherwise.
      */
     public function hasElement($element);
 
     /**
      * Returns an array of all registered elements (their keys).
-     * @return An array of all registered elements (their keys).
+     * @return array An array of all registered elements (their keys).
      */
     public function allRegisteredElements();
 }
