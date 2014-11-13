@@ -19,6 +19,15 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     const INPUT_METHOD_POST = 'POST';
     const INPUT_METHOD_PARAMS = 'PARAMS';
 
+    private static $filterCallbacks = array(
+        'int' => 'intval',
+        'float' => 'floatval',
+        'trim' => 'trim',
+        'lower' => 'strtolower',
+        'upper' => 'strtoupper',
+        'squeeze' => array(__CLASS__, 'squeeze')
+    );
+
     /**
      * Constructor for a request.
      * @param string $controller The controller being requested.
@@ -164,9 +173,9 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
 
     /**
      * Applies the array of filters against the input value.
-     * @param mixed $value The input value.
+     * @param string $value The input value.
      * @param array $filters The array of filters.
-     * @return Returns the value after the filters have been applied.
+     * @return string Returns the value after the filters have been applied.
      */
     private function applyInputFilters($value, $filters)
     {
@@ -174,28 +183,29 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
             $filters = array($filters);
         }
         foreach ($filters as $filter) {
-            switch ($filter) {
-                case 'int':
-                    $value = intval($value);
-                    break;
-                case 'float':
-                    $value = floatval($value);
-                    break;
-                case 'trim':
-                    $value = trim($value);
-                    break;
-                case 'lower':
-                    $value = strtolower($value);
-                    break;
-                case 'upper':
-                    $value = strtoupper($value);
-                    break;
-                case 'squeeze':
-                    // removes lines containing only whitespace
-                    $value = implode(PHP_EOL, array_filter(array_map('trim', explode(PHP_EOL, $value)), 'strlen'));
-                    break;
+            if (isset(self::$filterCallbacks[$filter])) {
+                $value = call_user_func(self::$filterCallbacks[$filter], $value);
             }
         }
         return $value;
+    }
+
+    /**
+     * Takes a string and removes empty lines.
+     * @param string $string The input string.
+     * @return string Returns the string with empty lines removed.
+     */
+    private static function squeeze($string)
+    {
+        return implode(
+            PHP_EOL,
+            array_filter(
+                array_map(
+                    'trim',
+                    explode(PHP_EOL, $string)
+                ),
+                'strlen'
+            )
+        );
     }
 }
