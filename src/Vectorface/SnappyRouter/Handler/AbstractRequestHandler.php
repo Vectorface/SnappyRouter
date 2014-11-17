@@ -12,9 +12,8 @@ use Vectorface\SnappyRouter\Response\AbstractResponse;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-abstract class AbstractRequestHandler extends AbstractHandler implements RequestHandlerInterface
+abstract class AbstractRequestHandler extends AbstractHandler
 {
-
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
      * @param string $path The URL path for the request.
