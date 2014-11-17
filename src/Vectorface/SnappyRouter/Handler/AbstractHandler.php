@@ -108,7 +108,7 @@ abstract class AbstractHandler implements DiProviderInterface
             }
             $options = array();
             if (isset($plugin[AbstractHandler::KEY_OPTIONS])) {
-                $options = (array($plugin[AbstractHandler::KEY_OPTIONS]));
+                $options = (array)$plugin[AbstractHandler::KEY_OPTIONS];
             }
             $this->plugins[] = new $pluginClass($options);
         }
