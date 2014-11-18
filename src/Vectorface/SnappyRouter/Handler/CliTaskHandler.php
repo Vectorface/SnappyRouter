@@ -17,7 +17,6 @@ class CliTaskHandler extends AbstractCliHandler
     {
         $components = array_values(array_filter(array_map('trim', $components), 'strlen'));
         $this->options = array();
-        $componentCount = count($components);
         if (count($components) < 5) {
             return false;
         }

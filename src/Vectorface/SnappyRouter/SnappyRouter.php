@@ -196,7 +196,6 @@ class SnappyRouter
     {
         $this->handlers = array();
         foreach ($handlers as $handlerClass => $handlerDetails) {
-            $handlerInstance = null;
             $options = array();
             if (isset($handlerDetails[AbstractHandler::KEY_OPTIONS])) {
                 $options = (array)$handlerDetails[AbstractHandler::KEY_OPTIONS];

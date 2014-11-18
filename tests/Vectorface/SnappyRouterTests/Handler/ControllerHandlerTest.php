@@ -109,7 +109,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
                 'TestPlugin' => array()
             )
         );
-        $handler = new ControllerHandler($options);
+        new ControllerHandler($options);
     }
 
     /**
@@ -127,7 +127,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
                 )
             )
         );
-        $handler = new ControllerHandler($options);
+        new ControllerHandler($options);
     }
 
     /**

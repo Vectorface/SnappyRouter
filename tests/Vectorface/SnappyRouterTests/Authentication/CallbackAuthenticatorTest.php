@@ -15,12 +15,15 @@ class CallbackAuthenticatorTest extends PHPUnit_Framework_TestCase
     public function testAuthenticator()
     {
         $bool = true;
-        $auth = new CallbackAuthenticator(function ($credentials) use (&$bool) {
+        $auth = new CallbackAuthenticator(function () use ($bool) {
             return $bool;
         });
-
         $this->assertTrue($auth->authenticate(array('a', 'b')));
+
         $bool = false;
+        $auth = new CallbackAuthenticator(function () use ($bool) {
+            return $bool;
+        });
         $this->assertFalse($auth->authenticate(array('a', 'b')));
     }
 }

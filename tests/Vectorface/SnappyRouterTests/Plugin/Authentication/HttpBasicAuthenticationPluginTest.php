@@ -44,7 +44,7 @@ class HttpBasicAuthenticationPluginTest extends PHPUnit_Framework_TestCase
 
         /* From here on out, use the "Do whatever I say" authenticator. :) */
         $bool = false;
-        $auth = new CallbackAuthenticator(function ($credentials) use (&$bool) {
+        $auth = new CallbackAuthenticator(function () use (&$bool) {
             return $bool;
         });
         $di->set('MyCustomAuth', $auth);
@@ -68,6 +68,7 @@ class HttpBasicAuthenticationPluginTest extends PHPUnit_Framework_TestCase
 
         /* With a true result, preInvoke should pass through. */
         $bool = true;
+        $this->assertTrue($bool);
         $plugin->afterHandlerSelected($ignored);
     }
 }

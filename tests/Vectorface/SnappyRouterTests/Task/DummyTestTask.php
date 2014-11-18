@@ -7,14 +7,14 @@ use Vectorface\SnappyRouter\Task\AbstractTask;
 
 class DummyTestTask extends AbstractTask
 {
-    public function testMethod($params)
+    public function testMethod()
     {
-        $options = $this->getOptions();
+        $this->getOptions();
         $this->set('response', 'Hello World');
         return $this->get('response');
     }
 
-    public function throwsException($params)
+    public function throwsException()
     {
         throw new Exception('An exception was thrown.');
     }

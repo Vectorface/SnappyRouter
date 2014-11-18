@@ -25,7 +25,7 @@ class PatternMatchHandlerTest extends PHPUnit_Framework_TestCase
                         return print_r($routeParams, true);
                     }
                 ),
-                '/anotherRoute' => function ($routeParams) {
+                '/anotherRoute' => function () {
                     return false;
                 }
             )
