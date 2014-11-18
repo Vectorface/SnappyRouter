@@ -233,4 +233,40 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($handler->isAppropriate('/test/otherView', array(), array(), 'GET'));
         $this->assertEquals('This is a test service.', $handler->performRoute());
     }
+
+    /**
+     * Tests that we can use namespace provisioning to retrieve a controller.
+     */
+    public function testNamespaceProvisioning()
+    {
+        $options = array(
+            AbstractHandler::KEY_NAMESPACES => array(
+                'Vectorface\\SnappyRouterTests\\Controller'
+            ),
+            ControllerHandler::KEY_VIEWS => array(
+                ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
+            )
+        );
+        $handler = new ControllerHandler($options);
+        $this->assertTrue($handler->isAppropriate('/testDummy/test', array(), array(), 'GET'));
+        $this->assertEquals('This is a test service.', $handler->performRoute());
+    }
+
+    /**
+     * Tests that we can use folder provisioning to retrieve a controller.
+     */
+    public function testFolderProvisioning()
+    {
+        $options = array(
+            AbstractHandler::KEY_FOLDERS => array(
+                realpath(__DIR__.'/../Controller')
+            ),
+            ControllerHandler::KEY_VIEWS => array(
+                ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
+            )
+        );
+        $handler = new ControllerHandler($options);
+        $this->assertTrue($handler->isAppropriate('/nonNamespaced/test', array(), array(), 'GET'));
+        $this->assertEquals('This is a test string.', $handler->performRoute());
+    }
 }

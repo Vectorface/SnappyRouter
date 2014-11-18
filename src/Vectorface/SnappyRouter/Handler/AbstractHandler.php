@@ -16,10 +16,12 @@ use Vectorface\SnappyRouter\Exception\PluginException;
  */
 abstract class AbstractHandler implements DiProviderInterface
 {
-    const KEY_CLASS    = 'class';
-    const KEY_OPTIONS  = 'options';
-    const KEY_SERVICES = 'services';
-    const KEY_PLUGINS  = 'plugins';
+    const KEY_CLASS      = 'class';
+    const KEY_OPTIONS    = 'options';
+    const KEY_SERVICES   = 'services';
+    const KEY_PLUGINS    = 'plugins';
+    const KEY_NAMESPACES = 'namespaces';
+    const KEY_FOLDERS    = 'folders';
 
     /** an array of handler-specific options */
     protected $options;
@@ -41,11 +43,19 @@ abstract class AbstractHandler implements DiProviderInterface
         if (isset($options[self::KEY_PLUGINS])) {
             $this->setPlugins((array)$options[self::KEY_PLUGINS]);
         }
+        // configure the service provider
         $services = array();
         if (isset($options[self::KEY_SERVICES])) {
             $services = (array)$options[self::KEY_SERVICES];
         }
         $this->serviceProvider = new ServiceProvider($services);
+        if (isset($options[self::KEY_NAMESPACES])) {
+            // namespace provisioning
+            $this->serviceProvider->setNamespaces((array)$options[self::KEY_NAMESPACES]);
+        } elseif (isset($options[self::KEY_FOLDERS])) {
+            // folder provisioning
+            $this->serviceProvider->setFolders((array)$options[self::KEY_FOLDERS]);
+        }
     }
 
     /**

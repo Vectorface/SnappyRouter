@@ -84,4 +84,66 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
             $serviceProvider->getServiceInstance('NonNamespacedController')
         );
     }
+
+    /**
+     * Test that we can retrieve a service while in namespace provisioning mode.
+     */
+    public function testNamespaceProvisioning()
+    {
+        $serviceProvider = new ServiceProvider(array());
+        $namespaces = array('Vectorface\SnappyRouterTests\Controller');
+        $serviceProvider->setNamespaces($namespaces);
+
+        $this->assertInstanceOf(
+            'Vectorface\SnappyRouterTests\Controller\TestDummyController',
+            $serviceProvider->getServiceInstance('TestDummyController')
+        );
+    }
+
+    /**
+     * Test that we get an exception if we cannot find the service in any
+     * of the given namespaces.
+     * @expectedException Exception
+     * @expectedExceptionMessage Controller class TestDummyController was not found in any listed namespace.
+     */
+    public function testNamespaceProvisioningMissingService()
+    {
+        $serviceProvider = new ServiceProvider(array());
+        $serviceProvider->setNamespaces(array());
+
+        $this->assertInstanceOf(
+            'Vectorface\SnappyRouterTests\Controller\TestDummyController',
+            $serviceProvider->getServiceInstance('TestDummyController')
+        );
+    }
+
+    /**
+     * Test that we can retrieve a service while in folder provisioning mode.
+     */
+    public function testFolderProvisioning()
+    {
+        $serviceProvider = new ServiceProvider(array());
+        $folders = array(realpath(__DIR__.'/../'));
+        $serviceProvider->setFolders($folders);
+
+        $this->assertInstanceOf(
+            'NonNamespacedController',
+            $serviceProvider->getServiceInstance('NonNamespacedController')
+        );
+    }
+
+    /**
+     * Test that we get an exception if we cannot find the service in any
+     * of the given folders (recursively checking).
+     * @expectedException Exception
+     * @expectedExceptionMessage Controller class NonExistantController not found in any listed folder.
+     */
+    public function testFolderProvisioningMissingService()
+    {
+        $serviceProvider = new ServiceProvider(array());
+        $folders = array(realpath(__DIR__.'/../'));
+        $serviceProvider->setFolders($folders);
+
+        $serviceProvider->getServiceInstance('NonExistantController');
+    }
 }
