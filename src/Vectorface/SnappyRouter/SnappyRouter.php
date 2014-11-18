@@ -23,6 +23,8 @@ class SnappyRouter
     const KEY_HANDLERS = 'handlers';
     /** the array key for configuring the DI provider */
     const KEY_DI = 'di';
+    /** the DI key for the main configuration */
+    const KEY_CONFIG = 'config';
 
     private $config; // the configuration
     private $handlers; // array of registered handlers
@@ -169,7 +171,10 @@ class SnappyRouter
         throw new ResourceNotFoundException($isCli ? 'No CLI handler registered.' : '');
     }
 
-    // parses the passed in config file
+    /**
+     * Parses the config, sets up the default DI and registers the config
+     * in the DI.
+     */
     private function parseConfig()
     {
         // setup the DI layer
@@ -180,6 +185,7 @@ class SnappyRouter
                 Di::setDefault($di);
             }
         }
+        Di::getDefault()->set(self::KEY_CONFIG, $this->config);
         $this->setupHandlers(
             $this->config->get(self::KEY_HANDLERS, array())
         );

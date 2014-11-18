@@ -21,4 +21,3 @@ points.
 TODO:
 - Automatic controller/task registration by namespace
 - Automatic controller/task registration by folder
-- Automatic config registration in the DI
