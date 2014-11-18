@@ -5,6 +5,7 @@ namespace Vectorface\SnappyRouterTests\Handler;
 use \PHPUnit_Framework_TestCase;
 use Vectorface\SnappyRouter\SnappyRouter;
 use Vectorface\SnappyRouter\Config\Config;
+use Vectorface\SnappyRouter\Encoder\NullEncoder;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 
@@ -232,6 +233,27 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
         $handler = new ControllerHandler($options);
         $this->assertTrue($handler->isAppropriate('/test/otherView', array(), array(), 'GET'));
         $this->assertEquals('This is a test service.', $handler->performRoute());
+    }
+
+    /**
+     * Tests that an exception is thrown if we "renderView" with a NullEncoder
+     * @expectedException Exception
+     * @expectedExceptionMessage The current encoder does not support the render view method.
+     */
+    public function testExceptionForNullEncoderRenderView()
+    {
+        $options = array(
+            AbstractHandler::KEY_SERVICES => array(
+                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+            ),
+            ControllerHandler::KEY_VIEWS => array(
+                ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
+            )
+        );
+        $handler = new ControllerHandler($options);
+        $this->assertTrue($handler->isAppropriate('/test/otherView', array(), array(), 'GET'));
+        $handler->setEncoder(new NullEncoder());
+        $handler->performRoute();
     }
 
     /**

@@ -51,10 +51,15 @@ abstract class AbstractController implements DiProviderInterface
      */
     public function renderView($viewVariables, $template)
     {
-        return $this->handler->getEncoder()->renderView(
-            $template,
-            array_merge($this->viewContext, (array)$viewVariables)
-        );
+        $encoder = $this->handler->getEncoder();
+        if (method_exists($encoder, 'renderView')) {
+            return $encoder->renderView(
+                $template,
+                array_merge($this->viewContext, (array)$viewVariables)
+            );
+        } else {
+            throw new Exception('The current encoder does not support the render view method.');
+        }
     }
 
     /**

@@ -9,7 +9,8 @@ class DummyTestTask extends AbstractTask
 {
     public function testMethod()
     {
-        $this->getOptions();
+        $options = $this->getOptions();
+        $this->set('taskOptions', $options);
         $this->set('response', 'Hello World');
         return $this->get('response');
     }

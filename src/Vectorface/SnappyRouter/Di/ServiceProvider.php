@@ -69,7 +69,7 @@ class ServiceProvider extends Di
      * @param string $key The key to lookup.
      * @param boolean $useCache An optional flag indicating whether we should
      *        use the cache. True by default.
-     * @return Returns an instance of the specified service.
+     * @return AbstractController Returns an instance of the specified service.
      * @throws ServiceNotFoundForKeyException Throws this exception if the key isn't associated
      * with any registered service.
      */

@@ -96,7 +96,7 @@ class Di implements DiInterface
 
     /**
      * Returns the current default DI instance.
-     * @return The current default DI instance.
+     * @return Di The current default DI instance.
      */
     public static function getDefault()
     {
@@ -109,8 +109,8 @@ class Di implements DiInterface
 
     /**
      * Sets the current default DI instance..
-     * @param DI $instance An instance of DI.
-     * @return Returns the new default DI instance.
+     * @param Di $instance An instance of DI.
+     * @return Di Returns the new default DI instance.
      */
     public static function setDefault(self $instance)
     {
