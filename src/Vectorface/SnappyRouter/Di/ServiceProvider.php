@@ -82,36 +82,19 @@ class ServiceProvider extends Di
             return $this->instanceCache[$key];
         }
 
-        // handle the non-standard provisioning modes
+        // retrieve the given controller from the key using the proper
+        // provisioning mode
         switch ($this->provisioningMode) {
             case self::PROVISIONING_MODE_NAMESPACES:
                 $this->instanceCache[$key] = $this->getServiceFromNamespaces($key);
-                return $this->instanceCache[$key];
+                break;
             case self::PROVISIONING_MODE_FOLDERS:
                 $this->instanceCache[$key] = $this->getServiceFromFolder($key);
-                return $this->instanceCache[$key];
+                break;
+            default:
+                $this->instanceCache[$key] = $this->getServiceFromServiceList($key);
         }
-
-        // default provisioning mode uses a hardcoded list of services
-        $serviceClass = $this->get($key);
-        if (is_string($serviceClass) && !class_exists($serviceClass)) {
-                require_once $serviceClass;
-                $serviceClass = $key;
-        } elseif (is_array($serviceClass)) {
-            if (isset($serviceClass['file'])) {
-                require_once $serviceClass['file'];
-            }
-            if (isset($serviceClass['class'])) {
-                $serviceClass = $serviceClass['class'];
-            }
-        }
-
-        $instance = new $serviceClass();
-
-        if ($useCache) {
-            $this->instanceCache[$key] = $instance;
-        }
-        return $instance;
+        return $this->instanceCache[$key];
     }
 
     /**
@@ -169,6 +152,30 @@ class ServiceProvider extends Di
             }
         }
         throw new Exception('Controller class '.$controllerClass.' not found in any listed folder.');
+    }
+
+    /**
+     * Returns an instance of the specified controller using the existing the
+     * explicitly specified services list.
+     * @param string $controllerClass The controller class we are resolving.
+     * @return AbstractController Returns an instance of the controller.
+     */
+    private function getServiceFromServiceList($controllerClass)
+    {
+        // default provisioning mode uses a hardcoded list of services
+        $serviceClass = $this->get($controllerClass);
+        if (is_string($serviceClass) && !class_exists($serviceClass)) {
+                require_once $serviceClass;
+                $serviceClass = $controllerClass;
+        } elseif (is_array($serviceClass)) {
+            if (isset($serviceClass['file'])) {
+                require_once $serviceClass['file'];
+            }
+            if (isset($serviceClass['class'])) {
+                $serviceClass = $serviceClass['class'];
+            }
+        }
+        return new $serviceClass();
     }
 
     /**
