@@ -16,17 +16,14 @@ use Vectorface\SnappyRouter\Handler\AbstractHandler;
  */
 class HttpBasicAuthenticationPlugin extends AbstractAuthenticationPlugin
 {
-    /**
-     * The authentication realm, usually presented to the user in a username/password dialog box.
-     *
-     * @var string
-     */
+    /** The authentication realm, usually presented to the user in a
+        username/password dialog box. */
     private $realm = "Authentication Required";
 
     /**
      * Create a new HTTP/Basic Authentication plugin.
      *
-     * @param mixed[] $options An associative array of options. Supports AuthMechanism and realm options.
+     * @param array $options An associative array of options. Supports AuthMechanism and realm options.
      */
     public function __construct($options)
     {

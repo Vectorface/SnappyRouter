@@ -13,6 +13,13 @@ use Vectorface\SnappyRouter\Task\TaskInterface;
  */
 class CliTaskHandler extends AbstractCliHandler
 {
+    /**
+     * Determines whether the current handler is appropriate for the given
+     * path components.
+     * @param array $components The path components as an array.
+     * @return bool Returns true if the handler is appropriate and false
+     *         otherwise.
+     */
     public function isAppropriate($components)
     {
         $components = array_values(array_filter(array_map('trim', $components), 'strlen'));
@@ -37,6 +44,10 @@ class CliTaskHandler extends AbstractCliHandler
         return true;
     }
 
+    /**
+     * Performs the actual routing.
+     * @return mixed Returns the result of the route.
+     */
     public function performRoute()
     {
         $task = $this->getServiceProvider()->getServiceInstance($this->options['task']);

@@ -21,7 +21,9 @@ class ServiceProvider extends Di
     /** The mode for retrieving services from a folder recursively. */
     const PROVISIONING_MODE_FOLDERS      = 3;
 
+    /** The Di key for storing the list of registered namespaces */
     const KEY_NAMESPACES = 'serviceNamespaces';
+    /** The Di key for storing the list of folders to scan for controllers */
     const KEY_FOLDERS    = 'serviceFolders';
 
     // the private provisioning mode
@@ -114,7 +116,7 @@ class ServiceProvider extends Di
 
     /**
      * Sets the list of namespaces and switches to namespace provisioning mode.
-     * @param array An array of namespaces.
+     * @param array $namespaces An array of namespaces.
      * @return ServiceProvider Returns $this.
      */
     public function setNamespaces($namespaces)
@@ -126,7 +128,7 @@ class ServiceProvider extends Di
 
     /**
      * Sets the list of folders and switches to folder provisioning mode.
-     * @param array An array of folders.
+     * @param array $folders An array of folders.
      * @return ServiceProvider Returns $this.
      */
     public function setFolders($folders)

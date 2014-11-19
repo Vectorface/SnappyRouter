@@ -26,11 +26,8 @@ abstract class AbstractAuthenticationPlugin extends AbstractPlugin
      */
     const DI_KEY_AUTH = 'AuthMechanism';
 
-    /**
-     * The key for fetching the authentication mechanism from dependency injection.
-     *
-     * @var string
-     */
+    /** The key for fetching the authentication mechanism from dependency
+        injection. */
     protected $authKey = self::DI_KEY_AUTH;
 
     /**

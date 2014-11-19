@@ -29,7 +29,7 @@ abstract class AbstractRequestHandler extends AbstractHandler
      * error handling logic. The returned value will be serialized by the
      * handler's encoder.
      * @param Exception $e The exception that was thrown.
-     * @return Returns a serializable value that will be encoded and returned
+     * @return mixed Returns a serializable value that will be encoded and returned
      *         to the client.
      */
     public function handleException(Exception $e)

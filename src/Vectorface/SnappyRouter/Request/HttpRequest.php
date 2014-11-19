@@ -15,10 +15,12 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     /** Holds the contents of the various inputs ($_GET, $_POST, etc) */
     private $input;
 
+    /** Array key for query parameters */
     const INPUT_METHOD_QUERY = 'QUERY';
+    /** Array key for post parameters */
     const INPUT_METHOD_POST = 'POST';
-    const INPUT_METHOD_PARAMS = 'PARAMS';
 
+    // mappings between magic filter strings and the filter functions
     private static $filterCallbacks = array(
         'int' => 'intval',
         'float' => 'floatval',
@@ -40,8 +42,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
         $this->setVerb($verb);
         $this->input = array(
             self::INPUT_METHOD_QUERY  => array(),
-            self::INPUT_METHOD_POST   => array(),
-            self::INPUT_METHOD_PARAMS => array()
+            self::INPUT_METHOD_POST   => array()
         );
     }
 

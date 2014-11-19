@@ -25,6 +25,7 @@ class TwigViewEncoder extends AbstractEncoder
     /**
      * Constructor for the encoder.
      * @param array $viewConfig The view configuration.
+     * @param string $template The name of the default template to render
      */
     public function __construct($viewConfig, $template)
     {

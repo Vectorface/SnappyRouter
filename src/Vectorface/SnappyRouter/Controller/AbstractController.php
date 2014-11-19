@@ -15,8 +15,6 @@ use Vectorface\SnappyRouter\Request\HttpRequest;
  */
 abstract class AbstractController implements DiProviderInterface
 {
-    const KEY_VIEW_ENVIRONMENT = 'viewEnvironment';
-
     /** The web request being made. */
     private $request;
 
@@ -31,7 +29,7 @@ abstract class AbstractController implements DiProviderInterface
      * Override this method to provide your own logic for the subclass but
      * ensure you make a call to parent::initialize() as well.
      * @param HttpRequest $request The web request being made.
-     * @param AbstractRequestHandler The handler the router is using.
+     * @param AbstractRequestHandler $handler The handler the router is using.
      * @return AbstractController Returns $this.
      */
     public function initialize(HttpRequest $request, AbstractRequestHandler $handler)

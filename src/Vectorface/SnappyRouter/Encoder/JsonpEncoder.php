@@ -16,7 +16,7 @@ class JsonpEncoder extends JsonEncoder
 
     /**
      * Constructor for the encoder.
-     * @param string $clientMethod The method the client is invoking.
+     * @param array $options (optional) The array of plugin options.
      */
     public function __construct($options = array())
     {

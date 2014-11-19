@@ -29,6 +29,10 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
     private $whitelist;
     private $blacklist;
 
+    /**
+     * Constructor for the plugin.
+     * @param array $options The array of options.
+     */
     public function __construct($options)
     {
         $this->options = $options;

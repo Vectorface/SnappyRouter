@@ -16,20 +16,26 @@ use Vectorface\SnappyRouter\Exception\PluginException;
  */
 abstract class AbstractHandler implements DiProviderInterface
 {
+    /** The config key for the handler class */
     const KEY_CLASS      = 'class';
+    /** The config key for the list of handler options */
     const KEY_OPTIONS    = 'options';
+    /** The config key for the list of services */
     const KEY_SERVICES   = 'services';
+    /** The config key for the list of plugins */
     const KEY_PLUGINS    = 'plugins';
+    /** The config key for the list of controler namespaces */
     const KEY_NAMESPACES = 'namespaces';
+    /** The config key for the list of controller folders */
     const KEY_FOLDERS    = 'folders';
 
-    /** an array of handler-specific options */
+    /** An array of handler-specific options */
     protected $options;
 
-    /** a sorted array of handler plugins */
+    /** A sorted array of handler plugins */
     private $plugins;
 
-    /** the service provider to use */
+    /** The service provider to use */
     private $serviceProvider;
 
     /**
@@ -151,7 +157,7 @@ abstract class AbstractHandler implements DiProviderInterface
 
     /**
      * Performs the actual routing.
-     * @return Returns the result of the route.
+     * @return mixed Returns the result of the route.
      */
     abstract public function performRoute();
 

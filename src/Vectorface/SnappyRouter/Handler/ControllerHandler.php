@@ -22,15 +22,18 @@ use Vectorface\SnappyRouter\Response\Response;
  */
 class ControllerHandler extends AbstractRequestHandler
 {
-
+    /** Options key for the base path */
     const KEY_BASE_PATH = 'basePath';
+    /** Options key for the view config */
     const KEY_VIEWS = 'views';
+    /** Options key for the view path config */
     const KEY_VIEWS_PATH = 'path';
 
+    /** The current web request */
     protected $request;
-    protected $decoder;
+    /** The current encoder */
     protected $encoder;
-
+    /** The current route parameters */
     protected $routeParams;
 
     /**

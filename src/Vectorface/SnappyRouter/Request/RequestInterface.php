@@ -2,6 +2,11 @@
 
 namespace Vectorface\SnappyRouter\Request;
 
+/**
+ * The standard interface for requests.
+ * @copyright Copyright (c) 2014, VectorFace, Inc.
+ * @author Dan Bruce <dbruce@vectorface.com>
+ */
 interface RequestInterface
 {
     /**

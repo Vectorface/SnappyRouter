@@ -19,11 +19,7 @@ use \Closure;
  */
 class CallbackAuthenticator extends AbstractAuthenticator
 {
-    /**
-     * Stores the callback to be used for authentication.
-     *
-     * @var Closure
-     */
+    /** Stores the callback to be used for authentication.*/
     private $callback;
 
     /**

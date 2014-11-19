@@ -4,6 +4,11 @@ namespace Vectorface\SnappyRouter\Request;
 
 use Vectorface\SnappyRouter\Controller\AbstractController;
 
+/**
+ * The base class for all requests. Implements the standard RequestInterface.
+ * @copyright Copyright (c) 2014, VectorFace, Inc.
+ * @author Dan Bruce <dbruce@vectorface.com>
+ */
 class AbstractRequest implements RequestInterface
 {
     /** The controller to use in the request. */
@@ -15,7 +20,6 @@ class AbstractRequest implements RequestInterface
      * Constructor for the abstract request.
      * @param string $controller The controller to be used.
      * @param string $action The action to be invoked.
-     * @param string $verb The HTTP verb used in the request.
      */
     public function __construct($controller, $action)
     {

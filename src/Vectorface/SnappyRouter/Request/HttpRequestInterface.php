@@ -2,6 +2,11 @@
 
 namespace Vectorface\SnappyRouter\Request;
 
+/**
+ * The interface for Http requests.
+ * @copyright Copyright (c) 2014, VectorFace, Inc.
+ * @author Dan Bruce <dbruce@vectorface.com>
+ */
 interface HttpRequestInterface
 {
     /**
