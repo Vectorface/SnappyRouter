@@ -56,7 +56,7 @@ class ServiceProvider extends Di
     /**
      * Specifies the mapping between the given key and service.
      * @param string $key The key to assign.
-     * @param string $service The service to be assigned to the key.
+     * @param mixed $service The service to be assigned to the key.
      * @return Returns $this.
      */
     public function setService($key, $service)

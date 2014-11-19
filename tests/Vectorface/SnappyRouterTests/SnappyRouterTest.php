@@ -93,7 +93,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
         // an example MVC request
         $path = '/Test/genericException';
         $query = array('jsoncall' => 'testMethod');
-        $response = $router->handleHttpRoute($path, $query, '', 'get');
+        $response = $router->handleHttpRoute($path, $query, array(), 'get');
 
         $expectedResponse = 'A generic exception.';
         $this->assertEquals($expectedResponse, $response);
@@ -109,7 +109,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
         // an example MVC request
         $path = '/Test/test';
         $query = array('jsoncall' => 'testMethod');
-        $response = $router->handleHttpRoute($path, $query, '', 'get');
+        $response = $router->handleHttpRoute($path, $query, array(), 'get');
         $this->assertEquals('', $response);
     }
 
@@ -129,7 +129,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
         // an example MVC request
         $path = '/Test/test';
         $query = array('jsoncall' => 'testMethod');
-        $response = $router->handleHttpRoute($path, $query, '', 'get');
+        $response = $router->handleHttpRoute($path, $query, array(), 'get');
 
         $expectedResponse = 'No handler responded to request.';
         $this->assertEquals($expectedResponse, $response);
