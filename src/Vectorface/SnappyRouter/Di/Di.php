@@ -109,10 +109,10 @@ class Di implements DiInterface
 
     /**
      * Sets the current default DI instance..
-     * @param Di $instance An instance of DI.
+     * @param DiInterface $instance An instance of DI.
      * @return Di Returns the new default DI instance.
      */
-    public static function setDefault(Di $instance)
+    public static function setDefault(DiInterface $instance)
     {
         self::$instance = $instance;
         return self::$instance;
