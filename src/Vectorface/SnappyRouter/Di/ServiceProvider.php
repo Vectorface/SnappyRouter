@@ -30,7 +30,7 @@ class ServiceProvider extends Di
     private $provisioningMode = self::PROVISIONING_MODE_SERVICE_LIST;
 
     // a cache of service instances
-    private $instanceCache;
+    private $instanceCache = array();
 
     /**
      * Returns the array of all services.
