@@ -24,7 +24,7 @@ class TestPluginTest extends PHPUnit_Framework_TestCase
 
         $plugin->setWhitelist(
             array(
-                'TestController' => PluginInterface::KEY_ALL
+                'TestController' => AbstractPlugin::ALL_ACTIONS
             )
         );
         $this->assertTrue(
@@ -53,7 +53,7 @@ class TestPluginTest extends PHPUnit_Framework_TestCase
         // set a whitelist
         $plugin->setWhitelist(
             array(
-                'TestController' => PluginInterface::KEY_ALL,
+                'TestController' => AbstractPlugin::ALL_ACTIONS,
                 'AnotherController' => array(
                     'specificAction'
                 )
@@ -94,7 +94,7 @@ class TestPluginTest extends PHPUnit_Framework_TestCase
                 'TestController' => array(
                     'bannedAction'
                 ),
-                'BannedController' => PluginInterface::KEY_ALL
+                'BannedController' => AbstractPlugin::ALL_ACTIONS
             )
         );
         // controller is missing from blacklist

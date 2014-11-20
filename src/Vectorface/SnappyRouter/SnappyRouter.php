@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouter;
 
 use \Exception;
+use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Config\ConfigInterface;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Di\DiInterface;
@@ -19,10 +20,6 @@ use Vectorface\SnappyRouter\Response\Response;
  */
 class SnappyRouter
 {
-    /** the array key for configuring handlers */
-    const KEY_HANDLERS = 'handlers';
-    /** the array key for configuring the DI provider */
-    const KEY_DI = 'di';
     /** the DI key for the main configuration */
     const KEY_CONFIG = 'config';
 
@@ -178,7 +175,7 @@ class SnappyRouter
     private function parseConfig()
     {
         // setup the DI layer
-        $diClass = $this->config->get(self::KEY_DI);
+        $diClass = $this->config->get(Config::KEY_DI);
         if (class_exists($diClass)) {
             $di = new $diClass();
             if ($di instanceof DiInterface) {
@@ -187,7 +184,7 @@ class SnappyRouter
         }
         Di::getDefault()->set(self::KEY_CONFIG, $this->config);
         $this->setupHandlers(
-            $this->config->get(self::KEY_HANDLERS, array())
+            $this->config->get(Config::KEY_HANDLERS, array())
         );
     }
 
@@ -197,12 +194,12 @@ class SnappyRouter
         $this->handlers = array();
         foreach ($handlers as $handlerClass => $handlerDetails) {
             $options = array();
-            if (isset($handlerDetails[AbstractHandler::KEY_OPTIONS])) {
-                $options = (array)$handlerDetails[AbstractHandler::KEY_OPTIONS];
+            if (isset($handlerDetails[Config::KEY_OPTIONS])) {
+                $options = (array)$handlerDetails[Config::KEY_OPTIONS];
             }
 
-            if (isset($handlerDetails[AbstractHandler::KEY_CLASS])) {
-                $handlerClass = $handlerDetails[AbstractHandler::KEY_CLASS];
+            if (isset($handlerDetails[Config::KEY_CLASS])) {
+                $handlerClass = $handlerDetails[Config::KEY_CLASS];
             }
 
             if (!class_exists($handlerClass)) {

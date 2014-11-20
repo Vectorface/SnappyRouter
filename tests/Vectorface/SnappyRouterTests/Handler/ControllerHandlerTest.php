@@ -6,7 +6,6 @@ use \PHPUnit_Framework_TestCase;
 use Vectorface\SnappyRouter\SnappyRouter;
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
-use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 
 /**
@@ -24,7 +23,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     {
         $options = array(
             ControllerHandler::KEY_BASE_PATH => '/',
-            AbstractHandler::KEY_SERVICES => array(
+            Config::KEY_SERVICES => array(
                 'ControllerController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController',
                 'IndexController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             )
@@ -85,7 +84,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testRouteToNonExistantControllerAction()
     {
         $options = array(
-            AbstractHandler::KEY_SERVICES => array(
+            Config::KEY_SERVICES => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             )
         );
@@ -106,7 +105,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testMissingClassOnPlugin()
     {
         $options = array(
-            AbstractHandler::KEY_PLUGINS => array(
+            Config::KEY_PLUGINS => array(
                 'TestPlugin' => array()
             )
         );
@@ -122,7 +121,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testInvalidClassOnPlugin()
     {
         $options = array(
-            AbstractHandler::KEY_PLUGINS => array(
+            Config::KEY_PLUGINS => array(
                 'TestPlugin' => array(
                     'class' => 'Vectorface\\SnappyRouter\\Plugin\\NonExistantPlugin'
                 )
@@ -140,7 +139,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     {
         $options = array(
             ControllerHandler::KEY_BASE_PATH => '/',
-            AbstractHandler::KEY_SERVICES => array(
+            Config::KEY_SERVICES => array(
                 'ControllerController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController',
             ),
             ControllerHandler::KEY_VIEWS => array()
@@ -156,12 +155,12 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testRenderDefaultView()
     {
         $routerOptions = array(
-            SnappyRouter::KEY_DI => 'Vectorface\\SnappyRouter\\Di\\Di',
-            SnappyRouter::KEY_HANDLERS => array(
+            Config::KEY_DI => 'Vectorface\\SnappyRouter\\Di\\Di',
+            Config::KEY_HANDLERS => array(
                 'ControllerHandler' => array(
-                    AbstractHandler::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handler\\ControllerHandler',
-                    AbstractHandler::KEY_OPTIONS => array(
-                        AbstractHandler::KEY_SERVICES => array(
+                    Config::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handler\\ControllerHandler',
+                    Config::KEY_OPTIONS => array(
+                        Config::KEY_SERVICES => array(
                             'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
                         ),
                         ControllerHandler::KEY_VIEWS => array(
@@ -186,7 +185,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testActionReturnsString()
     {
         $options = array(
-            AbstractHandler::KEY_SERVICES => array(
+            Config::KEY_SERVICES => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             ),
             ControllerHandler::KEY_VIEWS => array(
@@ -205,7 +204,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testActionReturnsArray()
     {
         $options = array(
-            AbstractHandler::KEY_SERVICES => array(
+            Config::KEY_SERVICES => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             ),
             ControllerHandler::KEY_VIEWS => array(
@@ -223,7 +222,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testActionRendersNonDefaultView()
     {
         $options = array(
-            AbstractHandler::KEY_SERVICES => array(
+            Config::KEY_SERVICES => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             ),
             ControllerHandler::KEY_VIEWS => array(
@@ -243,7 +242,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testExceptionForNullEncoderRenderView()
     {
         $options = array(
-            AbstractHandler::KEY_SERVICES => array(
+            Config::KEY_SERVICES => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             ),
             ControllerHandler::KEY_VIEWS => array(
@@ -262,7 +261,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testNamespaceProvisioning()
     {
         $options = array(
-            AbstractHandler::KEY_NAMESPACES => array(
+            Config::KEY_NAMESPACES => array(
                 'Vectorface\\SnappyRouterTests\\Controller'
             ),
             ControllerHandler::KEY_VIEWS => array(
@@ -280,7 +279,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testFolderProvisioning()
     {
         $options = array(
-            AbstractHandler::KEY_FOLDERS => array(
+            Config::KEY_FOLDERS => array(
                 realpath(__DIR__.'/../Controller')
             ),
             ControllerHandler::KEY_VIEWS => array(

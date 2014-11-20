@@ -3,7 +3,7 @@
 namespace Vectorface\SnappyRouterTests\Task;
 
 use \PHPUnit_Framework_TestCase;
-use Vectorface\SnappyRouter\Handler\AbstractCliHandler;
+use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Handler\CliTaskHandler;
 
 /**
@@ -20,7 +20,7 @@ class CliTaskHandlerTest extends PHPUnit_Framework_TestCase
     public function synopsis()
     {
         $options = array(
-            AbstractCliHandler::KEY_TASKS => array(
+            Config::KEY_TASKS => array(
                 'TestTask' => 'Vectorface\SnappyRouterTests\Task\DummyTestTask'
             )
         );
@@ -54,7 +54,7 @@ class CliTaskHandlerTest extends PHPUnit_Framework_TestCase
     public function testMissingActionOnTask()
     {
         $options = array(
-            AbstractCliHandler::KEY_TASKS => array(
+            Config::KEY_TASKS => array(
                 'TestTask' => 'Vectorface\SnappyRouterTests\Task\DummyTestTask'
             )
         );

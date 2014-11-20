@@ -3,7 +3,7 @@
 namespace Vectorface\SnappyRouterTests\Handler;
 
 use \PHPUnit_Framework_TestCase;
-use Vectorface\SnappyRouter\Handler\AbstractHandler;
+use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Handler\RestHandler;
 
 /**
@@ -21,7 +21,7 @@ class RestHandlerTest extends PHPUnit_Framework_TestCase
     {
         $options = array(
             RestHandler::KEY_BASE_PATH => '/',
-            AbstractHandler::KEY_SERVICES => array(
+            Config::KEY_SERVICES => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             )
         );
@@ -39,7 +39,7 @@ class RestHandlerTest extends PHPUnit_Framework_TestCase
     {
         $options = array(
             RestHandler::KEY_BASE_PATH => '/',
-            AbstractHandler::KEY_SERVICES => array(
+            Config::KEY_SERVICES => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             )
         );

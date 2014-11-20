@@ -20,6 +20,10 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
     /** the default priority of a plugin */
     const PRIORITY_DEFAULT = 1000;
 
+    /** A string constant indicating the whitelist/blacklist applies to all
+        actions within a controller */
+    const ALL_ACTIONS = 'all';
+
     /** The plugin options */
     protected $options;
 
@@ -124,7 +128,7 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
             if (is_array($this->whitelist[$controller])) {
                 return in_array($action, $this->whitelist[$controller]);
             } else {
-                return PluginInterface::KEY_ALL === $this->whitelist[$controller];
+                return self::ALL_ACTIONS === $this->whitelist[$controller];
             }
         } else {
             // if the controller isn't in the blacklist at all, we're good

@@ -11,6 +11,25 @@ use \ArrayAccess;
  */
 class Config implements ArrayAccess, ConfigInterface
 {
+    /** the config key for the list of handlers */
+    const KEY_HANDLERS = 'handlers';
+    /** the config key for the DI provider */
+    const KEY_DI = 'di';
+    /** the config key for the list of handler options */
+    const KEY_OPTIONS    = 'options';
+    /** the config key for a class */
+    const KEY_CLASS      = 'class';
+    /** the config key for the list of services */
+    const KEY_SERVICES   = 'services';
+    /** the config key for the list of plugins */
+    const KEY_PLUGINS    = 'plugins';
+    /** the config key for the list of controller namespaces */
+    const KEY_NAMESPACES = 'namespaces';
+    /** the config key for the list of controller folders */
+    const KEY_FOLDERS    = 'folders';
+    /** the config key for the list of tasks */
+    const KEY_TASKS = 'tasks';
+
     // the internal config array
     private $config;
 

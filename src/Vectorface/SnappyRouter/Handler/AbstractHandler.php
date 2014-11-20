@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouter\Handler;
 
 use \Exception;
+use VectorFace\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Di\DiProviderInterface;
 use Vectorface\SnappyRouter\Di\ServiceProvider;
@@ -16,19 +17,6 @@ use Vectorface\SnappyRouter\Exception\PluginException;
  */
 abstract class AbstractHandler implements DiProviderInterface
 {
-    /** The config key for the handler class */
-    const KEY_CLASS      = 'class';
-    /** The config key for the list of handler options */
-    const KEY_OPTIONS    = 'options';
-    /** The config key for the list of services */
-    const KEY_SERVICES   = 'services';
-    /** The config key for the list of plugins */
-    const KEY_PLUGINS    = 'plugins';
-    /** The config key for the list of controler namespaces */
-    const KEY_NAMESPACES = 'namespaces';
-    /** The config key for the list of controller folders */
-    const KEY_FOLDERS    = 'folders';
-
     /** An array of handler-specific options */
     protected $options;
 
@@ -46,21 +34,21 @@ abstract class AbstractHandler implements DiProviderInterface
     {
         $this->options = $options;
         $this->plugins = array();
-        if (isset($options[self::KEY_PLUGINS])) {
-            $this->setPlugins((array)$options[self::KEY_PLUGINS]);
+        if (isset($options[Config::KEY_PLUGINS])) {
+            $this->setPlugins((array)$options[Config::KEY_PLUGINS]);
         }
         // configure the service provider
         $services = array();
-        if (isset($options[self::KEY_SERVICES])) {
-            $services = (array)$options[self::KEY_SERVICES];
+        if (isset($options[Config::KEY_SERVICES])) {
+            $services = (array)$options[Config::KEY_SERVICES];
         }
         $this->serviceProvider = new ServiceProvider($services);
-        if (isset($options[self::KEY_NAMESPACES])) {
+        if (isset($options[Config::KEY_NAMESPACES])) {
             // namespace provisioning
-            $this->serviceProvider->setNamespaces((array)$options[self::KEY_NAMESPACES]);
-        } elseif (isset($options[self::KEY_FOLDERS])) {
+            $this->serviceProvider->setNamespaces((array)$options[Config::KEY_NAMESPACES]);
+        } elseif (isset($options[Config::KEY_FOLDERS])) {
             // folder provisioning
-            $this->serviceProvider->setFolders((array)$options[self::KEY_FOLDERS]);
+            $this->serviceProvider->setFolders((array)$options[Config::KEY_FOLDERS]);
         }
     }
 
@@ -115,16 +103,16 @@ abstract class AbstractHandler implements DiProviderInterface
         foreach ($plugins as $key => $plugin) {
             $pluginClass = $plugin;
             if (is_array($plugin)) {
-                if (!isset($plugin[AbstractHandler::KEY_CLASS])) {
+                if (!isset($plugin[Config::KEY_CLASS])) {
                     throw new PluginException('Invalid or missing class for plugin '.$key);
-                } elseif (!class_exists($plugin[AbstractHandler::KEY_CLASS])) {
+                } elseif (!class_exists($plugin[Config::KEY_CLASS])) {
                     throw new PluginException('Invalid or missing class for plugin '.$key);
                 }
-                $pluginClass = $plugin[AbstractHandler::KEY_CLASS];
+                $pluginClass = $plugin[Config::KEY_CLASS];
             }
             $options = array();
-            if (isset($plugin[AbstractHandler::KEY_OPTIONS])) {
-                $options = (array)$plugin[AbstractHandler::KEY_OPTIONS];
+            if (isset($plugin[Config::KEY_OPTIONS])) {
+                $options = (array)$plugin[Config::KEY_OPTIONS];
             }
             $this->plugins[] = new $pluginClass($options);
         }

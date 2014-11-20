@@ -2,6 +2,8 @@
 
 namespace Vectorface\SnappyRouter\Handler;
 
+use Vectorface\SnappyRouter\Config\Config;
+
 /**
  * The base class for all handlers for CLI routes.
  * @copyright Copyright (c) 2014, VectorFace, Inc.
@@ -9,19 +11,15 @@ namespace Vectorface\SnappyRouter\Handler;
  */
 abstract class AbstractCliHandler extends AbstractHandler
 {
-
-    /** constant options key for the list of tasks */
-    const KEY_TASKS = 'tasks';
-
     /**
      * Constructor for the class.
      * @param array $options An array of options for the plugin.
      */
     public function __construct($options)
     {
-        if (isset($options[self::KEY_TASKS])) {
-            $options[self::KEY_SERVICES] = $options[self::KEY_TASKS];
-            unset($options[self::KEY_TASKS]);
+        if (isset($options[Config::KEY_TASKS])) {
+            $options[Config::KEY_SERVICES] = $options[Config::KEY_TASKS];
+            unset($options[Config::KEY_TASKS]);
         }
         parent::__construct($options);
     }

@@ -24,30 +24,30 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
     private function getStandardConfig()
     {
         return array(
-            SnappyRouter::KEY_DI => 'Vectorface\SnappyRouter\Di\Di',
-            SnappyRouter::KEY_HANDLERS => array(
+            Config::KEY_DI => 'Vectorface\SnappyRouter\Di\Di',
+            Config::KEY_HANDLERS => array(
                 'BogusCliHandler' => array(
-                    AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\CliTaskHandler'
+                    Config::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\CliTaskHandler'
                 ),
                 'ControllerHandler' => array(
-                    AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\ControllerHandler',
-                    AbstractHandler::KEY_OPTIONS => array(
+                    Config::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\ControllerHandler',
+                    Config::KEY_OPTIONS => array(
                         ControllerHandler::KEY_BASE_PATH => '/',
-                        AbstractHandler::KEY_SERVICES => array(
+                        Config::KEY_SERVICES => array(
                             'TestController' => 'Vectorface\SnappyRouterTests\Controller\TestDummyController'
                         ),
-                        AbstractHandler::KEY_PLUGINS => array(
+                        Config::KEY_PLUGINS => array(
                             'TestPlugin'     => array(
-                                AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouterTests\Plugin\TestPlugin',
-                                AbstractHandler::KEY_OPTIONS => array()
+                                Config::KEY_CLASS => 'Vectorface\SnappyRouterTests\Plugin\TestPlugin',
+                                Config::KEY_OPTIONS => array()
                             ),
                             'AnotherPlugin'  => 'Vectorface\SnappyRouterTests\Plugin\TestPlugin'
                         )
                     )
                 ),
                 'CliHandler' => array(
-                    AbstractHandler::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\CliTaskHandler',
-                    AbstractHandler::KEY_OPTIONS => array(
+                    Config::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\CliTaskHandler',
+                    Config::KEY_OPTIONS => array(
                         'tasks' => array(
                             'TestTask' => 'Vectorface\SnappyRouterTests\Task\DummyTestTask'
                         )
@@ -121,7 +121,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
     public function testInvalidHandlerClass()
     {
         $config = $this->getStandardConfig();
-        $config[SnappyRouter::KEY_HANDLERS]['InvalidHandler'] = array(
+        $config[Config::KEY_HANDLERS]['InvalidHandler'] = array(
             'class' => 'Vectorface\SnappyRouter\Handler\NonexistantHandler'
         );
         $router = new SnappyRouter(new Config($config));

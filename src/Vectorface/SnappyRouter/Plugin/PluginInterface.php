@@ -15,10 +15,6 @@ use Vectorface\SnappyRouter\Handler\AbstractHandler;
  */
 interface PluginInterface
 {
-    /** A string constant indicating the whitelist/blacklist applies to all
-        actions within a controller */
-    const KEY_ALL = 'all';
-
     /**
      * Invoked directly after the router decides which handler will be used.
      * @param AbstractHandler $handler The handler selected by the router.
