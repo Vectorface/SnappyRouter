@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouter\Di;
 
 use \Exception;
+use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Exception\ServiceNotRegisteredException;
 
 /**
@@ -168,11 +169,11 @@ class ServiceProvider extends Di
                 require_once $serviceClass;
                 $serviceClass = $controllerClass;
         } elseif (is_array($serviceClass)) {
-            if (isset($serviceClass['file'])) {
-                require_once $serviceClass['file'];
+            if (isset($serviceClass[Config::KEY_FILE])) {
+                require_once $serviceClass[Config::KEY_FILE];
             }
-            if (isset($serviceClass['class'])) {
-                $serviceClass = $serviceClass['class'];
+            if (isset($serviceClass[Config::KEY_CLASS])) {
+                $serviceClass = $serviceClass[Config::KEY_CLASS];
             }
         }
         return new $serviceClass();
