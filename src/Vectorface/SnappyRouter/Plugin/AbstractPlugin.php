@@ -109,7 +109,7 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
      * invoke this plugin.
      * @param string $controller The requested controller.
      * @param string $action The requested action.
-     * @return bool Returns true if the given plugin is allowed to run against
+     * @return boolean Returns true if the given plugin is allowed to run against
      *         this controller/action and false otherwise.
      */
     public function supportsControllerAndAction($controller, $action)
@@ -127,25 +127,18 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
             // be mapped to the "all" string
             if (is_array($this->whitelist[$controller])) {
                 return in_array($action, $this->whitelist[$controller]);
-            } else {
-                return self::ALL_ACTIONS === $this->whitelist[$controller];
             }
-        } else {
-            // if the controller isn't in the blacklist at all, we're good
-            if (!isset($this->blacklist[$controller])) {
-                return true;
-            }
-
-            // if the controller is in the blacklist then we must check if it is
-            // an explicit array of blacklisted actions
-            if (is_array($this->blacklist[$controller])) {
-                return !in_array($action, $this->blacklist[$controller]);
-            } else {
-                // if the controller is in the blacklist and isn't an array we
-                // assume the whole controller should be blacklisted
-                return false;
-            }
+            return (self::ALL_ACTIONS === (string)$this->whitelist[$controller]);
         }
+        // if the controller isn't in the blacklist at all, we're good
+        if (!isset($this->blacklist[$controller])) {
+            return true;
+        }
+
+        // if the controller is not an array we return false
+        // otherwise we check if the action is listed in the array
+        return is_array($this->blacklist[$controller]) &&
+              !in_array($action, $this->blacklist[$controller]);
     }
 
     /**
