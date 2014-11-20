@@ -6,7 +6,7 @@ use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Exception\AccessDeniedException;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Plugin\AbstractControllerPlugin;
-use Vectorface\SnappyRouter\Request\AbstractRequest;
+use Vectorface\SnappyRouter\Request\HttpRequest;
 
 /**
  * A plugin that adds appropriate content headers for http requests based on the response.
@@ -53,13 +53,13 @@ class CrossOriginRequestPlugin extends AbstractControllerPlugin
     /**
      * Invoked after the router has decided which controller will be used.
      * @param AbstractHandler $handler The handler selected by the router.
-     * @param AbstractRequest $request The request to be handled.
+     * @param HttpRequest $request The request to be handled.
      * @param AbstractController $controller The controller determined to be used.
      * @param string $action The name of the action that will be invoked.
      */
     public function afterControllerSelected(
         AbstractHandler $handler,
-        AbstractRequest $request,
+        HttpRequest $request,
         AbstractController $controller,
         $action
     ) {

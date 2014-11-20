@@ -4,7 +4,7 @@ namespace Vectorface\SnappyRouter\Plugin;
 
 use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
-use Vectorface\SnappyRouter\Request\AbstractRequest;
+use Vectorface\SnappyRouter\Request\HttpRequest;
 
 /**
  * The base class for all controller-based plugins.
@@ -16,11 +16,11 @@ abstract class AbstractControllerPlugin extends AbstractPlugin implements Contro
     /**
      * Invoked before the handler decides which controller will be used.
      * @param AbstractHandler $handler The handler selected by the router.
-     * @param AbstractRequest $request The request to be handled.
+     * @param HttpRequest $request The request to be handled.
      */
     public function beforeControllerSelected(
         AbstractHandler $handler,
-        AbstractRequest $request
+        HttpRequest $request
     ) {
 
     }
@@ -28,13 +28,13 @@ abstract class AbstractControllerPlugin extends AbstractPlugin implements Contro
     /**
      * Invoked after the router has decided which controller will be used.
      * @param AbstractHandler $handler The handler selected by the router.
-     * @param AbstractRequest $request The request to be handled.
+     * @param HttpRequest $request The request to be handled.
      * @param AbstractController $controller The controller determined to be used.
      * @param string $action The name of the action that will be invoked.
      */
     public function afterControllerSelected(
         AbstractHandler $handler,
-        AbstractRequest $request,
+        HttpRequest $request,
         AbstractController $controller,
         $action
     ) {
@@ -44,13 +44,13 @@ abstract class AbstractControllerPlugin extends AbstractPlugin implements Contro
     /**
      * Invoked before the handler invokes the selected action.
      * @param AbstractHandler $handler The handler selected by the router.
-     * @param AbstractRequest $request The request to be handled.
+     * @param HttpRequest $request The request to be handled.
      * @param AbstractController $controller The controller determined to be used.
      * @param string $action The name of the action that will be invoked.
      */
     public function beforeActionInvoked(
         AbstractHandler $handler,
-        AbstractRequest $request,
+        HttpRequest $request,
         AbstractController $controller,
         $action
     ) {
@@ -60,14 +60,14 @@ abstract class AbstractControllerPlugin extends AbstractPlugin implements Contro
     /**
      * Invoked after the handler invoked the selected action.
      * @param AbstractHandler $handler The handler selected by the router.
-     * @param AbstractRequest $request The request to be handled.
+     * @param HttpRequest $request The request to be handled.
      * @param AbstractController $controller The controller determined to be used.
      * @param string $action The name of the action that will be invoked.
      * @param mixed $response The response from the controller action.
      */
     public function afterActionInvoked(
         AbstractHandler $handler,
-        AbstractRequest $request,
+        HttpRequest $request,
         AbstractController $controller,
         $action,
         $response
