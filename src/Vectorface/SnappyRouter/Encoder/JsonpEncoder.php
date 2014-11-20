@@ -2,6 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Encoder;
 
+use \Exception;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
 
 /**
@@ -11,6 +12,9 @@ use Vectorface\SnappyRouter\Response\AbstractResponse;
  */
 class JsonpEncoder extends JsonEncoder
 {
+    /** the config key for the client side method to invoke */
+    const KEY_CLIENT_METHOD = 'clientMethod';
+
     /** The method the client is invoking. */
     private $clientMethod;
 
@@ -21,10 +25,10 @@ class JsonpEncoder extends JsonEncoder
     public function __construct($options = array())
     {
         parent::__construct($options);
-        $this->clientMethod = 'method';
-        if (isset($options['clientMethod']) && is_string($options['clientMethod'])) {
-            $this->clientMethod = $options['clientMethod'];
+        if (!isset($options[self::KEY_CLIENT_METHOD])) {
+            throw new Exception('Client method missing from plugin options.');
         }
+        $this->clientMethod = (string)$options[self::KEY_CLIENT_METHOD];
     }
 
     /**
@@ -33,7 +37,10 @@ class JsonpEncoder extends JsonEncoder
      */
     public function encode(AbstractResponse $response)
     {
-        $response = parent::encode($response);
-        return sprintf('%s(%s);', $this->clientMethod, $response);
+        return sprintf(
+            '%s(%s);',
+            $this->clientMethod,
+            parent::encode($response)
+        );
     }
 }

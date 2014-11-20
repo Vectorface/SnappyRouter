@@ -35,4 +35,15 @@ class JsonpEncoderTest extends AbstractEncoderTest
             )
         );
     }
+
+    /**
+     * Tests that an exception is thrown if the client method is missing from
+     * the options.
+     * @expectedException Exception
+     * @expectedExceptionMessage Client method missing from plugin options.
+     */
+    public function testMissingClientMethodThrowsException()
+    {
+        new JsonpEncoder(array());
+    }
 }
