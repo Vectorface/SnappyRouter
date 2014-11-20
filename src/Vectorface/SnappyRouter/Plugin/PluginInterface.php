@@ -62,8 +62,8 @@ interface PluginInterface
      * invoke this plugin.
      * @param string $controller The requested controller.
      * @param string $action The requested action.
-     * @return Returns true if the given plugin is allowed to run against this
-     *         controller/action and false otherwise.
+     * @return boolean Returns true if the given plugin is allowed to run against
+     *         this controller/action and false otherwise.
      */
     public function supportsControllerAndAction($controller, $action);
 }
