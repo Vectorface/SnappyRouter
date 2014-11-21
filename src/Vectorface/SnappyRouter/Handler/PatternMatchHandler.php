@@ -13,6 +13,9 @@ use FastRoute\RouteCollector;
  */
 class PatternMatchHandler extends AbstractRequestHandler
 {
+    /** the config key for the list of routes */
+    const KEY_ROUTES = 'routes';
+
     // the currently active callback
     private $callback;
     // the currently active route parameters

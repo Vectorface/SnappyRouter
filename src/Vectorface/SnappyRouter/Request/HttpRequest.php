@@ -169,7 +169,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     private function fetchInputValue($array, $param, $defaultValue, $filters)
     {
         $value = isset($array[$param]) ? $array[$param] : $defaultValue;
-        return $this->applyInputFilters($value, $filters);
+        return $this->applyInputFilters($value, is_array($filters) ? $filters : array($filters));
     }
 
     /**
@@ -180,11 +180,8 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      */
     private function applyInputFilters($value, $filters)
     {
-        if (!is_array($filters)) {
-            $filters = array($filters);
-        }
         foreach ($filters as $filter) {
-            if (isset(self::$filterCallbacks[$filter])) {
+            if (is_string($filter) && isset(self::$filterCallbacks[$filter])) {
                 $value = call_user_func(self::$filterCallbacks[$filter], $value);
             }
         }

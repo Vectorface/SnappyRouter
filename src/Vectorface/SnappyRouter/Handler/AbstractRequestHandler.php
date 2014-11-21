@@ -20,7 +20,7 @@ abstract class AbstractRequestHandler extends AbstractHandler
      * @param array $query The query parameters.
      * @param array $post The post data.
      * @param string $verb The HTTP verb used in the request.
-     * @return Returns true if this handler will handle the request and false otherwise.
+     * @return boolean Returns true if this handler will handle the request and false otherwise.
      */
     abstract public function isAppropriate($path, $query, $post, $verb);
 

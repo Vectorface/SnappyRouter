@@ -20,7 +20,7 @@ class DirectScriptHandlerTest extends PHPUnit_Framework_TestCase
     {
         // the configuration maps a path like /cgi-bin to this folder
         $config = array(
-            DirectScriptHandler::PATH_MAP => array(
+            DirectScriptHandler::KEY_PATH_MAP => array(
                 '/cgi-bin' => __DIR__
             )
         );

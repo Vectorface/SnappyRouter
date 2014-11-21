@@ -10,7 +10,7 @@ namespace Vectorface\SnappyRouter\Handler;
 class DirectScriptHandler extends AbstractRequestHandler
 {
     /** Options key for the path mapping array */
-    const PATH_MAP = 'pathMap';
+    const KEY_PATH_MAP = 'pathMap';
 
     private $scriptPath;
 
@@ -26,8 +26,8 @@ class DirectScriptHandler extends AbstractRequestHandler
     {
         $options = $this->getOptions();
         $pathMaps = array();
-        if (isset($options[self::PATH_MAP])) {
-            $pathMaps = (array)$options[self::PATH_MAP];
+        if (isset($options[self::KEY_PATH_MAP])) {
+            $pathMaps = (array)$options[self::KEY_PATH_MAP];
         }
         foreach ($pathMaps as $pathPrefix => $folder) {
             if (false !== ($pos = strpos($path, $pathPrefix))) {
