@@ -17,7 +17,7 @@ class CliTaskHandler extends AbstractCliHandler
      * Determines whether the current handler is appropriate for the given
      * path components.
      * @param array $components The path components as an array.
-     * @return bool Returns true if the handler is appropriate and false
+     * @return boolean Returns true if the handler is appropriate and false
      *         otherwise.
      */
     public function isAppropriate($components)

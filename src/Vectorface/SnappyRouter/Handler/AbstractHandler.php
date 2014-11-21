@@ -53,6 +53,12 @@ abstract class AbstractHandler implements DiProviderInterface
     }
 
     /**
+     * Performs the actual routing.
+     * @return mixed Returns the result of the route.
+     */
+    abstract public function performRoute();
+
+    /**
      * Retrieve an element from the DI container.
      * @param string $key The DI key.
      * @param boolean $useCache (optional) An optional indicating whether we
@@ -142,12 +148,6 @@ abstract class AbstractHandler implements DiProviderInterface
             }
         }
     }
-
-    /**
-     * Performs the actual routing.
-     * @return mixed Returns the result of the route.
-     */
-    abstract public function performRoute();
 
     /**
      * Returns whether a handler should function in a CLI environment.

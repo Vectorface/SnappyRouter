@@ -42,7 +42,7 @@ class ControllerHandler extends AbstractRequestHandler
      * @param array $query The query parameters.
      * @param array $post The post data.
      * @param string $verb The HTTP verb used in the request.
-     * @return Returns true if this handler will handle the request and false otherwise.
+     * @return boolean Returns true if this handler will handle the request and false otherwise.
      */
     public function isAppropriate($path, $query, $post, $verb)
     {
@@ -121,7 +121,7 @@ class ControllerHandler extends AbstractRequestHandler
 
     /**
      * Performs the actual routing.
-     * @return Returns the result of the route.
+     * @return mixed Returns the result of the route.
      */
     public function performRoute()
     {
