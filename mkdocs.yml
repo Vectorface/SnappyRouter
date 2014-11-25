@@ -1,6 +1,6 @@
 site_name: 'SnappyRouter'
 pages:
--   ['index.md', 'Home']
+-   ['index.md', 'Home', 'Home']
 -   ['handlers/index.md', 'Handlers', 'Handlers']
 -   ['handlers/controller_handler.md', 'Handlers', 'Controller Handler']
 -   ['handlers/rest_handler.md', 'Handlers', 'Rest Handler']
