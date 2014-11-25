@@ -33,7 +33,7 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
                     Config::KEY_CLASS => 'Vectorface\SnappyRouter\Handler\ControllerHandler',
                     Config::KEY_OPTIONS => array(
                         ControllerHandler::KEY_BASE_PATH => '/',
-                        Config::KEY_SERVICES => array(
+                        Config::KEY_CONTROLLERS => array(
                             'TestController' => 'Vectorface\SnappyRouterTests\Controller\TestDummyController'
                         ),
                         Config::KEY_PLUGINS => array(

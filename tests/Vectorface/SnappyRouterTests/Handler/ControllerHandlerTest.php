@@ -23,7 +23,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     {
         $options = array(
             ControllerHandler::KEY_BASE_PATH => '/',
-            Config::KEY_SERVICES => array(
+            Config::KEY_CONTROLLERS => array(
                 'ControllerController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController',
                 'IndexController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             )
@@ -84,7 +84,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testRouteToNonExistantControllerAction()
     {
         $options = array(
-            Config::KEY_SERVICES => array(
+            Config::KEY_CONTROLLERS => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             )
         );
@@ -139,7 +139,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     {
         $options = array(
             ControllerHandler::KEY_BASE_PATH => '/',
-            Config::KEY_SERVICES => array(
+            Config::KEY_CONTROLLERS => array(
                 'ControllerController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController',
             ),
             ControllerHandler::KEY_VIEWS => array()
@@ -160,7 +160,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
                 'ControllerHandler' => array(
                     Config::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handler\\ControllerHandler',
                     Config::KEY_OPTIONS => array(
-                        Config::KEY_SERVICES => array(
+                        Config::KEY_CONTROLLERS => array(
                             'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
                         ),
                         ControllerHandler::KEY_VIEWS => array(
@@ -185,7 +185,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testActionReturnsString()
     {
         $options = array(
-            Config::KEY_SERVICES => array(
+            Config::KEY_CONTROLLERS => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             ),
             ControllerHandler::KEY_VIEWS => array(
@@ -204,7 +204,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testActionReturnsArray()
     {
         $options = array(
-            Config::KEY_SERVICES => array(
+            Config::KEY_CONTROLLERS => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             ),
             ControllerHandler::KEY_VIEWS => array(
@@ -222,7 +222,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testActionRendersNonDefaultView()
     {
         $options = array(
-            Config::KEY_SERVICES => array(
+            Config::KEY_CONTROLLERS => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             ),
             ControllerHandler::KEY_VIEWS => array(
@@ -242,7 +242,7 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
     public function testExceptionForNullEncoderRenderView()
     {
         $options = array(
-            Config::KEY_SERVICES => array(
+            Config::KEY_CONTROLLERS => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             ),
             ControllerHandler::KEY_VIEWS => array(

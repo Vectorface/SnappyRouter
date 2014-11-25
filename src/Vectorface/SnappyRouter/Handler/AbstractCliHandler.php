@@ -18,7 +18,7 @@ abstract class AbstractCliHandler extends AbstractHandler
     public function __construct($options)
     {
         if (isset($options[Config::KEY_TASKS])) {
-            $options[Config::KEY_SERVICES] = $options[Config::KEY_TASKS];
+            $options[Config::KEY_CONTROLLERS] = $options[Config::KEY_TASKS];
             unset($options[Config::KEY_TASKS]);
         }
         parent::__construct($options);

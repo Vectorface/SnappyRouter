@@ -21,7 +21,7 @@ class RestHandlerTest extends PHPUnit_Framework_TestCase
     {
         $options = array(
             RestHandler::KEY_BASE_PATH => '/',
-            Config::KEY_SERVICES => array(
+            Config::KEY_CONTROLLERS => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             )
         );
@@ -39,7 +39,7 @@ class RestHandlerTest extends PHPUnit_Framework_TestCase
     {
         $options = array(
             RestHandler::KEY_BASE_PATH => '/',
-            Config::KEY_SERVICES => array(
+            Config::KEY_CONTROLLERS => array(
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
             )
         );

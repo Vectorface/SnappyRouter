@@ -21,8 +21,10 @@ class Config implements ArrayAccess, ConfigInterface
     const KEY_CLASS      = 'class';
     /** the config key for a file */
     const KEY_FILE       = 'file';
-    /** the config key for the list of services */
+    /** the config key for the list of services (deprecated) */
     const KEY_SERVICES   = 'services';
+    /** the config key for the list of controllers */
+    const KEY_CONTROLLERS = 'services';
     /** the config key for the list of plugins */
     const KEY_PLUGINS    = 'plugins';
     /** the config key for the list of controller namespaces */

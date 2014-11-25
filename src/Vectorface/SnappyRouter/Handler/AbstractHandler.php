@@ -39,8 +39,8 @@ abstract class AbstractHandler implements DiProviderInterface
         }
         // configure the service provider
         $services = array();
-        if (isset($options[Config::KEY_SERVICES])) {
-            $services = (array)$options[Config::KEY_SERVICES];
+        if (isset($options[Config::KEY_CONTROLLERS])) {
+            $services = (array)$options[Config::KEY_CONTROLLERS];
         }
         $this->serviceProvider = new ServiceProvider($services);
         if (isset($options[Config::KEY_NAMESPACES])) {
