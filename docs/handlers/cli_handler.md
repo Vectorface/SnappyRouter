@@ -101,7 +101,7 @@ SnappyRouter to use to autodetect the appropriate task class.
     ...
 ```
 
-The namespaces will be scanned in the order list in the array.
+The namespaces will be scanned in the order listed in the array.
 
 ## Registering a Folder of Task PHP Files
 
