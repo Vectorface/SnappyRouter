@@ -1,11 +1,11 @@
 site_name: 'SnappyRouter'
 pages:
--   ['index.md', 'Home', 'Home']
--   ['handlers/index.md', 'Handlers', 'Handlers']
+-   ['index.md', 'Home']
+-   ['handlers/index.md', 'Handlers']
 -   ['handlers/controller_handler.md', 'Handlers', 'Controller Handler']
 -   ['handlers/rest_handler.md', 'Handlers', 'Rest Handler']
 -   ['handlers/pattern_handler.md', 'Handlers', 'Pattern Match Handler']
 -   ['handlers/direct_handler.md', 'Handlers', 'Direct Script Handler']
 -   ['handlers/cli_handler.md', 'Handlers', 'CLI Task Handler']
--   ['plugins/index.md', 'Plugins', 'Plugins']
+-   ['plugins/index.md', 'Plugins']
 theme: 'readthedocs'
