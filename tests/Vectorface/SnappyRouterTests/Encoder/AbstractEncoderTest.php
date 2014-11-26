@@ -29,7 +29,8 @@ abstract class AbstractEncoderTest extends PHPUnit_Framework_TestCase
 
     /**
      * Returns the encoder to be tested.
-     * @return EncoderInterface Returns an instance of an encoder.
+     * @return Vectorface\SnappyRouter\Encoder\EncoderInterface Returns an
+     *         instance of an encoder.
      */
     abstract public function getEncoder();
 
