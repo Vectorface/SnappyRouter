@@ -11,27 +11,27 @@ interface ResponseInterface
 {
     /**
      * Returns the serializeable response object.
-     * @return The serializeable response object.
+     * @return mixed The serializeable response object.
      */
     public function getResponseObject();
 
     /**
      * Sets the serializeable response object.
      * @param mixed $responseObject The serializeable response object.
-     * @return Returns $this.
+     * @return ResponseInterface Returns $this.
      */
     public function setResponseObject($responseObject);
 
     /**
      * Returns the HTTP status code associated with this response.
-     * @return The HTTP status code associated with this response.
+     * @return integer The HTTP status code associated with this response.
      */
     public function getStatusCode();
 
     /**
      * Sets the HTTP status code associated with this response.
      * @param int $statusCode The HTTP status code associated with this response.
-     * @return Returns $this.
+     * @return ResponseInterface Returns $this.
      */
     public function setStatusCode($statusCode);
 }

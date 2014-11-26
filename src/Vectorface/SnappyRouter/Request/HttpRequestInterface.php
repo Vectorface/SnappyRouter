@@ -18,7 +18,7 @@ interface HttpRequestInterface
     /**
      * Sets the HTTP verb used in the request.
      * @param string $verb The HTTP verb used in the request.
-     * @return RequestInterface Returns $this.
+     * @return HttpRequestInterface Returns $this.
      */
     public function setVerb($verb);
 
@@ -27,7 +27,7 @@ interface HttpRequestInterface
      * @param string $param The GET data parameter.
      * @param mixed $defaultValue The default value to use when the key is not present.
      * @param array $filters The array of filters to apply to the data.
-     * @return Returns the data from the GET parameter after being filtered (or
+     * @return mixed Returns the data from the GET parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
     public function getQuery($param, $defaultValue = null, $filters = array());
@@ -35,7 +35,7 @@ interface HttpRequestInterface
     /**
      * Sets all the QUERY data for the current request.
      * @param array $queryData The query data for the current request.
-     * @return Request Returns $this.
+     * @return HttpRequestInterface Returns $this.
      */
     public function setQuery($queryData);
 
@@ -44,7 +44,7 @@ interface HttpRequestInterface
      * @param string $param The POST data parameter.
      * @param mixed $defaultValue The default value to use when the key is not present.
      * @param array $filters The array of filters to apply to the data.
-     * @return Returns the data from the POST parameter after being filtered (or
+     * @return mixed Returns the data from the POST parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
     public function getPost($param, $defaultValue = null, $filters = array());
@@ -52,7 +52,7 @@ interface HttpRequestInterface
     /**
      * Sets all the POST data for the current request.
      * @param array $postData The post data for the current request.
-     * @return Request Returns $this.
+     * @return HttpRequestInterface Returns $this.
      */
     public function setPost($postData);
 

@@ -107,7 +107,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     /**
      * Sets all the QUERY data for the current request.
      * @param array $queryData The query data for the current request.
-     * @return Request Returns $this.
+     * @return HttpRequestInterface Returns $this.
      */
     public function setQuery($queryData)
     {
@@ -136,7 +136,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     /**
      * Sets all the POST data for the current request.
      * @param array $postData The post data for the current request.
-     * @return Request Returns $this.
+     * @return HttpRequestInterface Returns $this.
      */
     public function setPost($postData)
     {
