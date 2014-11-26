@@ -37,7 +37,7 @@ interface PluginInterface
     /**
      * Returns a sortable number for sorting plugins by execution priority. A lower number indicates
      * higher priority.
-     * @return The execution priority (as a number).
+     * @return integer The execution priority (as a number).
      */
     public function getExecutionOrder();
 
