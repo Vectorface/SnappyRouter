@@ -15,7 +15,7 @@ class Response extends AbstractResponse
 
     /**
      * Returns the serializeable response object.
-     * @return The serializeable response object.
+     * @return mixed The serializeable response object.
      */
     public function getResponseObject()
     {
@@ -25,7 +25,7 @@ class Response extends AbstractResponse
     /**
      * Sets the serializeable response object.
      * @param mixed $responseObject The serializeable response object.
-     * @return Returns $this.
+     * @return Response Returns $this.
      */
     public function setResponseObject($responseObject)
     {
@@ -35,7 +35,7 @@ class Response extends AbstractResponse
 
     /**
      * Returns the HTTP status code associated with this response.
-     * @return The HTTP status code associated with this response.
+     * @return integer The HTTP status code associated with this response.
      */
     public function getStatusCode()
     {
@@ -45,7 +45,7 @@ class Response extends AbstractResponse
     /**
      * Sets the HTTP status code associated with this response.
      * @param int $statusCode The HTTP status code associated with this response.
-     * @return Returns $this.
+     * @return Response Returns $this.
      */
     public function setStatusCode($statusCode)
     {

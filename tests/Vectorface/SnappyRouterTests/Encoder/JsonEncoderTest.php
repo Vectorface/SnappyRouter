@@ -14,7 +14,7 @@ class JsonEncoderTest extends AbstractEncoderTest
 {
     /**
      * Returns the encoder to be tested.
-     * @return EncoderInterface Returns an instance of an encoder.
+     * @return JsonEncoder Returns an instance of an encoder.
      */
     public function getEncoder()
     {

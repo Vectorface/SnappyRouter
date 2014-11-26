@@ -72,7 +72,7 @@ abstract class AbstractAuthenticationPlugin extends AbstractPlugin
     /**
      * Extract credentials from the request.
      *
-     * @return string[] An array of credentials; A username and password pair, or false if credentials aren't available
+     * @return mixed An array of credentials; A username and password pair, or false if credentials aren't available
      */
     abstract public function getCredentials();
 }

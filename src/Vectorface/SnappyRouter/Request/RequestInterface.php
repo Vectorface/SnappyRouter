@@ -11,7 +11,7 @@ interface RequestInterface
 {
     /**
      * Returns the controller to be used in the request.
-     * @return AbstractController Returns the controller to be used in the request.
+     * @return string Returns the controller DI key to be used in the request.
      */
     public function getController();
 

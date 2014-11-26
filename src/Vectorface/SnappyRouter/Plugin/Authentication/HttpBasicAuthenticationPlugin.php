@@ -51,7 +51,7 @@ class HttpBasicAuthenticationPlugin extends AbstractAuthenticationPlugin
     /**
      * Extract credentials from the request, PHP's PHP_AUTH_(USER|PW) server variables in this case.
      *
-     * @return string[] An array of credentials; A username and password pair, or false if credentials aren't available
+     * @return mixed An array of credentials; A username and password pair, or false if credentials aren't available
      */
     public function getCredentials()
     {

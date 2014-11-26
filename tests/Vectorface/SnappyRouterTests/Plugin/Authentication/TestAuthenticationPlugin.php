@@ -22,7 +22,7 @@ class TestAuthenticationPlugin extends AbstractAuthenticationPlugin
     /**
      * Extract credentials from the "request"... Or the hard-coded test values above.
      *
-     * @return string[] An array of credentials; A username and password pair, or false if credentials aren't available
+     * @return mixed An array of credentials; A username and password pair, or false if credentials aren't available
      */
     public function getCredentials()
     {

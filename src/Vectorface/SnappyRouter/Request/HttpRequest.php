@@ -91,7 +91,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      * @param string $param The GET data parameter.
      * @param mixed $defaultValue The default value to use when the key is not present.
      * @param mixed $filters The array of filters (or single filter) to apply to the data.
-     * @return Returns the data from the GET parameter after being filtered (or
+     * @return mixed Returns the data from the GET parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
     public function getQuery($param, $defaultValue = null, $filters = array())
@@ -120,7 +120,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      * @param string $param The POST data parameter.
      * @param mixed $defaultValue The default value to use when the key is not present.
      * @param mixed $filters The array of filters (or single filter) to apply to the data.
-     * @return Returns the data from the POST parameter after being filtered (or
+     * @return mixed Returns the data from the POST parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
     public function getPost($param, $defaultValue = null, $filters = array())
@@ -164,7 +164,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      * @param mixed $defaultValue The default value to use if the key is not
      *        found in the array.
      * @param mixed $filters The array of input filters to apply (or single filter).
-     * @return Returns the value filtered (or the default value filtered).
+     * @return mixed Returns the value filtered (or the default value filtered).
      */
     private function fetchInputValue($array, $param, $defaultValue, $filters)
     {
