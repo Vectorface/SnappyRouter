@@ -14,7 +14,7 @@ class JsonEncoderTest extends AbstractEncoderTest
 {
     /**
      * Returns the encoder to be tested.
-     * @return AbstractEncoder Returns an instance of an encoder.
+     * @return \Vectorface\SnappyRouter\Encoder\AbstractEncoder Returns an instance of an encoder.
      */
     public function getEncoder()
     {
