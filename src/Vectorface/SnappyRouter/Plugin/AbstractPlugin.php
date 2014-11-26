@@ -73,7 +73,7 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
     /**
      * Returns a sortable number for sorting plugins by execution priority. A lower number indicates
      * higher priority.
-     * @return The execution priority (as a number).
+     * @return integer The execution priority (as a number).
      */
     public function getExecutionOrder()
     {
@@ -84,7 +84,7 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
      * Sets the controller/action whitelist of this particular plugin. Note that
      * setting a whitelist will remove any previously set blacklists.
      * @param array $whitelist The controller/action whitelist.
-     * @return Returns $this.
+     * @return AbstractPlugin Returns $this.
      */
     public function setWhitelist($whitelist)
     {
@@ -96,7 +96,7 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
      * Sets the controller/action blacklist of this particular plugin. Note that
      * setting a blacklist will remove any previously set whitelists.
      * @param array $blacklist The controller/action blacklist.
-     * @return Returns $this.
+     * @return AbstractPlugin Returns $this.
      */
     public function setBlacklist($blacklist)
     {
@@ -146,7 +146,7 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
      * @param string $key The DI key.
      * @param boolean $useCache (optional) An optional indicating whether we
      *        should use the cached version of the element (true by default).
-     * @return Returns the DI element mapped to that key.
+     * @return mixed Returns the DI element mapped to that key.
      */
     public function get($key, $useCache = true)
     {

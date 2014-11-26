@@ -49,7 +49,7 @@ class AbstractTask implements DiProviderInterface, TaskInterface
      * @param string $key The DI key.
      * @param boolean $useCache (optional) An optional indicating whether we
      *        should use the cached version of the element (true by default).
-     * @return Returns the DI element mapped to that key.
+     * @return mixed Returns the DI element mapped to that key.
      */
     public function get($key, $useCache = true)
     {
