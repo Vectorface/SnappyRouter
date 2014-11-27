@@ -3,7 +3,7 @@
 namespace Vectorface\SnappyRouter\Handler;
 
 use \Exception;
-use VectorFace\SnappyRouter\Config\Config;
+use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Di\DiProviderInterface;
 use Vectorface\SnappyRouter\Di\ServiceProvider;
