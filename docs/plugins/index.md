@@ -6,6 +6,31 @@ code before the router hands off control and after the route has finished.
 Note that to interrupt the standard route, the plugin method *must* throw an
 exception. The return value of the plugin methods are not used.
 
+## Enabling Plugins
+
+Plugins are specified in the configuration under options for each handler.
+Plugins can be specified as an arbitrary key mapping to the name of the
+class or as an array with fields for the file and class.
+
+```php
+...
+    Config::KEY_HANDLERS => array(
+        'MyHandler' => array(
+            Config::KEY_CLASS => 'Vendor\\MyNamespace\\Handler\\MyCustomHandler',
+            Config::KEY_OPTIONS => array(
+                Config::KEY_PLUGINS => array(
+                    'RouterHeaderPlugin' => 'Vectorface\\SnappyRouter\\Plugin\\HttpHeader\\RouterHeaderPlugin',
+                    'MyCustomPlugin' => array(
+                        Config::KEY_CLASS => '\MyCustomPlugin',
+                        Config::KEY_FILE  => '/home/user/project/plugins/MyCustomPlugin.php'
+                    )
+                )
+            )
+        )
+    )
+...
+```
+
 ## Writing your own Plugin
 
 Plugins are very easy to implement, simply extend the class
