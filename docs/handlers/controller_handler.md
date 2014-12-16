@@ -1,8 +1,8 @@
 # Controller Handler
 
 The controller handler provides the "C" part of the MVC application paradigm.
-Controller actions become the entry point to your application. The router
-provides the environment information through the parent controller class.
+Controller actions are the entry point to your application. The router
+provides the environment information through the controller class.
 
 Controllers must follow the naming convention `"${NAME}Controller"` and actions
 must follow the naming convention `"${NAME}Action". Actions can optionally
@@ -320,7 +320,11 @@ controller action and the view. Manual view rendering is also made easy.
 ### Convention-based Twig Integration
 
 For the convention-based method, simply provide a Twig `view` folder in the
-view configuration.
+view configuration. Any options specified in the view will be handed off to
+the `Twig_Environment` so you can also specify additional environment
+options such as `cache`, `debug`, `auto_reload`, etc. See the
+[Twig documentation](http://twig.sensiolabs.org/doc/api.html#environment-options)
+for more details.
 
 ```php
 <?php

@@ -1,22 +1,22 @@
 # Getting Started
 
-In this tutorial, we will build a new application from scratch using the
-SnappyRouter framework.
+In this tutorial, we will build a new application from scratch using
+SnappyRouter.
 
-The full tutorial application can be found here.
+The full tutorial application can be found
+[here](https://github.com/Vectorface/SnappyTutorial).
 
 ## Creating the Project Structure
 
-Start by creating the project folder and recommended subfolders.
+We begin by creating the project folder and recommended subfolders.
 
 ```shell
 $> mkdir tutorial tutorial/app tutorial/public
-$> mkdir tutorial/app/Controllers tutorial/app/Views tutorial/app/Models
-$> mkdir tutorial/public/css tutorial/public/js tutorial/public/images
+$> mkdir tutorial/app/Controllers tutorial/app/Views tutorial/app/Views/index tutorial/app/Models
 $> cd tutorial
 ```
 
-The folder structure should look like:
+The folder structure should look like this:
 
 ```
 tutorial/
@@ -24,13 +24,11 @@ tutorial/
         Controllers/
         Models/
         Views/
+            index/
     public/
-        css/
-        images/
-        js/
 ```
 
-## .htaccess Redirects, Composer and index.php
+## Redirects, Composer and index.php
 
 We will use .htaccess files to redirect all incoming requests to a single entry
 point in our application (`public/index.php`).
@@ -57,7 +55,7 @@ Create the following files:
 ```
 
 We will also make use of Composer to provide dependencies and to autoload our
-application classes. If you do not have Composer installed, following the
+application classes. If you do not have Composer installed, follow the
 documentation at [getcomposer.org](https://getcomposer.org/doc/00-intro.md).
 
 Create the file `tutorial/composer.json` with the following contents:
@@ -122,6 +120,10 @@ $configArray = require_once __DIR__.'/../app/config.php';
 $config = new Config($configArray);
 ...
 ```
+*N.B.* Any file placed in the public folder will be directly accessible through
+the web browser. This folder should be used for any web assets (javascript, images,
+css, fonts) or direct PHP scripts you wish to expose. Any script exposed through
+the public folder will *not* be run through SnappyRouter.
 
 ## Setting up the DI Container
 
@@ -129,7 +131,7 @@ Dependency injection (DI) is a powerful tool for injecting services and
 dependencies across your application at runtime. Some common examples include
 the database adapter, cache adapters, mail senders, etc.
 
-In the configuration we specified a class to use for DI so create the file
+For this tutorial, we specify a class to use for DI. Create the file
 `app/Models/TutorialDi.php` with the following contents:
 
 ```
@@ -147,7 +149,7 @@ class TutorialDi extends Di
         parent::__construct($this->getDiArray());
     }
 
-    private function getDiArray()
+    protected function getDiArray()
     {
         return array(
             'projectTitle' => function(Di $di) {
@@ -167,10 +169,12 @@ It is good practice to always include your own base controller on top of
 `Vectorface\SnappyRouter\Controller\AbstractController` to provide common logic
 across all your controllers.
 
-The base controller:
+The `BaseController` implements the `initialize` method which is invoked by
+SnappyRouter before any action is invoked. Note that we retrieve the
+`projectTitle` from the DI layer and hand it off to the view.
 
 ```php
-<?php
+<?php // app/Controllers/BaseController.php
 
 namespace Vectorface\SnappyTutorial\Controllers;
 
@@ -188,8 +192,7 @@ abstract class BaseController extends AbstractController
     }
 }
 ```
-We use the base controller to conveniently pass the `projectTitle` to all our
-views. And our `IndexController`:
+And the `IndexController`:
 
 ```php
 <?php // app/Controllers/IndexController.php

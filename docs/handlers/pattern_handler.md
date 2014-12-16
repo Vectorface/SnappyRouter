@@ -2,7 +2,7 @@
 
 Direct pattern matching in SnappyRouter is supported by the pattern match
 handler. Similar to many other popular routers, the routing configuration is
-specified as a list of regular epxression patterns mapping to callback
+specified as a list of regular expression patterns mapping to callback
 functions.
 
 An example configuration:
@@ -43,7 +43,7 @@ echo $router->handleRoute();
 
 Routes are listed as arrays using regular expressions with named parameters. For
 documentation on the individual patterns see the
-(FastRoute library)[https://github.com/nikic/FastRoute]. The routes must be
+[FastRoute library](https://github.com/nikic/FastRoute). The routes must be
 specified in the options of the handler.
 
 The patterns should be listed as the keys to the array and must map to a

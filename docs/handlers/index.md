@@ -1,24 +1,24 @@
 # Handlers
 
-ServiceRouter uses a number of different route handlers to serve web and CLI
+SnappyRouter uses a number of different route handlers to serve web and CLI
 requests. Handlers are a core component in the router and are the starting point
 for customizing the router for your own application.
 
 ## What is a Handler?
 
 The router makes very few assumptions about the executing environment (command
-line, web server, etc). To handle each environment differently, the router
-passes off control to a handler. The handler is responsible for most of the
-routing logic.
+line, web server, folder structure, etc). To handle each environment
+differently, the router passes off control to a handler. The handler is
+responsible for most of the routing logic.
 
 ## Built-in Handlers
 
-ServiceRouter provides a number of built in routing handlers.
+SnappyRouter provides a number of built in routing handlers.
 
 ### Controller Handler
 
 The controller handler provides the "VC" part of MVC. The router assumes your
-web requests are searching for a pattern such as
+web requests match a pattern such as
 `/prefix/controller/action/param1/param2` and will attempt to find the
 appropriate controller and action to invoke. Furthermore, the Twig view engine
 can be initialized to provide an easy to use controller-view binding.
@@ -58,9 +58,9 @@ This handler provides a command line entry point for tasks.
 
 ## Writing your own Handler
 
-Every application has unique conventions and workflows. ServiceRouter handlers
-are very easy to extend and build your own to handle any custom routing your
-application may need.
+Every application has unique conventions and workflows. SnappyRouter handlers
+are easy to extend and building you can write your own handler for any custom
+routing your application may need.
 
 To begin, add a class that extends one of the abstract handler classes. For a
 web request handler, it is recommended to extend

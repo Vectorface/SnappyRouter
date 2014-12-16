@@ -4,10 +4,10 @@ The CLI (command line interface) task handler allows for execution of PHP in the
 standard shell instead of through a web server like Apache. Command line scripts
 are structured as tasks, which are similar to controllers (task/action pattern).
 
-Tasks must follow the naming convention `"${NAME}Task"`. Actions must follow the
-naming convention `"${NAME}Action"`. Actions can (optionally) take an array as
-an argument which will be populated with any additional command line options
-passed to the script.
+Tasks must follow the naming convention `"${NAME}Task"`. Actions do not require
+any naming convention. Actions can (optionally) take an array as an argument
+which will be populated with any additional command line options passed to the
+script.
 
 An example task:
 
@@ -20,7 +20,7 @@ use Vectorface\SnappyRouter\Task\AbstractTask;
 
 class DatabaseTask extends AbstractTask
 {
-    public function cleanupAction($cliParams)
+    public function cleanup($cliParams)
     {
         // perform some database cleanup here
     }

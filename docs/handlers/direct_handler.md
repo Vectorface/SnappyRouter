@@ -59,8 +59,8 @@ echo $router->handleRoute();
 
 Many application environments use virtual hosts, path aliases, symbolic
 links, etc. The URL to a particular script may not always be obvious and
-consistent across production, test environments, and local development
-environments. For this reason, the `DirectScriptHandler::KEY_PATH_MAP` config
+consistent across production, test, and local development environments.
+For this reason, the `DirectScriptHandler::KEY_PATH_MAP` config
 option supports multiple path prefixes which the handler will try each one
 iteratively (in order) until it finds a matching script.
 
