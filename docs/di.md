@@ -109,4 +109,33 @@ $di->set('database', function ($di) {
 
 echo $router->handleRoute();
 ```
+## Using the Built-in DI Layer
 
+Many of the classes provided by SnappyRouter also provide direct access to the
+DI layer for convenience. The interface
+`Vectorface\SnappyRouter\Di\DiProviderInterface` provides the two key methods
+`get` and `set`. This interface is implemented by popular classes such as
+`AbstractController`, `AbstractTask`, `AbstractPlugin`, etc.
+
+Here is an example with a custom controller that has access to the DI layer
+by simply extending `AbstractController`.
+
+```php
+<?php
+
+namespace Vendor\MyNamespace\Controllers;
+
+use Vectorface\SnappyRouter\Controller\AbstractController;
+
+class MyCustomController extends AbstractController
+{
+    public function myAction()
+    {
+        // set this method as the last one called in the DI
+        $this->set('lastMethodCalled', __METHOD__);
+
+        $database = $this->get('database'); // retrieve the database from the DI layer
+        // do something with $database
+    }
+}
+```
