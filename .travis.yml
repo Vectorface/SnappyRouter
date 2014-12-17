@@ -1,4 +1,6 @@
 language: php
+sudo: false
+cache: bundler
 
 php:
   - 5.6
