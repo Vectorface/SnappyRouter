@@ -17,4 +17,4 @@ SnappyRouter makes it easy to write your own routing handler for any imaginable
 custom routing scheme. It is designed to work with your existing "seasoned"
 codebase to provide a common entry point for your code base.
 
-For more information, view the detailed [documentation](https://readthedocs.org/projects/snappyrouter/).
+For more information, view the detailed [documentation](http://snappyrouter.readthedocs.org/en/latest/).
