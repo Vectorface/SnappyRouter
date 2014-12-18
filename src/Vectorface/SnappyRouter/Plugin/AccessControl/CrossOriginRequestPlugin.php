@@ -124,6 +124,10 @@ class CrossOriginRequestPlugin extends AbstractControllerPlugin
         // ensure we have a whitelist and it is an array
         $whitelist = array();
         if (isset($this->options[self::CONFIG_SERVICE_WHITELIST])) {
+            if (is_string($this->options[self::CONFIG_SERVICE_WHITELIST]) &&
+                self::CONFIG_ALL_METHODS === $this->options[self::CONFIG_SERVICE_WHITELIST]) {
+                return true;
+            }
             $whitelist = (array)$this->options[self::CONFIG_SERVICE_WHITELIST];
         }
 

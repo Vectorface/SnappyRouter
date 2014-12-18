@@ -152,4 +152,30 @@ class CrossOriginRequestPluginTest extends PHPUnit_Framework_TestCase
         ));
         $plugin->afterControllerSelected($handler, $request, $controller, $action);
     }
+
+    /**
+     * Tests that the whitelist can be the string 'all' instead of an array
+     * allowing access to any service.
+     */
+    public function testWhitelistingAllActions()
+    {
+
+        // make it appear that we are generating a cross origin request
+        $_SERVER['HTTP_ORIGIN'] = 'www.example.com';
+        // some dummy variables that are needed by the plugin
+        $handler = new ControllerHandler(array());
+        $controller = new TestDummyController();
+        $action = 'testAction';
+        $request = new HttpRequest('TestDummyController', $action, 'GET');
+
+        $plugin = new CrossOriginRequestPlugin(array(
+            'whitelist' => 'all'
+        ));
+        try {
+            $plugin->afterControllerSelected($handler, $request, $controller, $action);
+            $this->assertTrue(true);
+        } catch (AccessDeniedException $e) {
+            $this->fail('Cross origin plugin should not have denied access.');
+        }
+    }
 }
