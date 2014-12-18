@@ -119,7 +119,7 @@ class CrossOriginRequestPlugin extends AbstractControllerPlugin
      * @return Returns true if the service/method pair is in the whitelist and
      *         false otherwise.
      */
-    private function isServiceEnabledForCrossOrigin($service, $method)
+    protected function isServiceEnabledForCrossOrigin($service, $method)
     {
         // ensure we have a whitelist and it is an array
         $whitelist = array();
@@ -151,7 +151,7 @@ class CrossOriginRequestPlugin extends AbstractControllerPlugin
      * the Origin HTTP header exist in the request) and false otherwise.
      * @return True if the request is cross origin and false otherwise.
      */
-    private function isRequestCrossOrigin()
+    protected function isRequestCrossOrigin()
     {
         if (empty($_SERVER[self::HEADER_CLIENT_ORIGIN])) {
             return false;
