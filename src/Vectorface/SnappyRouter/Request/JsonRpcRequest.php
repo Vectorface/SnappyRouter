@@ -23,10 +23,11 @@ class JsonRpcRequest extends HttpRequest
      * Constructor for a request.
      *
      * @param string $controller The controller being requested.
-     * @param string $action The action being invoked.
+     * @param object $payload The action being invoked.
      */
     public function __construct($controller, $payload)
     {
+        /* method is required. id, params, and jsonrpc are optional */
         if (empty($payload->method)) {
             throw new Exception("The JSON sent is not a valid Request object.", JsonRpcHandler::ERR_INVALID_REQUEST);
         }

@@ -29,7 +29,7 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * An overview of how to use the RestHandler class.
+     * An overview of how to use the JsonRpcHandler class.
      * @test
      */
     public function synopsis()

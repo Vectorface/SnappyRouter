@@ -12,7 +12,7 @@ use Vectorface\SnappyRouter\Request\JsonRpcRequest;
 class JsonRpcRequestTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * An overview of how to use the RPCRequest class.
+     * An overview of how to use the JsonRpcRequest class.
      * @test
      */
     public function synopsis()

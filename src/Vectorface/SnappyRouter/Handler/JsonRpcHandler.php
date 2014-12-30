@@ -6,7 +6,6 @@ use \stdClass;
 use \Exception;
 use \EngineException;
 use Vectorface\SnappyRouter\Encoder\JsonEncoder;
-use Vectorface\SnappyRouter\Exception\RouterExceptionInterface;
 use Vectorface\SnappyRouter\Handler\AbstractRequestHandler;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 use Vectorface\SnappyRouter\Request\JsonRpcRequest;
@@ -17,14 +16,6 @@ use Vectorface\SnappyRouter\Response\JsonRpcResponse;
  * Handle JSON-RPC 1/2 requests
  *
  * @copyright Copyright (c) 2014, VectorFace, Inc.
- *
- * Notes:
- *
- * On Mapping of URIs to services:
- *
- * The tailing end of a URI is mapped to a service, so:
- *  - A URI like /foo/bar/baz will match service key is bar/baz
- *  - A URI like /foo/bar/baz will not match a service key foo/bar, because the tailing element is missing.
  */
 class JsonRpcHandler extends AbstractRequestHandler
 {
@@ -33,6 +24,9 @@ class JsonRpcHandler extends AbstractRequestHandler
      */
     const KEY_BASE_PATH = 'basePath';
 
+    /**
+     * Error constants from the JSON-RPC 2.0 spec.
+     */
     const ERR_PARSE_ERROR = -32700;
     const ERR_INVALID_REQUEST = -32600;
     const ERR_METHOD_NOT_FOUND = -32601;
@@ -67,7 +61,7 @@ class JsonRpcHandler extends AbstractRequestHandler
      * @param array $query The query parameters.
      * @param array $post The post data.
      * @param string $verb The HTTP verb used in the request.
-     * @return Returns true if this handler will handle the request and false otherwise.
+     * @return boolean Returns true if this handler will handle the request and false otherwise.
      */
     public function isAppropriate($path, $query, $post, $verb)
     {
@@ -176,6 +170,13 @@ class JsonRpcHandler extends AbstractRequestHandler
         return $this->getEncoder()->encode($response);
     }
 
+    /**
+     * Invokes a method on a service class, based on the JSON-RPC request.
+     *
+     * @param string $service The service class instance to handle the method call.
+     * @param JsonRpcRequest $request The procedure call request.
+     * @return JsonRpcResponse A response based on the result of the procedure call.
+     */
     private function invokeMethod($service, JsonRpcRequest $request)
     {
         $action = $request->getAction();
@@ -210,6 +211,7 @@ class JsonRpcHandler extends AbstractRequestHandler
 
     /**
      * Returns the active response encoder.
+     *
      * @return EncoderInterface Returns the response encoder.
      */
     public function getEncoder()
@@ -226,7 +228,7 @@ class JsonRpcHandler extends AbstractRequestHandler
      * handler's encoder.
      *
      * @param Exception $e The exception that was thrown.
-     * @return Returns a serializable value that will be encoded and returned
+     * @return mixed Returns a serializable value that will be encoded and returned
      *         to the client.
      */
     public function handleException(Exception $e)

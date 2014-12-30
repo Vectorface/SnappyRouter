@@ -7,17 +7,14 @@ use \Exception;
 use Vectorface\SnappyRouter\Request\JsonRpcRequest;
 
 /**
- * The response to be returned to the client.
+ * The response to be returned to the client for JSON-RPC requests.
  *
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  */
 class JsonRpcResponse extends Response
 {
-    private $responseObject; // the serializeable response object
-    private $statusCode; // the http response code
-
     /**
-     * Construct a Response from JSON-RPC style result, error, and requests.
+     * Construct a Response from JSON-RPC style result, error, and JSON-RPC request.
      *
      * @param mixed $result The result of the remote procedure call.
      * @param Exception $error The error, as an exception. (Requires code and message.)
@@ -25,7 +22,7 @@ class JsonRpcResponse extends Response
      */
     public function __construct($result, Exception $error = null, JsonRpcRequest $request = null)
     {
-        $response = new \stdClass();
+        $response = new stdClass();
 
         /* JSON-RPC spec: either error or result, never both. */
         if ($error) {
