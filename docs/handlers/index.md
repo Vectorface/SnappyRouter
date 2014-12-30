@@ -56,6 +56,14 @@ This handler provides a command line entry point for tasks.
 
 [More details](cli_handler.md)
 
+### JSON-RPC Handler
+
+This handler is for exposing class methods to remote clients via the JSON-RPC
+protocol, versions 1 and 2.
+
+[More details](jsonrpc_handler.md)
+
+
 ## Writing your own Handler
 
 Every application has unique conventions and workflows. SnappyRouter handlers
