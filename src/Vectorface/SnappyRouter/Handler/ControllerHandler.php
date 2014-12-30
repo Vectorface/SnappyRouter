@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouter\Handler;
 
 use \Exception;
+use FastRoute\Dispatcher;
 use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Encoder\EncoderInterface;
@@ -20,7 +21,7 @@ use Vectorface\SnappyRouter\Response\Response;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class ControllerHandler extends AbstractRequestHandler
+class ControllerHandler extends PatternMatchHandler
 {
     /** Options key for the base path */
     const KEY_BASE_PATH = 'basePath';
@@ -35,6 +36,12 @@ class ControllerHandler extends AbstractRequestHandler
     protected $encoder;
     /** The current route parameters */
     protected $routeParams;
+
+    /** Constants indicating the type of route */
+    const DEFAULT_INDEX = 0;
+    const CONTROLLER_FOUND = 1;
+    const METHOD_FOUND = 2;
+    const PARAMS_FOUND = 4;
 
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
@@ -52,43 +59,29 @@ class ControllerHandler extends AbstractRequestHandler
             $path = $this->extractPathFromBasePath($path, $options[self::KEY_BASE_PATH]);
         }
 
-        // remove the leading /
-        if (0 === strpos($path, '/')) {
-            $path = substr($path, 1);
+        // ensure the path has a leading slash
+        if (empty($path) || $path[0] !== '/') {
+            $path = '/'.$path;
         }
 
-        // split the path components to find the controller, action and route parameters
-        $pathComponents = array_filter(array_map('trim', explode('/', $path)), 'strlen');
-        $pathComponentsCount = count($pathComponents);
-
-        // default values if not present
-        $controllerClass = 'index';
-        $actionName = 'index';
-        $this->routeParams = array();
-        switch ($pathComponentsCount) {
-            case 0:
-                break;
-            case 2:
-                $actionName = $pathComponents[1];
-                // fall through is intentional
-            case 1:
-                $controllerClass = $pathComponents[0];
-                break;
-            default:
-                $controllerClass = $pathComponents[0];
-                $actionName = $pathComponents[1];
-                $this->routeParams = array_slice($pathComponents, 2);
-        }
-        $controllerClass = strtolower($controllerClass);
-        $actionName = strtolower($actionName);
-        $defaultView = sprintf(
-            '%s/%s.twig',
-            $controllerClass,
-            $actionName
+        // these are the possible routes that can match
+        $routes = array(
+            '/' => self::DEFAULT_INDEX,
+            '/{controller}' => self::CONTROLLER_FOUND,
+            '/{controller}/' => self::CONTROLLER_FOUND,
+            '/{controller}/{action}' => self::CONTROLLER_FOUND | self::METHOD_FOUND,
+            '/{controller}/{action}/' => self::CONTROLLER_FOUND | self::METHOD_FOUND,
+            '/{controller}/{action}/{params:.+}' => self::CONTROLLER_FOUND | self::METHOD_FOUND | self::PARAMS_FOUND
         );
-        $controllerClass = ucfirst($controllerClass).'Controller';
-        $actionName = $actionName.'Action';
+        $routeInfo = $this->getRouteInfo($routes, $verb, $path);
 
+        // extract the controller, action and route parameters if present
+        // and fall back to defaults when not present
+        $controller = ($routeInfo[1] & self::CONTROLLER_FOUND) ? strtolower($routeInfo[2]['controller']) : 'index';
+        $action = ($routeInfo[1] & self::METHOD_FOUND) ? strtolower($routeInfo[2]['action']) : 'index';
+        $this->routeParams = ($routeInfo[1] & self::PARAMS_FOUND) ? explode('/', $routeInfo[2]['params']) : array();
+
+        $controllerClass = ucfirst($controller).'Controller';
         // ensure we actually handle the controller for this application
         try {
             $this->getServiceProvider()->getServiceInstance($controllerClass);
@@ -96,15 +89,8 @@ class ControllerHandler extends AbstractRequestHandler
             return false;
         }
 
-        // configure the view encoder if they specify a view option
-        if (isset($options[self::KEY_VIEWS])) {
-            $this->encoder = new TwigViewEncoder(
-                $options[self::KEY_VIEWS],
-                $defaultView
-            );
-        } else {
-            $this->encoder = new NullEncoder();
-        }
+        $actionName = $action.'Action';
+        $this->configureViewEncoder($options, $controller, $action);
 
         // configure the request object
         $this->request = new HttpRequest(
@@ -243,5 +229,18 @@ class ControllerHandler extends AbstractRequestHandler
             array($this, $this->getRequest(), $controller, $action, $response)
         );
         return $response;
+    }
+
+    private function configureViewEncoder($options, $controller, $action)
+    {
+        // configure the view encoder if they specify a view option
+        if (isset($options[self::KEY_VIEWS])) {
+            $this->encoder = new TwigViewEncoder(
+                $options[self::KEY_VIEWS],
+                sprintf('%s/%s.twig', $controller, $action)
+            );
+        } else {
+            $this->encoder = new NullEncoder();
+        }
     }
 }

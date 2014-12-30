@@ -41,17 +41,25 @@ class PatternMatchHandler extends AbstractRequestHandler
     public function isAppropriate($path, $query, $post, $verb)
     {
         $options = $this->getOptions();
-        $dispatcher = $this->getDispatcher($options['routes']);
-        $routeInfo = $dispatcher->dispatch(strtoupper($verb), $path);
-        switch ($routeInfo[0]) {
-            case Dispatcher::FOUND:
-                break;
-            default:
-                return false;
+        $routeInfo = $this->getRouteInfo($options['routes'], $verb, $path);
+        if (Dispatcher::FOUND !== $routeInfo[0]) {
+            return false;
         }
         $this->callback = $routeInfo[1];
         $this->routeParams = isset($routeInfo[2]) ? $routeInfo[2] : array();
         return true;
+    }
+
+    /**
+     * Returns the array of route info from the routing library.
+     * @param array $routes The array of route patterns.
+     * @param string $verb The HTTP verb used in the request.
+     * @param string $path The path to match against the patterns.
+     */
+    protected function getRouteInfo($routes, $verb, $path)
+    {
+        $dispatcher = $this->getDispatcher($routes);
+        return $dispatcher->dispatch(strtoupper($verb), $path);
     }
 
     /**
