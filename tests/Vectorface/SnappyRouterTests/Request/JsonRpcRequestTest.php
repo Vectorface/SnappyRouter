@@ -43,7 +43,7 @@ class JsonRpcRequestTest extends \PHPUnit_Framework_TestCase
 
         /* Catches invalid request format. */
         try {
-            $request = new JsonRpcRequest('MyService', (object)array(
+            new JsonRpcRequest('MyService', (object)array(
                 'jsonrpc' => '2.0',
                 'method' => null
             ));

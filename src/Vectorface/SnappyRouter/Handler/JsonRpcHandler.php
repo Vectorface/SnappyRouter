@@ -55,6 +55,13 @@ class JsonRpcHandler extends AbstractRequestHandler
     private $request;
 
     /**
+     * The encoder instance to be used to encode responses.
+     *
+     * @var Vectorface\SnappyRouter\Encoder\EncoderInterface
+     */
+    private $encoder;
+
+    /**
      * Returns true if the handler determines it should handle this request and false otherwise.
      *
      * @param string $path The URL path for the request.
@@ -99,8 +106,8 @@ class JsonRpcHandler extends AbstractRequestHandler
         }
 
         /* Checks pass. Setup the request and tell the router that we'll handle this. */
-        $this->payload = $post; //
-        $this->request = new HttpRequest($service, null, $verb);
+        $this->payload = $post;
+        $this->request = new HttpRequest($service, '', $verb);
         return true;
     }
 
