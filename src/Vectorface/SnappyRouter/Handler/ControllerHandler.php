@@ -3,13 +3,10 @@
 namespace Vectorface\SnappyRouter\Handler;
 
 use \Exception;
-use FastRoute\Dispatcher;
 use Vectorface\SnappyRouter\Controller\AbstractController;
-use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Encoder\EncoderInterface;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
 use Vectorface\SnappyRouter\Encoder\TwigViewEncoder;
-use Vectorface\SnappyRouter\Exception\HandlerException;
 use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
@@ -107,7 +104,7 @@ class ControllerHandler extends PatternMatchHandler
 
     /**
      * Performs the actual routing.
-     * @return mixed Returns the result of the route.
+     * @return string Returns the result of the route.
      */
     public function performRoute()
     {
@@ -122,7 +119,7 @@ class ControllerHandler extends PatternMatchHandler
     /**
      * Returns a request object extracted from the request details (path, query, etc). The method
      * isAppropriate() must have returned true, otherwise this method should return null.
-     * @return Returns a Request object or null if this handler is not appropriate.
+     * @return HttpRequest Returns a Request object or null if this handler is not appropriate.
      */
     public function getRequest()
     {
@@ -141,7 +138,7 @@ class ControllerHandler extends PatternMatchHandler
     /**
      * Sets the encoder to be used by this handler (overriding the default).
      * @param EncoderInterface $encoder The encoder to be used.
-     * @return Returns $this.
+     * @return ControllerHandler Returns $this.
      */
     public function setEncoder(EncoderInterface $encoder)
     {
@@ -231,6 +228,12 @@ class ControllerHandler extends PatternMatchHandler
         return $response;
     }
 
+    /**
+     * Configures the view encoder based on the current options.
+     * @param array $options The current options.
+     * @param string $controller The controller to use for the default view.
+     * @param string $action The action to use for the default view.
+     */
     private function configureViewEncoder($options, $controller, $action)
     {
         // configure the view encoder if they specify a view option
