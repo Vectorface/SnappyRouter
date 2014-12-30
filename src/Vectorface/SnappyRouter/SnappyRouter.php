@@ -165,7 +165,13 @@ class SnappyRouter
             }
         }
 
-        throw new ResourceNotFoundException($isCli ? 'No CLI handler registered.' : '');
+        $config = Di::getDefault()->get('config');
+        if ($isCli) {
+            $errorMessage = 'No CLI handler registered.';
+        } else {
+            $errorMessage = ($config->isDebug()) ? 'No handler responded to the request.' : '';
+        }
+        throw new ResourceNotFoundException($errorMessage);
     }
 
     /**
