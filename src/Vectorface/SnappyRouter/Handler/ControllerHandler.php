@@ -42,6 +42,16 @@ class ControllerHandler extends PatternMatchHandler
     const PARAMS_FOUND = 4;
     const CONTROLLER_ACTION_AND_PARAMS_FOUND = 7;
 
+    /** The valid routes the controller handler will match */
+    private static $routes = array(
+        '/' => self::DEFAULT_INDEX,
+        '/{controller}' => self::CONTROLLER_FOUND,
+        '/{controller}/' => self::CONTROLLER_FOUND,
+        '/{controller}/{action}' => self::CONTROLLER_AND_ACTION_FOUND,
+        '/{controller}/{action}/' => self::CONTROLLER_AND_ACTION_FOUND,
+        '/{controller}/{action}/{params:.+}' => self::CONTROLLER_ACTION_AND_PARAMS_FOUND
+    );
+
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
      * @param string $path The URL path for the request.
@@ -57,28 +67,17 @@ class ControllerHandler extends PatternMatchHandler
         if (isset($options[self::KEY_BASE_PATH])) {
             $path = $this->extractPathFromBasePath($path, $options[self::KEY_BASE_PATH]);
         }
-
         // ensure the path has a leading slash
         if (empty($path) || $path[0] !== '/') {
             $path = '/'.$path;
         }
-
-        // these are the possible routes that can match
-        $routes = array(
-            '/' => self::DEFAULT_INDEX,
-            '/{controller}' => self::CONTROLLER_FOUND,
-            '/{controller}/' => self::CONTROLLER_FOUND,
-            '/{controller}/{action}' => self::CONTROLLER_AND_ACTION_FOUND,
-            '/{controller}/{action}/' => self::CONTROLLER_AND_ACTION_FOUND,
-            '/{controller}/{action}/{params:.+}' => self::CONTROLLER_ACTION_AND_PARAMS_FOUND
-        );
-        $routeInfo = $this->getRouteInfo($routes, $verb, $path);
 
         // extract the controller, action and route parameters if present
         // and fall back to defaults when not present
         $controller = 'index';
         $action = 'index';
         $this->routeParams = array();
+        $routeInfo = $this->getRouteInfo(self::$routes, $verb, $path);
         if ($routeInfo[1] & self::CONTROLLER_FOUND) {
             $controller = strtolower($routeInfo[2]['controller']);
             if ($routeInfo[1] & self::ACTION_FOUND) {
@@ -96,7 +95,6 @@ class ControllerHandler extends PatternMatchHandler
         } catch (Exception $e) {
             return false;
         }
-
         $actionName = $action.'Action';
         $this->configureViewEncoder($options, $controller, $action);
 
