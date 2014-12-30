@@ -37,8 +37,10 @@ class ControllerHandler extends PatternMatchHandler
     /** Constants indicating the type of route */
     const DEFAULT_INDEX = 0;
     const CONTROLLER_FOUND = 1;
-    const METHOD_FOUND = 2;
+    const ACTION_FOUND = 2;
+    const CONTROLLER_AND_ACTION_FOUND = 3;
     const PARAMS_FOUND = 4;
+    const CONTROLLER_ACTION_AND_PARAMS_FOUND = 7;
 
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
@@ -66,17 +68,26 @@ class ControllerHandler extends PatternMatchHandler
             '/' => self::DEFAULT_INDEX,
             '/{controller}' => self::CONTROLLER_FOUND,
             '/{controller}/' => self::CONTROLLER_FOUND,
-            '/{controller}/{action}' => self::CONTROLLER_FOUND | self::METHOD_FOUND,
-            '/{controller}/{action}/' => self::CONTROLLER_FOUND | self::METHOD_FOUND,
-            '/{controller}/{action}/{params:.+}' => self::CONTROLLER_FOUND | self::METHOD_FOUND | self::PARAMS_FOUND
+            '/{controller}/{action}' => self::CONTROLLER_AND_ACTION_FOUND,
+            '/{controller}/{action}/' => self::CONTROLLER_AND_ACTION_FOUND,
+            '/{controller}/{action}/{params:.+}' => self::CONTROLLER_ACTION_AND_PARAMS_FOUND
         );
         $routeInfo = $this->getRouteInfo($routes, $verb, $path);
 
         // extract the controller, action and route parameters if present
         // and fall back to defaults when not present
-        $controller = ($routeInfo[1] & self::CONTROLLER_FOUND) ? strtolower($routeInfo[2]['controller']) : 'index';
-        $action = ($routeInfo[1] & self::METHOD_FOUND) ? strtolower($routeInfo[2]['action']) : 'index';
-        $this->routeParams = ($routeInfo[1] & self::PARAMS_FOUND) ? explode('/', $routeInfo[2]['params']) : array();
+        $controller = 'index';
+        $action = 'index';
+        $this->routeParams = array();
+        if ($routeInfo[1] & self::CONTROLLER_FOUND) {
+            $controller = strtolower($routeInfo[2]['controller']);
+            if ($routeInfo[1] & self::ACTION_FOUND) {
+                $action = strtolower($routeInfo[2]['action']);
+                if ($routeInfo[1] & self::PARAMS_FOUND) {
+                    $this->routeParams = explode('/', $routeInfo[2]['params']);
+                }
+            }
+        }
 
         $controllerClass = ucfirst($controller).'Controller';
         // ensure we actually handle the controller for this application
