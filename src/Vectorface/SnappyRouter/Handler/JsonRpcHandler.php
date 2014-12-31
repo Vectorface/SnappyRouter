@@ -50,14 +50,14 @@ class JsonRpcHandler extends AbstractRequestHandler
     /**
      * A top-level HTTP request.
      *
-     * @var Vectorface\SnappyRouter\Request\HttpRequest
+     * @var \Vectorface\SnappyRouter\Request\HttpRequest
      */
     private $request;
 
     /**
      * The encoder instance to be used to encode responses.
      *
-     * @var Vectorface\SnappyRouter\Encoder\EncoderInterface
+     * @var \Vectorface\SnappyRouter\Encoder\EncoderInterface|\Vectorface\SnappyRouter\Encoder\JsonEncoder
      */
     private $encoder;
 

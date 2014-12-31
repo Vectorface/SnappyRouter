@@ -24,8 +24,6 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
         $prop = $refCls->getProperty('stdin');
         $prop->setAccessible(true);
         $prop->setValue($handler, $tmpfile);
-
-        $this->tmpfile = $tmpfile;
     }
 
     /**
