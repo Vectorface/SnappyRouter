@@ -30,6 +30,9 @@ class PatternMatchHandler extends AbstractRequestHandler
         'OPTIONS'
     );
 
+    /** The route information from FastRoute */
+    private $routeInfo;
+
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
      * @param string $path The URL path for the request.
@@ -40,18 +43,40 @@ class PatternMatchHandler extends AbstractRequestHandler
      */
     public function isAppropriate($path, $query, $post, $verb)
     {
-        $options = $this->getOptions();
-        $dispatcher = $this->getDispatcher($options['routes']);
-        $routeInfo = $dispatcher->dispatch(strtoupper($verb), $path);
-        switch ($routeInfo[0]) {
-            case Dispatcher::FOUND:
-                break;
-            default:
-                return false;
+        $routeInfo = $this->getRouteInfo($verb, $path);
+        if (Dispatcher::FOUND !== $routeInfo[0]) {
+            return false;
         }
         $this->callback = $routeInfo[1];
         $this->routeParams = isset($routeInfo[2]) ? $routeInfo[2] : array();
         return true;
+    }
+
+    /**
+     * Returns the array of route info from the routing library.
+     * @param string $verb The HTTP verb used in the request.
+     * @param string $path The path to match against the patterns.
+     * @param boolean $useCache (optional) An optional flag whether to use the
+     *        cached route info or not. Defaults to false.
+     * @return array Returns the route info as an array.
+     */
+    protected function getRouteInfo($verb, $path, $useCache = false)
+    {
+        if (!$useCache || !isset($this->routeInfo)) {
+            $dispatcher = $this->getDispatcher($this->getRoutes());
+            $this->routeInfo = $dispatcher->dispatch(strtoupper($verb), $path);
+        }
+        return $this->routeInfo;
+    }
+
+    /**
+     * Returns the array of routes.
+     * @return array The array of routes.
+     */
+    protected function getRoutes()
+    {
+        $options = $this->getOptions();
+        return isset($options[self::KEY_ROUTES]) ? $options[self::KEY_ROUTES] : array();
     }
 
     /**

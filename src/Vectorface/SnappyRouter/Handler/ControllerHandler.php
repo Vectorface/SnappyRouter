@@ -3,12 +3,11 @@
 namespace Vectorface\SnappyRouter\Handler;
 
 use \Exception;
+use FastRoute\Dispatcher;
 use Vectorface\SnappyRouter\Controller\AbstractController;
-use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Encoder\EncoderInterface;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
 use Vectorface\SnappyRouter\Encoder\TwigViewEncoder;
-use Vectorface\SnappyRouter\Exception\HandlerException;
 use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
@@ -20,7 +19,7 @@ use Vectorface\SnappyRouter\Response\Response;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class ControllerHandler extends AbstractRequestHandler
+class ControllerHandler extends PatternMatchHandler
 {
     /** Options key for the base path */
     const KEY_BASE_PATH = 'basePath';
@@ -36,6 +35,14 @@ class ControllerHandler extends AbstractRequestHandler
     /** The current route parameters */
     protected $routeParams;
 
+    /** Constants indicating the type of route */
+    const MATCHES_NOTHING = 0;
+    const MATCHES_CONTROLLER = 1;
+    const MATCHES_ACTION = 2;
+    const MATCHES_CONTROLLER_AND_ACTION = 3;
+    const MATCHES_PARAMS = 4;
+    const MATCHES_CONTROLLER_ACTION_AND_PARAMS = 7;
+
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
      * @param string $path The URL path for the request.
@@ -48,63 +55,38 @@ class ControllerHandler extends AbstractRequestHandler
     {
         // remove the leading base path option if present
         $options = $this->getOptions();
-        if (isset($options[self::KEY_BASE_PATH])) {
-            $path = $this->extractPathFromBasePath($path, $options[self::KEY_BASE_PATH]);
-        }
+        $path = $this->extractPathFromBasePath($path, $options);
 
-        // remove the leading /
-        if (0 === strpos($path, '/')) {
-            $path = substr($path, 1);
-        }
-
-        // split the path components to find the controller, action and route parameters
-        $pathComponents = array_filter(array_map('trim', explode('/', $path)), 'strlen');
-        $pathComponentsCount = count($pathComponents);
-
-        // default values if not present
-        $controllerClass = 'index';
-        $actionName = 'index';
+        // extract the controller, action and route parameters if present
+        // and fall back to defaults when not present
+        $controller = 'index';
+        $action = 'index';
         $this->routeParams = array();
-        switch ($pathComponentsCount) {
-            case 0:
-                break;
-            case 2:
-                $actionName = $pathComponents[1];
-                // fall through is intentional
-            case 1:
-                $controllerClass = $pathComponents[0];
-                break;
-            default:
-                $controllerClass = $pathComponents[0];
-                $actionName = $pathComponents[1];
-                $this->routeParams = array_slice($pathComponents, 2);
+        $routeInfo = $this->getRouteInfo($verb, $path);
+        // ensure the path matches at least one of the routes
+        if (Dispatcher::FOUND !== $routeInfo[0]) {
+            return false;
         }
-        $controllerClass = strtolower($controllerClass);
-        $actionName = strtolower($actionName);
-        $defaultView = sprintf(
-            '%s/%s.twig',
-            $controllerClass,
-            $actionName
-        );
-        $controllerClass = ucfirst($controllerClass).'Controller';
-        $actionName = $actionName.'Action';
 
+        if ($routeInfo[1] & self::MATCHES_CONTROLLER) {
+            $controller = strtolower($routeInfo[2]['controller']);
+            if ($routeInfo[1] & self::MATCHES_ACTION) {
+                $action = strtolower($routeInfo[2]['action']);
+                if ($routeInfo[1] & self::MATCHES_PARAMS) {
+                    $this->routeParams = explode('/', $routeInfo[2]['params']);
+                }
+            }
+        }
+
+        $controllerClass = ucfirst($controller).'Controller';
         // ensure we actually handle the controller for this application
         try {
             $this->getServiceProvider()->getServiceInstance($controllerClass);
         } catch (Exception $e) {
             return false;
         }
-
-        // configure the view encoder if they specify a view option
-        if (isset($options[self::KEY_VIEWS])) {
-            $this->encoder = new TwigViewEncoder(
-                $options[self::KEY_VIEWS],
-                $defaultView
-            );
-        } else {
-            $this->encoder = new NullEncoder();
-        }
+        $actionName = $action.'Action';
+        $this->configureViewEncoder($options, $controller, $action);
 
         // configure the request object
         $this->request = new HttpRequest(
@@ -121,7 +103,7 @@ class ControllerHandler extends AbstractRequestHandler
 
     /**
      * Performs the actual routing.
-     * @return mixed Returns the result of the route.
+     * @return string Returns the result of the route.
      */
     public function performRoute()
     {
@@ -136,7 +118,7 @@ class ControllerHandler extends AbstractRequestHandler
     /**
      * Returns a request object extracted from the request details (path, query, etc). The method
      * isAppropriate() must have returned true, otherwise this method should return null.
-     * @return Returns a Request object or null if this handler is not appropriate.
+     * @return HttpRequest Returns a Request object or null if this handler is not appropriate.
      */
     public function getRequest()
     {
@@ -155,7 +137,7 @@ class ControllerHandler extends AbstractRequestHandler
     /**
      * Sets the encoder to be used by this handler (overriding the default).
      * @param EncoderInterface $encoder The encoder to be used.
-     * @return Returns $this.
+     * @return ControllerHandler Returns $this.
      */
     public function setEncoder(EncoderInterface $encoder)
     {
@@ -166,13 +148,22 @@ class ControllerHandler extends AbstractRequestHandler
     /**
      * Returns the new path with the base path extracted.
      * @param string $path The full path.
-     * @param string $basePath The base path to extract.
+     * @param array $options The array of options.
      * @return string Returns the new path with the base path removed.
      */
-    protected function extractPathFromBasePath($path, $basePath)
+    protected function extractPathFromBasePath($path, $options)
     {
-        $pos = strpos($path, $basePath);
-        return (false === $pos) ? $path : substr($path, $pos + strlen($basePath));
+        if (isset($options[self::KEY_BASE_PATH])) {
+            $pos = strpos($path, $options[self::KEY_BASE_PATH]);
+            if (false !== $pos) {
+                $path = substr($path, $pos + strlen($options[self::KEY_BASE_PATH]));
+            }
+        }
+        // ensure the path has a leading slash
+        if (empty($path) || $path[0] !== '/') {
+            $path = '/'.$path;
+        }
+        return $path;
     }
 
     /**
@@ -243,5 +234,40 @@ class ControllerHandler extends AbstractRequestHandler
             array($this, $this->getRequest(), $controller, $action, $response)
         );
         return $response;
+    }
+
+    /**
+     * Configures the view encoder based on the current options.
+     * @param array $options The current options.
+     * @param string $controller The controller to use for the default view.
+     * @param string $action The action to use for the default view.
+     */
+    private function configureViewEncoder($options, $controller, $action)
+    {
+        // configure the view encoder if they specify a view option
+        if (isset($options[self::KEY_VIEWS])) {
+            $this->encoder = new TwigViewEncoder(
+                $options[self::KEY_VIEWS],
+                sprintf('%s/%s.twig', $controller, $action)
+            );
+        } else {
+            $this->encoder = new NullEncoder();
+        }
+    }
+
+    /**
+     * Returns the array of routes.
+     * @return array The array of routes.
+     */
+    protected function getRoutes()
+    {
+        return array(
+            '/' => self::MATCHES_NOTHING,
+            '/{controller}' => self::MATCHES_CONTROLLER,
+            '/{controller}/' => self::MATCHES_CONTROLLER,
+            '/{controller}/{action}' => self::MATCHES_CONTROLLER_AND_ACTION,
+            '/{controller}/{action}/' => self::MATCHES_CONTROLLER_AND_ACTION,
+            '/{controller}/{action}/{params:.+}' => self::MATCHES_CONTROLLER_ACTION_AND_PARAMS
+        );
     }
 }
