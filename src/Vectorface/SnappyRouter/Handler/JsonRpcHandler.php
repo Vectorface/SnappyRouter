@@ -219,7 +219,7 @@ class JsonRpcHandler extends AbstractRequestHandler
     /**
      * Returns the active response encoder.
      *
-     * @return EncoderInterface Returns the response encoder.
+     * @return \Vectorface\SnappyRouter\Encoder\EncoderInterface Returns the response encoder.
      */
     public function getEncoder()
     {
