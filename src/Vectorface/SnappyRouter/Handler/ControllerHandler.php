@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouter\Handler;
 
 use \Exception;
+use FastRoute\Dispatcher;
 use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Encoder\EncoderInterface;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
@@ -35,22 +36,12 @@ class ControllerHandler extends PatternMatchHandler
     protected $routeParams;
 
     /** Constants indicating the type of route */
-    const DEFAULT_INDEX = 0;
-    const CONTROLLER_FOUND = 1;
-    const ACTION_FOUND = 2;
-    const CONTROLLER_AND_ACTION_FOUND = 3;
-    const PARAMS_FOUND = 4;
-    const CONTROLLER_ACTION_AND_PARAMS_FOUND = 7;
-
-    /** The valid routes the controller handler will match */
-    private static $routes = array(
-        '/' => self::DEFAULT_INDEX,
-        '/{controller}' => self::CONTROLLER_FOUND,
-        '/{controller}/' => self::CONTROLLER_FOUND,
-        '/{controller}/{action}' => self::CONTROLLER_AND_ACTION_FOUND,
-        '/{controller}/{action}/' => self::CONTROLLER_AND_ACTION_FOUND,
-        '/{controller}/{action}/{params:.+}' => self::CONTROLLER_ACTION_AND_PARAMS_FOUND
-    );
+    const MATCHES_NOTHING = 0;
+    const MATCHES_CONTROLLER = 1;
+    const MATCHES_ACTION = 2;
+    const MATCHES_CONTROLLER_AND_ACTION = 3;
+    const MATCHES_PARAMS = 4;
+    const MATCHES_CONTROLLER_ACTION_AND_PARAMS = 7;
 
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
@@ -64,25 +55,24 @@ class ControllerHandler extends PatternMatchHandler
     {
         // remove the leading base path option if present
         $options = $this->getOptions();
-        if (isset($options[self::KEY_BASE_PATH])) {
-            $path = $this->extractPathFromBasePath($path, $options[self::KEY_BASE_PATH]);
-        }
-        // ensure the path has a leading slash
-        if (empty($path) || $path[0] !== '/') {
-            $path = '/'.$path;
-        }
+        $path = $this->extractPathFromBasePath($path, $options);
 
         // extract the controller, action and route parameters if present
         // and fall back to defaults when not present
         $controller = 'index';
         $action = 'index';
         $this->routeParams = array();
-        $routeInfo = $this->getRouteInfo(self::$routes, $verb, $path);
-        if ($routeInfo[1] & self::CONTROLLER_FOUND) {
+        $routeInfo = $this->getRouteInfo($verb, $path);
+        // ensure the path matches at least one of the routes
+        if (Dispatcher::FOUND !== $routeInfo[0]) {
+            return false;
+        }
+
+        if ($routeInfo[1] & self::MATCHES_CONTROLLER) {
             $controller = strtolower($routeInfo[2]['controller']);
-            if ($routeInfo[1] & self::ACTION_FOUND) {
+            if ($routeInfo[1] & self::MATCHES_ACTION) {
                 $action = strtolower($routeInfo[2]['action']);
-                if ($routeInfo[1] & self::PARAMS_FOUND) {
+                if ($routeInfo[1] & self::MATCHES_PARAMS) {
                     $this->routeParams = explode('/', $routeInfo[2]['params']);
                 }
             }
@@ -158,13 +148,22 @@ class ControllerHandler extends PatternMatchHandler
     /**
      * Returns the new path with the base path extracted.
      * @param string $path The full path.
-     * @param string $basePath The base path to extract.
+     * @param array $options The array of options.
      * @return string Returns the new path with the base path removed.
      */
-    protected function extractPathFromBasePath($path, $basePath)
+    protected function extractPathFromBasePath($path, $options)
     {
-        $pos = strpos($path, $basePath);
-        return (false === $pos) ? $path : substr($path, $pos + strlen($basePath));
+        if (isset($options[self::KEY_BASE_PATH])) {
+            $pos = strpos($path, $options[self::KEY_BASE_PATH]);
+            if (false !== $pos) {
+                $path = substr($path, $pos + strlen($options[self::KEY_BASE_PATH]));
+            }
+        }
+        // ensure the path has a leading slash
+        if (empty($path) || $path[0] !== '/') {
+            $path = '/'.$path;
+        }
+        return $path;
     }
 
     /**
@@ -254,5 +253,21 @@ class ControllerHandler extends PatternMatchHandler
         } else {
             $this->encoder = new NullEncoder();
         }
+    }
+
+    /**
+     * Returns the array of routes.
+     * @return array The array of routes.
+     */
+    protected function getRoutes()
+    {
+        return array(
+            '/' => self::MATCHES_NOTHING,
+            '/{controller}' => self::MATCHES_CONTROLLER,
+            '/{controller}/' => self::MATCHES_CONTROLLER,
+            '/{controller}/{action}' => self::MATCHES_CONTROLLER_AND_ACTION,
+            '/{controller}/{action}/' => self::MATCHES_CONTROLLER_AND_ACTION,
+            '/{controller}/{action}/{params:.+}' => self::MATCHES_CONTROLLER_ACTION_AND_PARAMS
+        );
     }
 }

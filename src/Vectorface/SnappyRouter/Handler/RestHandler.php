@@ -17,6 +17,11 @@ class RestHandler extends ControllerHandler
     // the array of route parameters
     private $apiVersion;
 
+    /** Constants indicating the type of route */
+    const MATCHES_ID = 8;
+    const MATCHES_CONTROLLER_AND_ID = 9;
+    const MATCHES_CONTROLLER_ACTION_AND_ID = 11;
+
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
      * @param string $path The URL path for the request.
@@ -27,55 +32,18 @@ class RestHandler extends ControllerHandler
      */
     public function isAppropriate($path, $query, $post, $verb)
     {
-        // remove the leading base path option if present
-        if (isset($this->options[self::KEY_BASE_PATH])) {
-            $path = $this->extractPathFromBasePath($path, $this->options[self::KEY_BASE_PATH]);
-            unset($this->options[self::KEY_BASE_PATH]);
+        // use the parent method to match the routes
+        if (false === parent::isAppropriate($path, $query, $post, $verb)) {
+            return false;
         }
 
-        // extract the full path as components
-        $pathComponents = array_filter(array_map('trim', explode('/', $path)), 'strlen');
-        $path = implode('/', $pathComponents);
-
-        $matches = array();
-        if (preg_match('/^v((\d)+(\.(\d+))?)\/([a-zA-z]+)\/((\d)+)\/([a-zA-Z]+)$/', $path, $matches)) {
-            // matches "/v{$version}/{$controller}/{$objectId}/${action}(/)"
-            $this->apiVersion = $matches[1];
-            return parent::isAppropriate(
-                implode('/', array($matches[5], $matches[8], intval($matches[6]))),
-                $query,
-                $post,
-                $verb
-            );
-        } elseif (preg_match('/^v((\d)+(\.(\d+))?)\/([a-zA-Z]+)\/((\d)+)$/', $path, $matches)) {
-            // matches "/v{$version}/{$controller}/{$objectId}(/)"
-            $this->apiVersion = $matches[1];
-            return parent::isAppropriate(
-                implode('/', array($matches[5], 'default', intval($matches[6]))),
-                $query,
-                $post,
-                $verb
-            );
-        } elseif (preg_match('/^v((\d)+(\.(\d+))?)\/([a-zA-Z]+)\/([a-zA-Z]+)$/', $path, $matches)) {
-            // matches "/v{$version}/{$controller}/{$action}(/)"
-            $this->apiVersion = $matches[1];
-            return parent::isAppropriate(
-                implode('/', array($matches[5], $matches[6])),
-                $query,
-                $post,
-                $verb
-            );
-        } elseif (preg_match('/^v((\d)+(\.(\d+))?)\/([a-zA-Z]+)$/', $path, $matches)) {
-            // matches "/v{$version}/{$controller}(/)"
-            $this->apiVersion = $matches[1];
-            return parent::isAppropriate(
-                implode('/', array($matches[5], 'default')),
-                $query,
-                $post,
-                $verb
-            );
+        // determine the route information from the path
+        $routeInfo = $this->getRouteInfo($verb, $path, true);
+        $this->apiVersion = $routeInfo[2]['version'];
+        if ($routeInfo[1] & self::MATCHES_ID) {
+            $this->routeParams = array(intval($routeInfo[2]['objectId']));
         }
-        return false;
+        return true;
     }
 
     /**
@@ -95,5 +63,25 @@ class RestHandler extends ControllerHandler
     public function getEncoder()
     {
         return new JsonEncoder();
+    }
+
+    /**
+     * Returns the array of routes.
+     * @return array The array of routes.
+     */
+    protected function getRoutes()
+    {
+        return array(
+            '/v{version}/{controller}' => self::MATCHES_CONTROLLER,
+            '/v{version}/{controller}/' => self::MATCHES_CONTROLLER,
+            '/v{version}/{controller}/{action:[a-zA-Z]+}' => self::MATCHES_CONTROLLER_AND_ACTION,
+            '/v{version}/{controller}/{action:[a-zA-Z]+}/' => self::MATCHES_CONTROLLER_AND_ACTION,
+            '/v{version}/{controller}/{objectId:[0-9]+}' => self::MATCHES_CONTROLLER_AND_ID,
+            '/v{version}/{controller}/{objectId:[0-9]+}/' => self::MATCHES_CONTROLLER_AND_ID,
+            '/v{version}/{controller}/{action:[a-zA-Z]+}/{objectId:[0-9]+}' => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            '/v{version}/{controller}/{action:[a-zA-Z]+}/{objectId:[0-9]+}/' => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            '/v{version}/{controller}/{objectId:[0-9]+}/{action:[a-zA-Z]+}' => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            '/v{version}/{controller}/{objectId:[0-9]+}/{action:[a-zA-Z]+}/' => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+        );
     }
 }
