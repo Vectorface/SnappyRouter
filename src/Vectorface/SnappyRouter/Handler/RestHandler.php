@@ -11,12 +11,6 @@ use Vectorface\SnappyRouter\Encoder\JsonEncoder;
  */
 class RestHandler extends ControllerHandler
 {
-    /** The route parameter key for the API version */
-    const KEY_API_VERSION = 'apiVersion';
-
-    // the array of route parameters
-    private $apiVersion;
-
     /** Constants indicating the type of route */
     const MATCHES_ID = 8;
     const MATCHES_CONTROLLER_AND_ID = 9;
@@ -39,21 +33,11 @@ class RestHandler extends ControllerHandler
 
         // determine the route information from the path
         $routeInfo = $this->getRouteInfo($verb, $path, true);
-        $this->apiVersion = $routeInfo[2]['version'];
+        $this->routeParams = array($routeInfo[2]['version']);
         if ($routeInfo[1] & self::MATCHES_ID) {
-            $this->routeParams = array(intval($routeInfo[2]['objectId']));
+            $this->routeParams[] = intval($routeInfo[2]['objectId']);
         }
         return true;
-    }
-
-    /**
-     * Performs the actual routing.
-     * @return mixed Returns the result of the route.
-     */
-    public function performRoute()
-    {
-        $this->routeParams[self::KEY_API_VERSION] = $this->apiVersion;
-        return parent::performRoute();
     }
 
     /**
