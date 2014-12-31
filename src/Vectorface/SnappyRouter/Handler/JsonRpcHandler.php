@@ -162,7 +162,7 @@ class JsonRpcHandler extends AbstractRequestHandler
 
             /* Stop here if this isn't a batch. There is only one response. */
             if (!$batch) {
-                 $response = $callResponse->getResponseObject();
+                $response = $callResponse->getResponseObject();
                 break;
             }
 
