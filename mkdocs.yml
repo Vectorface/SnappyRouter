@@ -7,6 +7,7 @@ pages:
 -   ['handlers/rest_handler.md', 'Handlers', 'Rest Handler']
 -   ['handlers/pattern_handler.md', 'Handlers', 'Pattern Match Handler']
 -   ['handlers/direct_handler.md', 'Handlers', 'Direct Script Handler']
+-   ['handlers/jsonrpc_handler.md', 'Handlers', 'JSON RPC Handler']
 -   ['handlers/cli_handler.md', 'Handlers', 'CLI Task Handler']
 -   ['plugins/index.md', 'Plugins', 'Plugins']
 -   ['di.md', 'Dependency Injection', 'Dependency Injection']

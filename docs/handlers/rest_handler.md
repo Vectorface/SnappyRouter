@@ -2,7 +2,7 @@
 
 The class `Vectorface\SnappyRouter\Handler\RestHandler` provides a simple
 "by convention" api routing handler that builds on top of the
-[controller handler](/handlers/controller_handler) by mapping specific route
+[controller handler](handlers/controller_handler) by mapping specific route
 patterns to controllers and actions.
 
 ## Rest Routing
@@ -20,8 +20,8 @@ The following route patterns are supported:
 Examples:
 
 ```
-/api/v1.2/users/1234/save/relationships
-/api/v1.2/users/1234/save
+/api/v1.2/users/1234/details
+/api/v1.2/users/details/1234
 /api/v1.2/users/search
 /api/v1.2/users/1234
 /api/v1.2/users
@@ -60,7 +60,7 @@ class MyRestHandler extends RestHandler
 
 ## Writing a Restful Controller
 
-Similar to the [controller handler](/handlers/controller_handler), the
+Similar to the [controller handler](handlers/controller_handler), the
 controller class should subclass
 `Vectorface\SnappyRouter\Controller\AbstractController`. A key difference
 between the REST handler and the controller handler is that the route
@@ -76,17 +76,18 @@ Example controller:
 
 namespace Vendor\MyNamespace\Controller;
 
+use \Exception;
 use Vectorface\SnappyRouter\Controller\AbstractController;
 
 class RestUsersController extends AbstractController
 {
     public function detailsAction($routeParams)
     {
-        $apiVersion = $routeParams[0];
-        if (count($routeParams) > 1) {
-            $userId = $routeParams[1];
+        $apiVersion = array_pop($routeParams);
+        if (empty($routeParams)) {
+            throw new Exception('Missing user ID');
         }
-        $user = ModelLayer::getUser($userId);
+        $user = ModelLayer::getUser(array_pop($routeParams));
         return $user->getDetails();
     }
 }
