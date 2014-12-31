@@ -77,20 +77,7 @@ class JsonRpcHandler extends AbstractRequestHandler
             return false;
         }
 
-        /* Ensure the path is in a standard form, removing empty elements. */
-        $path = implode('/', array_filter(array_map('trim', explode('/', $path)), 'strlen'));
-
-        /* If using the basePath option, strip the basePath. Otherwise, the path becomes the basename of the URI. */
-        if (isset($this->options[self::KEY_BASE_PATH])) {
-            $basePathPosition = strpos($path, $this->options[self::KEY_BASE_PATH]);
-            if (false !== $basePathPosition) {
-                $path = substr($path, $basePathPosition + strlen($this->options[self::KEY_BASE_PATH]));
-            }
-
-            $service = trim(dirname($path), "/") . '/' .  basename($path, '.php'); /* For example, x/y/z/FooService */
-        } else {
-            $service = basename($path, '.php'); /* For example: FooService, from /x/y/z/FooService.php */
-        }
+        $service = $this->getServiceFromPath($path);
 
         /* Check if we can get the service. */
         try {
@@ -109,6 +96,30 @@ class JsonRpcHandler extends AbstractRequestHandler
         $this->payload = $post;
         $this->request = new HttpRequest($service, '', $verb);
         return true;
+    }
+
+    /**
+     * Determine the service to load via the ServiceProvider based on path
+     *
+     * @param string $path The raw path (URI) used to determine the service.
+     * @return string The name of the service that we should attempt to load.
+     */
+    private function getServiceFromPath($path)
+    {
+        /* Ensure the path is in a standard form, removing empty elements. */
+        $path = implode('/', array_filter(array_map('trim', explode('/', $path)), 'strlen'));
+
+        /* If using the basePath option, strip the basePath. Otherwise, the path becomes the basename of the URI. */
+        if (isset($this->options[self::KEY_BASE_PATH])) {
+            $basePathPosition = strpos($path, $this->options[self::KEY_BASE_PATH]);
+            if (false !== $basePathPosition) {
+                $path = substr($path, $basePathPosition + strlen($this->options[self::KEY_BASE_PATH]));
+            }
+
+            return trim(dirname($path), "/") . '/' .  basename($path, '.php'); /* For example, x/y/z/FooService */
+        } else {
+            return basename($path, '.php'); /* For example: FooService, from /x/y/z/FooService.php */
+        }
     }
 
     /**
@@ -136,39 +147,28 @@ class JsonRpcHandler extends AbstractRequestHandler
             $this->getRequest()->getController()
         );
 
-        /* Possible JSON-RPC 2.0 batch */
-        if (is_array($this->payload)) {
-            $calls = $this->payload;
-            $batch = true;
-        } else {
-            $calls = array($this->payload);
+        /* To handle JSON-RPC 2.0 batches, always use an array of calls. */
+        $calls = $this->payload;
+        $batch = true;
+        if (!is_array($this->payload)) {
+            $calls = array($calls);
             $batch = false;
         }
 
         /* Loop through each call in the possible batch. */
         $response = array();
         foreach ($calls as $call) {
-            $callRequest = $callResponse = null;
-            try {
-                $callRequest = new JsonRpcRequest($service, $call);
-            } catch (Exception $e) {
-                $callResponse = new JsonRpcResponse(null, $e);
-            }
+            $callResponse = $this->invokeMethod($service, $call);
 
-            /* If the request was parsed without an exception. */
-            if (isset($callRequest) && !isset($callResponse)) {
-                $callResponse = $this->invokeMethod($service, $callRequest);
-            }
-
-
-            if ($batch) {
-                /* Omit empty responses from the batch response. */
-                if ($callResponse = $callResponse->getResponseObject()) {
-                    $response[] = $callResponse;
-                }
-            } else {
-                $response = $callResponse->getResponseObject();
+            /* Stop here if this isn't a batch. There is only one response. */
+            if (!$batch) {
+                 $response = $callResponse->getResponseObject();
                 break;
+            }
+
+            /* Omit empty responses from the batch response. */
+            if ($callResponse = $callResponse->getResponseObject()) {
+                $response[] = $callResponse;
             }
         }
 
@@ -178,14 +178,22 @@ class JsonRpcHandler extends AbstractRequestHandler
     }
 
     /**
-     * Invokes a method on a service class, based on the JSON-RPC request.
+     * Invokes a method on a service class, based on the raw JSON-RPC request.
      *
      * @param string $service The service class instance to handle the method call.
-     * @param JsonRpcRequest $request The procedure call request.
+     * @param object $call The raw JSON-RPC method call object.
      * @return JsonRpcResponse A response based on the result of the procedure call.
      */
-    private function invokeMethod($service, JsonRpcRequest $request)
+    private function invokeMethod($service, $call)
     {
+        /* Try to read the raw RPC object as an RPC request. */
+        try {
+            $request = new JsonRpcRequest($service, $call);
+        } catch (Exception $e) {
+            /* Note: Method isn't known, so invocation hooks aren't called. */
+            return new JsonRpcResponse(null, $e);
+        }
+
         $action = $request->getAction();
         $this->invokePluginsHook(
             'afterServiceSelected',
