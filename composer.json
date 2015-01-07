@@ -36,6 +36,6 @@
     "require-dev": {
         "phpunit/phpunit": "4.2.*",
         "squizlabs/php_codesniffer": "1.*",
-        "vectorface/dunit": "dev-dev"
+        "vectorface/dunit": "~2.0"
     }
 }
