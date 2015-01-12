@@ -14,7 +14,14 @@ standard in most other routers such as:
 - Direct file invokation (wrap paths to specific files through the router)
 
 SnappyRouter makes it easy to write your own routing handler for any imaginable
-custom routing scheme. It is designed to work with your existing "seasoned"
-codebase to provide a common entry point for your code base.
+custom routing scheme.
+
+*SnappyRouter is designed to work with your existing "seasoned"
+codebase to provide a common entry point for your code base.* SnappyRouter is
+ideal for existing projects that lack the features of a modern framework. By
+providing a number of flexible different routing handlers, any PHP code base
+can be retrofitted behind the router without requiring changes to your existing
+code. More information for why you want to use a router,
+[see the documentation](https://snappyrouter.readthedocs.org/en/latest/#why-would-i-want-to-use-snappyrouter).
 
 For more information, view the detailed [documentation](https://snappyrouter.readthedocs.org/en/latest/).
