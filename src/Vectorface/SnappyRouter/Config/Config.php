@@ -124,4 +124,14 @@ class Config implements ArrayAccess, ConfigInterface
     {
         return $this->config;
     }
+
+    /**
+     * Returns whether or not we are in debug mode.
+     * @return boolean Returns true if the router is in debug mode and false
+     *         otherwise.
+     */
+    public function isDebug()
+    {
+        return (bool)$this->get('debug', false);
+    }
 }

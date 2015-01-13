@@ -4,6 +4,7 @@ namespace Vectorface\SnappyRouterTests;
 
 use Vectorface\SnappyRouter\SnappyRouter;
 use Vectorface\SnappyRouter\Config\Config;
+use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Plugin\PluginInterface;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
@@ -104,13 +105,16 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
      */
     public function testNoHandlerFoundException()
     {
-        $router = new SnappyRouter(new Config(array()));
+        // turn on debug mode so we get a verbose description of the exception
+        $router = new SnappyRouter(new Config(array(
+            'debug' => true
+        )));
 
         // an example MVC request
         $path = '/Test/test';
         $query = array('jsoncall' => 'testMethod');
         $response = $router->handleHttpRoute($path, $query, array(), 'get');
-        $this->assertEquals('', $response);
+        $this->assertEquals('No handler responded to the request.', $response);
     }
 
     /**
