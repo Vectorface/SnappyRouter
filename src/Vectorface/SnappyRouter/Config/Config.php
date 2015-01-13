@@ -33,6 +33,8 @@ class Config implements ArrayAccess, ConfigInterface
     const KEY_FOLDERS    = 'folders';
     /** the config key for the list of tasks */
     const KEY_TASKS      = 'tasks';
+    /** the config key for debug mode */
+    const KEY_DEBUG      = 'debug';
 
     // the internal config array
     private $config;
@@ -132,6 +134,6 @@ class Config implements ArrayAccess, ConfigInterface
      */
     public function isDebug()
     {
-        return (bool)$this->get('debug', false);
+        return (bool)$this->get(self::KEY_DEBUG, false);
     }
 }
