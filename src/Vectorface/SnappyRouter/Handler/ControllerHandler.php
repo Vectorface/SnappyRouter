@@ -43,6 +43,15 @@ class ControllerHandler extends PatternMatchHandler
     const MATCHES_PARAMS = 4;
     const MATCHES_CONTROLLER_ACTION_AND_PARAMS = 7;
 
+    /** controller route pattern */
+    const ROUTE_PATTERN_CONTROLLER = '{controller:[a-zA-Z][a-zA-Z0-9]*}';
+
+    /** action route pattern */
+    const ROUTE_PATTERN_ACTION = '{action:[a-zA-Z][a-zA-Z0-9]*}';
+
+    /** URL parameters route pattern */
+    const ROUTE_PATTERN_PARAMS = '{params:.+}';
+
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
      * @param string $path The URL path for the request.
@@ -78,20 +87,13 @@ class ControllerHandler extends PatternMatchHandler
             }
         }
 
-        $controllerClass = ucfirst($controller).'Controller';
-        // ensure we actually handle the controller for this application
-        try {
-            $this->getServiceProvider()->getServiceInstance($controllerClass);
-        } catch (Exception $e) {
-            return false;
-        }
-        $actionName = $action.'Action';
+        // configure the default view encoder
         $this->configureViewEncoder($options, $controller, $action);
 
         // configure the request object
         $this->request = new HttpRequest(
-            $controllerClass,
-            $actionName,
+            ucfirst($controller).'Controller',
+            $action.'Action',
             $verb
         );
         $this->request->setQuery($query);
@@ -181,7 +183,14 @@ class ControllerHandler extends PatternMatchHandler
         );
 
         $controllerDiKey = $request->getController();
-        $controller = $this->getServiceProvider()->getServiceInstance($controllerDiKey);
+        try {
+            $controller = $this->getServiceProvider()->getServiceInstance($controllerDiKey);
+        } catch (Exception $e) {
+            throw new ResourceNotFoundException(sprintf(
+                'No such controller found "%s".',
+                $this->getRequest()->getController()
+            ));
+        }
         $actionName = $request->getAction();
         if (!method_exists($controller, $actionName)) {
             throw new ResourceNotFoundException(sprintf(
@@ -261,13 +270,16 @@ class ControllerHandler extends PatternMatchHandler
      */
     protected function getRoutes()
     {
+        $c = self::ROUTE_PATTERN_CONTROLLER;
+        $a = self::ROUTE_PATTERN_ACTION;
+        $p = self::ROUTE_PATTERN_PARAMS;
         return array(
-            '/' => self::MATCHES_NOTHING,
-            '/{controller}' => self::MATCHES_CONTROLLER,
-            '/{controller}/' => self::MATCHES_CONTROLLER,
-            '/{controller}/{action}' => self::MATCHES_CONTROLLER_AND_ACTION,
-            '/{controller}/{action}/' => self::MATCHES_CONTROLLER_AND_ACTION,
-            '/{controller}/{action}/{params:.+}' => self::MATCHES_CONTROLLER_ACTION_AND_PARAMS
+            "/" => self::MATCHES_NOTHING,
+            "/$c" => self::MATCHES_CONTROLLER,
+            "/$c/" => self::MATCHES_CONTROLLER,
+            "/$c/$a" => self::MATCHES_CONTROLLER_AND_ACTION,
+            "/$c/$a/" => self::MATCHES_CONTROLLER_AND_ACTION,
+            "/$c/$a/$p" => self::MATCHES_CONTROLLER_ACTION_AND_PARAMS
         );
     }
 }

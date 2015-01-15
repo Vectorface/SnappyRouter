@@ -65,6 +65,8 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests the handler returns false for a route to an unknown controller.
+     * @expectedException Vectorface\SnappyRouter\Exception\ResourceNotFoundException
+     * @expectedExceptionMessage No such controller found "TestController".
      */
     public function testRouteToNonExistantController()
     {
@@ -72,7 +74,8 @@ class ControllerHandlerTest extends PHPUnit_Framework_TestCase
         $handler = new ControllerHandler($options);
 
         $path = '/test/test';
-        $this->assertFalse($handler->isAppropriate($path, array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate($path, array(), array(), 'GET'));
+        $handler->performRoute();
     }
 
     /**
