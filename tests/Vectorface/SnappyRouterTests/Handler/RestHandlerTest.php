@@ -82,7 +82,7 @@ class RestHandlerTest extends PHPUnit_Framework_TestCase
                 '/v1.2'
             ),
             array(
-                false,
+                true,
                 '/v1.2/noController'
             ),
             array(
