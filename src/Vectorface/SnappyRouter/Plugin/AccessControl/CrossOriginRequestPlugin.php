@@ -4,6 +4,7 @@ namespace Vectorface\SnappyRouter\Plugin\AccessControl;
 
 use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Exception\AccessDeniedException;
+use Vectorface\SnappyRouter\Exception\InternalErrorException;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Plugin\AbstractControllerPlugin;
 use Vectorface\SnappyRouter\Request\HttpRequest;
@@ -121,23 +122,28 @@ class CrossOriginRequestPlugin extends AbstractControllerPlugin
      */
     protected function isServiceEnabledForCrossOrigin($service, $method)
     {
-        // ensure we have a whitelist and it is an array
-        $whitelist = array();
-        if (isset($this->options[self::CONFIG_SERVICE_WHITELIST])) {
-            if (is_string($this->options[self::CONFIG_SERVICE_WHITELIST]) &&
-                self::CONFIG_ALL_METHODS === $this->options[self::CONFIG_SERVICE_WHITELIST]) {
-                return true;
-            }
-            $whitelist = (array)$this->options[self::CONFIG_SERVICE_WHITELIST];
+        // ensure the plugin has a valid whitelist
+        if (!isset($this->options[self::CONFIG_SERVICE_WHITELIST])) {
+            throw new InternalErrorException(
+                'Cross origin request plugin missing whitelist.'
+            );
         }
 
-        // ensure the service is listed in the whitelist
-        if (!isset($whitelist[$service])) {
+        $whitelist = $this->options[self::CONFIG_SERVICE_WHITELIST];
+        // check if the whitelist is the string "all"
+        if (self::CONFIG_ALL_METHODS === $whitelist) {
+            return true;
+        }
+
+        // ensure the whitelist is an array and the service is listed within
+        // the whitelist
+        if (!is_array($whitelist) || !isset($whitelist[$service])) {
             return false;
         }
+
         // if the service is listed and set to the string 'all' this means all
         // methods are enabled for cross origin so we're good!
-        if (is_string($whitelist[$service]) && self::CONFIG_ALL_METHODS === $whitelist[$service]) {
+        if (self::CONFIG_ALL_METHODS === $whitelist[$service]) {
             return true;
         }
 
