@@ -44,10 +44,10 @@ class ControllerHandler extends PatternMatchHandler
     const MATCHES_CONTROLLER_ACTION_AND_PARAMS = 7;
 
     /** controller route pattern */
-    const ROUTE_PATTERN_CONTROLLER = '{controller:[a-zA-Z][a-zA-Z0-9]*}';
+    const ROUTE_PATTERN_CONTROLLER = '{controller:[a-zA-Z]\w*}';
 
     /** action route pattern */
-    const ROUTE_PATTERN_ACTION = '{action:[a-zA-Z][a-zA-Z0-9]*}';
+    const ROUTE_PATTERN_ACTION = '{action:[a-zA-Z]\w*}';
 
     /** URL parameters route pattern */
     const ROUTE_PATTERN_PARAMS = '{params:.+}';

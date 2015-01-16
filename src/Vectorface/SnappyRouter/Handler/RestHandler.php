@@ -17,10 +17,12 @@ class RestHandler extends ControllerHandler
     const MATCHES_CONTROLLER_ACTION_AND_ID = 11;
 
     /** API version pattern */
-    const ROUTE_PATTERN_VERSION = 'v{version}';
+    const ROUTE_PATTERN_VERSION_ONE   = 'v{version:\d+}';
+    const ROUTE_PATTERN_VERSION_TWO   = 'v{version:\d+\.\d+}';
+    const ROUTE_PATTERN_VERSION_THREE = 'v{version:\d+\.\d+\.\d+}';
 
     /** object ID version pattern */
-    const ROUTE_PATTERN_OBJECT_ID = '{objectId:[0-9]+}';
+    const ROUTE_PATTERN_OBJECT_ID = '{objectId:\d+}';
 
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
@@ -63,19 +65,41 @@ class RestHandler extends ControllerHandler
     {
         $c = parent::ROUTE_PATTERN_CONTROLLER;
         $a = parent::ROUTE_PATTERN_ACTION;
-        $v = self::ROUTE_PATTERN_VERSION;
+        $v1 = self::ROUTE_PATTERN_VERSION_ONE;
+        $v2 = self::ROUTE_PATTERN_VERSION_TWO;
+        $v3 = self::ROUTE_PATTERN_VERSION_THREE;
         $o = self::ROUTE_PATTERN_OBJECT_ID;
         return array(
-            "/$v/$c" => self::MATCHES_CONTROLLER,
-            "/$v/$c/" => self::MATCHES_CONTROLLER,
-            "/$v/$c/$a" => self::MATCHES_CONTROLLER_AND_ACTION,
-            "/$v/$c/$a/" => self::MATCHES_CONTROLLER_AND_ACTION,
-            "/$v/$c/$o" => self::MATCHES_CONTROLLER_AND_ID,
-            "/$v/$c/$o/" => self::MATCHES_CONTROLLER_AND_ID,
-            "/$v/$c/$a/$o" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
-            "/$v/$c/$a/$o/" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
-            "/$v/$c/$o/$a" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
-            "/$v/$c/$o/$a/" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v1/$c" => self::MATCHES_CONTROLLER,
+            "/$v1/$c/" => self::MATCHES_CONTROLLER,
+            "/$v2/$c" => self::MATCHES_CONTROLLER,
+            "/$v2/$c/" => self::MATCHES_CONTROLLER,
+            "/$v3/$c" => self::MATCHES_CONTROLLER,
+            "/$v3/$c/" => self::MATCHES_CONTROLLER,
+            "/$v1/$c/$a" => self::MATCHES_CONTROLLER_AND_ACTION,
+            "/$v1/$c/$a/" => self::MATCHES_CONTROLLER_AND_ACTION,
+            "/$v2/$c/$a" => self::MATCHES_CONTROLLER_AND_ACTION,
+            "/$v2/$c/$a/" => self::MATCHES_CONTROLLER_AND_ACTION,
+            "/$v3/$c/$a" => self::MATCHES_CONTROLLER_AND_ACTION,
+            "/$v3/$c/$a/" => self::MATCHES_CONTROLLER_AND_ACTION,
+            "/$v1/$c/$o" => self::MATCHES_CONTROLLER_AND_ID,
+            "/$v1/$c/$o/" => self::MATCHES_CONTROLLER_AND_ID,
+            "/$v2/$c/$o" => self::MATCHES_CONTROLLER_AND_ID,
+            "/$v2/$c/$o/" => self::MATCHES_CONTROLLER_AND_ID,
+            "/$v3/$c/$o" => self::MATCHES_CONTROLLER_AND_ID,
+            "/$v3/$c/$o/" => self::MATCHES_CONTROLLER_AND_ID,
+            "/$v1/$c/$a/$o" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v1/$c/$a/$o/" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v1/$c/$o/$a" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v1/$c/$o/$a/" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v2/$c/$a/$o" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v2/$c/$a/$o/" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v2/$c/$o/$a" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v2/$c/$o/$a/" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v3/$c/$a/$o" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v3/$c/$a/$o/" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v3/$c/$o/$a" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
+            "/$v3/$c/$o/$a/" => self::MATCHES_CONTROLLER_ACTION_AND_ID,
         );
     }
 }
