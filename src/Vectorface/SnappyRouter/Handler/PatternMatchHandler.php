@@ -16,6 +16,9 @@ class PatternMatchHandler extends AbstractRequestHandler
     /** the config key for the list of routes */
     const KEY_ROUTES = 'routes';
 
+    /** the config key for the route cache */
+    const KEY_CACHE = 'routeCache';
+
     // the currently active callback
     private $callback;
     // the currently active route parameters
@@ -109,6 +112,17 @@ class PatternMatchHandler extends AbstractRequestHandler
                 }
             }
         };
-        return \FastRoute\simpleDispatcher($f);
+
+        $options = $this->getOptions();
+        $cacheData = array();
+        if (isset($options[self::KEY_CACHE])) {
+            $cacheData = (array)$options[self::KEY_CACHE];
+        }
+
+        if (empty($cacheData)) {
+            return \FastRoute\simpleDispatcher($f);
+        } else {
+            return \FastRoute\cachedDispatcher($f, $cacheData);
+        }
     }
 }
