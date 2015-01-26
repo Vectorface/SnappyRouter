@@ -4,8 +4,8 @@ namespace Vectorface\SnappyRouter\Handler;
 
 use \stdClass;
 use \Exception;
-use \EngineException;
 use Vectorface\SnappyRouter\Encoder\JsonEncoder;
+use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\Handler\AbstractRequestHandler;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 use Vectorface\SnappyRouter\Request\JsonRpcRequest;
@@ -77,15 +77,6 @@ class JsonRpcHandler extends AbstractRequestHandler
             return false;
         }
 
-        $service = $this->getServiceFromPath($path);
-
-        /* Check if we can get the service. */
-        try {
-            $this->getServiceProvider()->getServiceInstance($service);
-        } catch (Exception $e) {
-            return false;
-        }
-
         /* Try decoding and validating POST data, and skip if it doesn't look like JSON-RPC */
         $post = json_decode(file_get_contents($this->stdin));
         if (!is_object($post) && !is_array($post)) {
@@ -94,6 +85,7 @@ class JsonRpcHandler extends AbstractRequestHandler
 
         /* Checks pass. Setup the request and tell the router that we'll handle this. */
         $this->payload = $post;
+        $service = $this->getServiceFromPath($path);
         $this->request = new HttpRequest($service, '', $verb);
         return true;
     }
@@ -143,9 +135,17 @@ class JsonRpcHandler extends AbstractRequestHandler
             'beforeServiceSelected',
             array($this, $this->getRequest())
         );
-        $service = $this->getServiceProvider()->getServiceInstance(
-            $this->getRequest()->getController()
-        );
+
+        /* Check if we can get the service. */
+        try {
+            $service = $this->getServiceProvider()->getServiceInstance(
+                $this->getRequest()->getController()
+            );
+        } catch (Exception $e) {
+            throw new ResourceNotFoundException(
+                'No such service: '.$this->getRequest()->getController()
+            );
+        }
 
         /* To handle JSON-RPC 2.0 batches, always use an array of calls. */
         $calls = $this->payload;

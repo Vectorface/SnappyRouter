@@ -15,6 +15,11 @@ use Vectorface\SnappyRouter\Handler\JsonRpcHandler;
  */
 class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * Helper method to override the internals of php://input for test purposes.
+     * @param JsonRpcHandler $handler The handler to override.
+     * @param array $payload The payload to hand off for the request input.
+     */
     private function setRequestPayload(JsonRpcHandler $handler, $payload)
     {
         $tmpfile = tempnam(sys_get_temp_dir(), __CLASS__);
@@ -78,6 +83,9 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("1", $result[0]->id);
     }
 
+    /**
+     * Tests various edge cases of the JsonRpcHandler::isAppropriate method.
+     */
     public function testIsAppropriate()
     {
         /* Without a base path, only the last path element is used to map the controller/service */
@@ -87,9 +95,6 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
             )
         );
         $handler = new JsonRpcHandler($options);
-
-        /* Ignores unconfigured services */
-        $this->assertFalse($handler->isAppropriate('/anything', array(), array(), 'POST'));
 
         /* Ignores non-JSON POST'ed data */
         $this->setRequestPayload($handler, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><document></document>");
@@ -108,6 +113,9 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * Tests the edge cases of the JsonRpcHandler::performRoute method.
+     */
     public function testPerformRoute()
     {
         $options = array(
@@ -133,6 +141,9 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(-32000 >= $result->error->code);
     }
 
+    /**
+     * Tests the method JsonRpcHandler::handleException.
+     */
     public function testHandleException()
     {
         $handler = new JsonRpcHandler(array());
@@ -144,5 +155,19 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
         $passthrough = $handler->handleException(new Exception("passthrough", -32001));
         $this->assertEquals(-32001, $passthrough->error->code);
         $this->assertEquals("passthrough", $passthrough->error->message);
+    }
+
+    /**
+     * Tests that a request to a service that doesn't exist returns a 404
+     * response.
+     * @expectedException Vectorface\SnappyRouter\Exception\ResourceNotFoundException
+     * @expectedExceptionMessage No such service: nonexistent
+     */
+    public function testServiceNotFound()
+    {
+        $handler = new JsonRpcHandler(array());
+        $this->setRequestPayload($handler, array('method' => 'someMethod', 'id' => '1'));
+        $this->assertTrue($handler->isAppropriate('/nonexistent', array(), array(), 'POST'));
+        $handler->performRoute();
     }
 }
