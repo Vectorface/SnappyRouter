@@ -41,4 +41,19 @@ class DirectScriptHandlerTest extends PHPUnit_Framework_TestCase
             $handler->isAppropriate($path, array(), array(), 'GET')
         );
     }
+
+    /**
+     * Tests that the getRequest() method returns null.
+     */
+    public function testGetRequest()
+    {
+        $config = array(
+            DirectScriptHandler::KEY_PATH_MAP => array(
+                '/cgi-bin' => __DIR__
+            )
+        );
+        $handler = new DirectScriptHandler($config);
+        $this->assertTrue($handler->isAppropriate('/cgi-bin/test_script.php', array(), array(), 'GET'));
+        $this->assertNull($handler->getRequest());
+    }
 }

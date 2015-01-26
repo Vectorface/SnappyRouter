@@ -41,4 +41,21 @@ class PatternMatchHandlerTest extends PHPUnit_Framework_TestCase
         // matching pattern but invalid HTTP verb
         $this->assertFalse($handler->isAppropriate('/user/asdf/1234', array(), array(), 'POST'));
     }
+
+    /**
+     * Tests that the getRequest() method returns null.
+     */
+    public function testGetRequest()
+    {
+        $config = array(
+            'routes' => array(
+                '/testRoute' => function () {
+                    return false;
+                }
+            )
+        );
+        $handler = new PatternMatchHandler($config);
+        $this->assertTrue($handler->isAppropriate('/testRoute', array(), array(), 'GET'));
+        $this->assertNull($handler->getRequest());
+    }
 }
