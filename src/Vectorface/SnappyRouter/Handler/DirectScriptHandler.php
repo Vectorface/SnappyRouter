@@ -42,6 +42,17 @@ class DirectScriptHandler extends AbstractRequestHandler
     }
 
     /**
+     * Returns a request object extracted from the request details (path, query, etc). The method
+     * isAppropriate() must have returned true, otherwise this method should return null.
+     * @return \Vectorface\SnappyRouter\Request\HttpRequest|null Returns a
+     *         Request object or null if this handler is not appropriate.
+     */
+    public function getRequest()
+    {
+        return null;
+    }
+
+    /**
      * Performs the actual routing.
      * @return mixed Returns the result of the route.
      */

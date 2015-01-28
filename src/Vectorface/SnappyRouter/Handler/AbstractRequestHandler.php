@@ -25,6 +25,14 @@ abstract class AbstractRequestHandler extends AbstractHandler
     abstract public function isAppropriate($path, $query, $post, $verb);
 
     /**
+     * Returns a request object extracted from the request details (path, query, etc). The method
+     * isAppropriate() must have returned true, otherwise this method should return null.
+     * @return \Vectorface\SnappyRouter\Request\HttpRequest|null Returns a
+     *         Request object or null if this handler is not appropriate.
+     */
+    abstract public function getRequest();
+
+    /**
      * Provides the handler with an opportunity to perform any last minute
      * error handling logic. The returned value will be serialized by the
      * handler's encoder.

@@ -6,7 +6,8 @@ use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Exception\AccessDeniedException;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
-use Vectorface\SnappyRouter\Plugin\AbstractControllerPlugin;
+use Vectorface\SnappyRouter\Handler\AbstractRequestHandler;
+use Vectorface\SnappyRouter\Plugin\AbstractPlugin;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 
 /**
@@ -14,7 +15,7 @@ use Vectorface\SnappyRouter\Request\HttpRequest;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class CrossOriginRequestPlugin extends AbstractControllerPlugin
+class CrossOriginRequestPlugin extends AbstractPlugin
 {
     /** the PHP constant for the Origin HTTP request header */
     const HEADER_CLIENT_ORIGIN = 'HTTP_ORIGIN';
@@ -52,26 +53,27 @@ class CrossOriginRequestPlugin extends AbstractControllerPlugin
     );
 
     /**
-     * Invoked after the router has decided which controller will be used.
+     * Invoked directly after the router decides which handler will be used.
      * @param AbstractHandler $handler The handler selected by the router.
-     * @param HttpRequest $request The request to be handled.
-     * @param AbstractController $controller The controller determined to be used.
-     * @param string $action The name of the action that will be invoked.
      */
-    public function afterControllerSelected(
-        AbstractHandler $handler,
-        HttpRequest $request,
-        AbstractController $controller,
-        $action
-    ) {
-        parent::afterControllerSelected($handler, $request, $controller, $action);
-        if (false === $this->isRequestCrossOrigin()) {
+    public function afterHandlerSelected(AbstractHandler $handler)
+    {
+        parent::afterHandlerSelected($handler);
+        if (false === $this->isRequestCrossOrigin() || !($handler instanceof AbstractRequestHandler)) {
             // since the request isn't cross origin we don't need this plugin to
             // do any processing at all
             return;
         }
 
+        $request = $handler->getRequest();
+        if (null === $request) {
+            // the CORS plugin only supports handler with standard requests
+            return;
+        }
+
         $controller = $request->getController();
+        $action = $request->getAction();
+
         if (false === $this->isServiceEnabledForCrossOrigin($controller, $action)) {
             // we have a cross origin request for a controller that's not enabled
             // so throw an exception instead of processing the request
@@ -116,7 +118,7 @@ class CrossOriginRequestPlugin extends AbstractControllerPlugin
      * Returns whether or not the current service/method combination is enabled
      * for cross origin requests.
      * @param string $service The service requested.
-     * @param string $method The method requested.
+     * @param string|null $method The method requested.
      * @return Returns true if the service/method pair is in the whitelist and
      *         false otherwise.
      */
@@ -143,7 +145,7 @@ class CrossOriginRequestPlugin extends AbstractControllerPlugin
 
         // if the service is listed and set to the string 'all' this means all
         // methods are enabled for cross origin so we're good!
-        if (self::CONFIG_ALL_METHODS === $whitelist[$service]) {
+        if (self::CONFIG_ALL_METHODS === $whitelist[$service] || null === $method) {
             return true;
         }
 

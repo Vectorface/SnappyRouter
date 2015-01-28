@@ -92,6 +92,17 @@ class PatternMatchHandler extends AbstractRequestHandler
     }
 
     /**
+     * Returns a request object extracted from the request details (path, query, etc). The method
+     * isAppropriate() must have returned true, otherwise this method should return null.
+     * @return \Vectorface\SnappyRouter\Request\HttpRequest|null Returns a
+     *         Request object or null if this handler is not appropriate.
+     */
+    public function getRequest()
+    {
+        return null;
+    }
+
+    /**
      * Returns an instance of the FastRoute dispatcher.
      * @param array $routes The array of specified routes.
      * @return FastRoute\Dispatcher The dispatcher to use.
