@@ -17,7 +17,7 @@ use Vectorface\SnappyRouter\Response\JsonRpcResponse;
  *
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  */
-class JsonRpcHandler extends AbstractRequestHandler
+class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandlerInterface
 {
     /**
      * Option key for a base path
@@ -41,18 +41,19 @@ class JsonRpcHandler extends AbstractRequestHandler
     private $stdin = 'php://input';
 
     /**
-     * The posted payload.
-     *
-     * @var array|object
-     */
-    private $payload;
-
-    /**
-     * A top-level HTTP request.
+     * An array of HttpRequest objects.
      *
      * @var \Vectorface\SnappyRouter\Request\HttpRequest
      */
-    private $request;
+    private $requests;
+
+
+    /**
+     * A flag indicating whether the request is a batch request.
+     *
+     * @var boolean
+     */
+    private $batch;
 
     /**
      * The encoder instance to be used to encode responses.
@@ -83,10 +84,10 @@ class JsonRpcHandler extends AbstractRequestHandler
             return false;
         }
 
-        /* Checks pass. Setup the request and tell the router that we'll handle this. */
-        $this->payload = $post;
+        // extract the list of requests from the payload and tell the router
+        // we'll handle this request
         $service = $this->getServiceFromPath($path);
-        $this->request = new HttpRequest($service, '', $verb);
+        $this->processPayload($service, $post);
         return true;
     }
 
@@ -115,13 +116,38 @@ class JsonRpcHandler extends AbstractRequestHandler
     }
 
     /**
+     * Processes the payload POST data and sets up the array of requests.
+     * @param string $service The service being requested.
+     * @param array|object $post The raw POST data.
+     */
+    private function processPayload($service, $post)
+    {
+        $this->batch = is_array($post);
+        if (false === $this->batch) {
+            $post = array($post);
+        }
+        $this->requests = array_map(function ($payload) use ($service) {
+            return new JsonRpcRequest($service, $payload);
+        }, $post);
+    }
+
+    /**
      * Returns a request object extracted from the request details (path, query, etc). The method
      * isAppropriate() must have returned true, otherwise this method should return null.
      * @return HttpRequest Returns a Request object or null if this handler is not appropriate.
      */
     public function getRequest()
     {
-        return $this->request;
+        return (!empty($this->requests)) ? $this->requests[0] : null;
+    }
+
+    /**
+     * Returns an array of batched requests.
+     * @return An array of batched requests.
+     */
+    public function getRequests()
+    {
+        return $this->requests;
     }
 
     /**
@@ -147,21 +173,13 @@ class JsonRpcHandler extends AbstractRequestHandler
             );
         }
 
-        /* To handle JSON-RPC 2.0 batches, always use an array of calls. */
-        $calls = $this->payload;
-        $batch = true;
-        if (!is_array($this->payload)) {
-            $calls = array($calls);
-            $batch = false;
-        }
-
         /* Loop through each call in the possible batch. */
         $response = array();
-        foreach ($calls as $call) {
-            $callResponse = $this->invokeMethod($service, $call);
+        foreach ($this->requests as $request) {
+            $callResponse = $this->invokeMethod($service, $request);
 
             /* Stop here if this isn't a batch. There is only one response. */
-            if (!$batch) {
+            if (false === $this->batch) {
                 $response = $callResponse->getResponseObject();
                 break;
             }
@@ -180,18 +198,22 @@ class JsonRpcHandler extends AbstractRequestHandler
     /**
      * Invokes a method on a service class, based on the raw JSON-RPC request.
      *
-     * @param string $service The service class instance to handle the method call.
-     * @param object $call The raw JSON-RPC method call object.
+     * @param mixed $service The service being invoked.
+     * @param Vectorface\SnappyRouter\Request\JsonRpcRequest $request The request
+     *        to invoke.
      * @return JsonRpcResponse A response based on the result of the procedure call.
      */
-    private function invokeMethod($service, $call)
+    private function invokeMethod($service, JsonRpcRequest $request)
     {
-        /* Try to read the raw RPC object as an RPC request. */
-        try {
-            $request = new JsonRpcRequest($service, $call);
-        } catch (Exception $e) {
+        if (false === $request->isValid()) {
             /* Note: Method isn't known, so invocation hooks aren't called. */
-            return new JsonRpcResponse(null, $e);
+            return new JsonRpcResponse(
+                null,
+                new Exception(
+                    'The JSON sent is not a valid Request object',
+                    self::ERR_INVALID_REQUEST
+                )
+            );
         }
 
         $action = $request->getAction();

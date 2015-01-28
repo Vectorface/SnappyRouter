@@ -20,7 +20,7 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
      * @param JsonRpcHandler $handler The handler to override.
      * @param array $payload The payload to hand off for the request input.
      */
-    private function setRequestPayload(JsonRpcHandler $handler, $payload)
+    public static function setRequestPayload(JsonRpcHandler $handler, $payload)
     {
         $tmpfile = tempnam(sys_get_temp_dir(), __CLASS__);
         file_put_contents($tmpfile, is_string($payload) ? $payload : json_encode($payload));
@@ -62,6 +62,7 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
             array('jsonrpc' => '2.0', 'method' => 'testAction', 'id' => '2')
         ));
         $this->assertTrue($handler->isAppropriate('/x/y/z/TestController', array(), array(), 'POST'));
+        $this->assertEquals(2, count($handler->getRequests()));
 
         $result = json_decode($handler->performRoute());
         $this->assertEquals(2, count($result), "Expect 2 responses for 2 calls");

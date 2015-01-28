@@ -42,14 +42,10 @@ class JsonRpcRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(), $request->getParameters());
 
         /* Catches invalid request format. */
-        try {
-            new JsonRpcRequest('MyService', (object)array(
-                'jsonrpc' => '2.0',
-                'method' => null
-            ));
-            $this->fail("Empty method should not be allowed.");
-        } catch (\Exception $e) {
-            $this->assertEquals(-32600, $e->getCode()); // "Invalid Request"
-        }
+        $request = new JsonRpcRequest('MyService', (object)array(
+            'jsonrpc' => '2.0',
+            'method' => null
+        ));
+        $this->assertFalse($request->isValid());
     }
 }
