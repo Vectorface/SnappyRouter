@@ -43,7 +43,7 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
     /**
      * An array of HttpRequest objects.
      *
-     * @var \Vectorface\SnappyRouter\Request\HttpRequest
+     * @var array
      */
     private $requests;
 
