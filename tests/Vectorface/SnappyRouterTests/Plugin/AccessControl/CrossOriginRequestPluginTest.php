@@ -7,9 +7,11 @@ use Vectorface\SnappyRouter\Exception\AccessDeniedException;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 use Vectorface\SnappyRouter\Handler\PatternMatchHandler;
+use Vectorface\SnappyRouter\Handler\JsonRpcHandler;
 use Vectorface\SnappyRouter\Plugin\AccessControl\CrossOriginRequestPlugin;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 use Vectorface\SnappyRouterTests\Controller\TestDummyController;
+use Vectorface\SnappyRouterTests\Handler\JsonRpcHandlerTest;
 
 /**
  * Tests the router header plugin.
@@ -185,6 +187,37 @@ class CrossOriginRequestPluginTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($handler->isAppropriate('/testDummy', array(), array(), 'GET'));
         $plugin = new CrossOriginRequestPlugin(array(
             'whitelist' => 'all'
+        ));
+        try {
+            $plugin->afterHandlerSelected($handler);
+            $this->assertTrue(true);
+        } catch (AccessDeniedException $e) {
+            $this->fail('Cross origin plugin should not have denied access.');
+        }
+
+    }
+
+    /**
+     * Test that the plugin doesn't break with the PatternMatchHandler.
+     */
+    public function testCompatibilityWithJsonRpcHandler()
+    {
+        // make it appear that we are generating a cross origin request
+        $_SERVER['HTTP_ORIGIN'] = 'www.example.com';
+        // some dummy variables that are needed by the plugin
+        $config = array(
+            'controllers' => array(
+                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+            )
+        );
+        $handler = new JsonRpcHandler($config);
+        $payload = array('jsonrpc' => '2.0', 'method' => 'testAction', 'id' => '1');
+        JsonRpcHandlerTest::setRequestPayload($handler, $payload);
+        $this->assertTrue($handler->isAppropriate('/testDummy', array(), array(), 'POST'));
+        $plugin = new CrossOriginRequestPlugin(array(
+            'whitelist' => array(
+                'testDummy' => array('testAction')
+            )
         ));
         try {
             $plugin->afterHandlerSelected($handler);

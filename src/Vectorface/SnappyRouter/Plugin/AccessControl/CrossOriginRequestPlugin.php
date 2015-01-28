@@ -7,6 +7,7 @@ use Vectorface\SnappyRouter\Exception\AccessDeniedException;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Handler\AbstractRequestHandler;
+use Vectorface\SnappyRouter\Handler\BatchRequestHandlerInterface;
 use Vectorface\SnappyRouter\Plugin\AbstractPlugin;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 
@@ -65,21 +66,27 @@ class CrossOriginRequestPlugin extends AbstractPlugin
             return;
         }
 
-        $request = $handler->getRequest();
-        if (null === $request) {
-            // the CORS plugin only supports handler with standard requests
-            return;
+        if ($handler instanceof BatchRequestHandlerInterface) {
+            $requests = $handler->getRequests();
+        } else {
+            $requests = array($handler->getRequest());
         }
 
-        $controller = $request->getController();
-        $action = $request->getAction();
+        foreach ($requests as $request) {
+            if (null === $request) {
+                // the CORS plugin only supports handler with standard requests
+                return;
+            }
+            $controller = $request->getController();
+            $action = $request->getAction();
 
-        if (false === $this->isServiceEnabledForCrossOrigin($controller, $action)) {
-            // we have a cross origin request for a controller that's not enabled
-            // so throw an exception instead of processing the request
-            throw new AccessDeniedException(
-                'Cross origin access denied to '.$controller.' and action '.$action
-            );
+            if (false === $this->isServiceEnabledForCrossOrigin($controller, $action)) {
+                // we have a cross origin request for a controller that's not enabled
+                // so throw an exception instead of processing the request
+                throw new AccessDeniedException(
+                    'Cross origin access denied to '.$controller.' and action '.$action
+                );
+            }
         }
 
         // let the browser know this domain can make cross origin requests
