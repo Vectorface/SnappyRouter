@@ -2,14 +2,12 @@
 
 namespace Vectorface\SnappyRouter\Plugin\AccessControl;
 
-use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Exception\AccessDeniedException;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Handler\AbstractRequestHandler;
 use Vectorface\SnappyRouter\Handler\BatchRequestHandlerInterface;
 use Vectorface\SnappyRouter\Plugin\AbstractPlugin;
-use Vectorface\SnappyRouter\Request\HttpRequest;
 
 /**
  * A plugin that adds appropriate content headers for http requests based on the response.
@@ -66,20 +64,37 @@ class CrossOriginRequestPlugin extends AbstractPlugin
             return;
         }
 
+        $request = $handler->getRequest();
+        if (null === $request) {
+            // the CORS plugin only supports handlers with standard requests
+            return;
+        }
+        $requests = array($request);
         if ($handler instanceof BatchRequestHandlerInterface) {
             $requests = $handler->getRequests();
-        } else {
-            $requests = array($handler->getRequest());
         }
+        $this->processRequestsForAccessDenial($requests);
 
+        // let the browser know this domain can make cross origin requests
+        @header(self::HEADER_ALLOW_ORIGIN.': '.$_SERVER[self::HEADER_CLIENT_ORIGIN]);
+        // do not explicitly block requests that pass a cookie
+        @header(self::HEADER_ALLOW_CREDENTIALS.': true');
+
+        if ('OPTIONS' === strtoupper($request->getVerb())) {
+            $this->addHeadersForOptionsRequests($handler->getRequest());
+        }
+    }
+
+    /**
+     * Processes the list of requests to check if any should be blocked due
+     * to CORS policy.
+     * @param array $requests The array of requests.
+     */
+    private function processRequestsForAccessDenial(array $requests)
+    {
         foreach ($requests as $request) {
-            if (null === $request) {
-                // the CORS plugin only supports handler with standard requests
-                return;
-            }
             $controller = $request->getController();
             $action = $request->getAction();
-
             if (false === $this->isServiceEnabledForCrossOrigin($controller, $action)) {
                 // we have a cross origin request for a controller that's not enabled
                 // so throw an exception instead of processing the request
@@ -88,37 +103,33 @@ class CrossOriginRequestPlugin extends AbstractPlugin
                 );
             }
         }
+    }
 
-        // let the browser know this domain can make cross origin requests
-        @header(self::HEADER_ALLOW_ORIGIN.': '.$_SERVER[self::HEADER_CLIENT_ORIGIN]);
-        // do not explicitly block requests that pass a cookie
-        @header(self::HEADER_ALLOW_CREDENTIALS.': true');
-
-        // check the HTTP verb
-        $httpVerb = strtoupper($request->getVerb());
-        // if the request is for OPTIONS we include a couple of extra headers
-        if ('OPTIONS' === $httpVerb) {
-            // header for preflight cache expiry
-            $maxAge = self::MAX_AGE;
-            if (isset($this->options[self::HEADER_MAX_AGE])) {
-                $maxAge = intval($this->options[self::HEADER_MAX_AGE]);
-            }
-            @header(self::HEADER_MAX_AGE.': '.$maxAge);
-
-            // header for allowed request headers in cross origin requests
-            $allowedHeaders = self::$allowedHeaders;
-            if (isset($this->options[self::HEADER_ALLOW_HEADERS])) {
-                $allowedHeaders = (array)$this->options[self::HEADER_ALLOW_HEADERS];
-            }
-            @header(self::HEADER_ALLOW_HEADERS.':'.implode(',', $allowedHeaders));
-
-            // header for allowed HTTP methods in cross orgin requests
-            $allowedMethods = self::$allowedMethods;
-            if (isset($this->options[self::HEADER_ALLOW_METHODS])) {
-                $allowedMethods = (array)$this->options[self::HEADER_ALLOW_METHODS];
-            }
-            @header(self::HEADER_ALLOW_METHODS.':'.implode(',', $allowedMethods));
+    /**
+     * Adds additional headers for the OPTIONS http verb.
+     */
+    private function addHeadersForOptionsRequests()
+    {
+        // header for preflight cache expiry
+        $maxAge = self::MAX_AGE;
+        if (isset($this->options[self::HEADER_MAX_AGE])) {
+            $maxAge = intval($this->options[self::HEADER_MAX_AGE]);
         }
+        @header(self::HEADER_MAX_AGE.': '.$maxAge);
+
+        // header for allowed request headers in cross origin requests
+        $allowedHeaders = self::$allowedHeaders;
+        if (isset($this->options[self::HEADER_ALLOW_HEADERS])) {
+            $allowedHeaders = (array)$this->options[self::HEADER_ALLOW_HEADERS];
+        }
+        @header(self::HEADER_ALLOW_HEADERS.':'.implode(',', $allowedHeaders));
+
+        // header for allowed HTTP methods in cross orgin requests
+        $allowedMethods = self::$allowedMethods;
+        if (isset($this->options[self::HEADER_ALLOW_METHODS])) {
+            $allowedMethods = (array)$this->options[self::HEADER_ALLOW_METHODS];
+        }
+        @header(self::HEADER_ALLOW_METHODS.':'.implode(',', $allowedMethods));
     }
 
     /**
@@ -126,7 +137,7 @@ class CrossOriginRequestPlugin extends AbstractPlugin
      * for cross origin requests.
      * @param string $service The service requested.
      * @param string|null $method The method requested.
-     * @return Returns true if the service/method pair is in the whitelist and
+     * @return boolean Returns true if the service/method pair is in the whitelist and
      *         false otherwise.
      */
     protected function isServiceEnabledForCrossOrigin($service, $method)
@@ -164,7 +175,7 @@ class CrossOriginRequestPlugin extends AbstractPlugin
     /**
      * Returns true if the current requests is a cross origin request (i.e. does
      * the Origin HTTP header exist in the request) and false otherwise.
-     * @return True if the request is cross origin and false otherwise.
+     * @return boolean Returns true if the request is cross origin and false otherwise.
      */
     protected function isRequestCrossOrigin()
     {
