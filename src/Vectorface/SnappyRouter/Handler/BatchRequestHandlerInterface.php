@@ -12,7 +12,7 @@ interface BatchRequestHandlerInterface
 {
     /**
      * Returns an array of batched requests.
-     * @return An array of batched requests.
+     * @return array An array of batched requests.
      */
     public function getRequests();
 }
