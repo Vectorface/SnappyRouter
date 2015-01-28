@@ -18,7 +18,7 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * Helper method to override the internals of php://input for test purposes.
      * @param JsonRpcHandler $handler The handler to override.
-     * @param array $payload The payload to hand off for the request input.
+     * @param mixed $payload The payload to hand off for the request input.
      */
     public static function setRequestPayload(JsonRpcHandler $handler, $payload)
     {

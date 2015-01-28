@@ -81,7 +81,7 @@ class CrossOriginRequestPlugin extends AbstractPlugin
         @header(self::HEADER_ALLOW_CREDENTIALS.': true');
 
         if ('OPTIONS' === strtoupper($request->getVerb())) {
-            $this->addHeadersForOptionsRequests($handler->getRequest());
+            $this->addHeadersForOptionsRequests();
         }
     }
 
