@@ -74,20 +74,20 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
     public function isAppropriate($path, $query, $post, $verb)
     {
         /* JSON-RPC is POST-only. */
-        if ($verb !== 'POST') {
+        if ($verb !== 'POST' && $verb !== 'OPTIONS') {
             return false;
         }
 
         /* Try decoding and validating POST data, and skip if it doesn't look like JSON-RPC */
         $post = json_decode(file_get_contents($this->stdin));
-        if (!is_object($post) && !is_array($post)) {
+        if ($verb === 'POST' && !is_object($post) && !is_array($post)) {
             return false;
         }
 
         // extract the list of requests from the payload and tell the router
         // we'll handle this request
         $service = $this->getServiceFromPath($path);
-        $this->processPayload($service, $post);
+        $this->processPayload($service, $verb, $post);
         return true;
     }
 
@@ -118,16 +118,17 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
     /**
      * Processes the payload POST data and sets up the array of requests.
      * @param string $service The service being requested.
+     * @param string $verb The HTTP verb being used.
      * @param array|object $post The raw POST data.
      */
-    private function processPayload($service, $post)
+    private function processPayload($service, $verb, $post)
     {
         $this->batch = is_array($post);
         if (false === $this->batch) {
             $post = array($post);
         }
-        $this->requests = array_map(function ($payload) use ($service) {
-            return new JsonRpcRequest($service, $payload);
+        $this->requests = array_map(function ($payload) use ($service, $verb) {
+            return new JsonRpcRequest($service, $payload, $verb);
         }, $post);
     }
 

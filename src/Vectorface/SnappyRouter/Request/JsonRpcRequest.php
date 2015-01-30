@@ -24,15 +24,16 @@ class JsonRpcRequest extends HttpRequest
      *
      * @param string $controller The controller being requested.
      * @param object $payload The action being invoked.
+     * @param string $verb (optional) The HTTP verb (usually POST).
      */
-    public function __construct($controller, $payload)
+    public function __construct($controller, $payload, $verb = 'POST')
     {
         // extract a minimal "action" value from the payload
         $action = '';
         if (is_object($payload) && isset($payload->method)) {
             $action = $payload->method;
         }
-        parent::__construct($controller, $action, 'POST');
+        parent::__construct($controller, $action, $verb);
         $this->payload = $payload;
     }
 
