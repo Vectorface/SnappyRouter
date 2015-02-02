@@ -20,8 +20,8 @@ custom routing scheme.
 codebase to provide a common entry point for your code base.* SnappyRouter is
 ideal for existing projects that lack the features of a modern framework. By
 providing a number of flexible different routing handlers, any PHP code base
-can be retrofitted behind the router without requiring changes to your existing
-code. More information for why you want to use a router,
+can be retrofitted behind the router (usually) without requiring changes to
+your existing code. For more information on why you want to use a router,
 [see the documentation](https://snappyrouter.readthedocs.org/en/latest/#why-would-i-want-to-use-snappyrouter).
 
 For more information, view the detailed [documentation](https://snappyrouter.readthedocs.org/en/latest/).
