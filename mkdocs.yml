@@ -1,14 +1,18 @@
 site_name: 'SnappyRouter'
 pages:
--   ['index.md', 'Home', 'Home']
--   ['getting_started.md', 'Home', 'Getting Started']
--   ['handlers/index.md', 'Handlers', 'Handlers']
--   ['handlers/controller_handler.md', 'Handlers', 'Controller Handler']
--   ['handlers/rest_handler.md', 'Handlers', 'Rest Handler']
--   ['handlers/pattern_handler.md', 'Handlers', 'Pattern Match Handler']
--   ['handlers/direct_handler.md', 'Handlers', 'Direct Script Handler']
--   ['handlers/jsonrpc_handler.md', 'Handlers', 'JSON RPC Handler']
--   ['handlers/cli_handler.md', 'Handlers', 'CLI Task Handler']
--   ['plugins/index.md', 'Plugins', 'Plugins']
--   ['di.md', 'Dependency Injection', 'Dependency Injection']
+- Home:
+  - Home: index.md
+  - Getting Started: getting_started.md
+- Handlers:
+  - Handlers: handlers/index.md
+  - Controller Handler: handlers/controller_handler.md
+  - Rest Handler: handlers/rest_handler.md
+  - Pattern Match Handler: handlers/pattern_handler.md
+  - Direct Script Handler: handlers/direct_handler.md
+  - JSON RPC Handler: handlers/jsonrpc_handler.md
+  - CLI Task Handler: handlers/cli_handler.md
+- Plugins:
+  - Plugins: plugins/index.md
+- Dependency Injection:
+  - Dependency Injection: di.md
 theme: 'readthedocs'
