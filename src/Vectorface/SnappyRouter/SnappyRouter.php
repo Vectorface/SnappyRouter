@@ -60,6 +60,7 @@ class SnappyRouter
 
         switch ($environment) {
             case 'cli':
+            case 'phpdbg':
                 $components = empty($_SERVER['argv']) ? array() : $_SERVER['argv'];
                 return $this->handleCliRoute($components).PHP_EOL;
             default:
