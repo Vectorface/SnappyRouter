@@ -65,7 +65,7 @@ Create the file `tutorial/composer.json` with the following contents:
     "name": "vectorface/snappy-tutorial",
     "autoload": {
         "psr-4": {
-            "Vectorface\\SnappyTutorial": "./app"
+            "Vectorface\\SnappyTutorial\\": "./app"
         }
     },
     "require": {
@@ -219,11 +219,10 @@ Note that there are many ways to pass variables to the view.
 3. Directly rendering the view with `$this->renderView`. More details for this
    method can be found [here](handlers/controller_handler/#integration-with-twig).
 
-We will divide our view into two files. The first file `layout.twig` will
+We will divide our view into two files. The first file `app/Views/layout.twig` will
 provide common boilerplate that we could reuse across multiple pages.
 
 ```html
-<!-- app/Views/layout.twig -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -242,10 +241,9 @@ provide common boilerplate that we could reuse across multiple pages.
 </html>
 ```
 
-And a very simple view for our `indexAction`.
+And a very simple view for our `indexAction` in `app/Views/index/index.twig`:
 
 ```html
-<!-- app/Views/index/index.twig -->
 {% extends 'layout.twig' %}
 
 {% block content %}
@@ -254,5 +252,6 @@ And a very simple view for our `indexAction`.
 </div>
 {% endblock %}
 ```
+
 Once you add the `tutorial` folder to your standard web root, you should have
 a working application at `http://localhost/tutorial/`.
