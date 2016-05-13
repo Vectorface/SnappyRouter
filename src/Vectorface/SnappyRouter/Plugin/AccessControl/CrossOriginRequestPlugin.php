@@ -48,7 +48,7 @@ class CrossOriginRequestPlugin extends AbstractPlugin
 
     // the array of allowed HTTP verbs that can be used to perform cross origin requests
     private static $allowedMethods = array(
-        'GET', 'POST', 'OPTIONS','DELETE','PUT'
+        'GET', 'POST', 'OPTIONS'
     );
 
     /**
