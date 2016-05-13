@@ -3,3 +3,4 @@ composer.phar
 coverage/
 site/
 vendor/
+.idea
