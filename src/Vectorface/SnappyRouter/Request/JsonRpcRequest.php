@@ -33,7 +33,7 @@ class JsonRpcRequest extends HttpRequest
         if (is_object($payload) && isset($payload->method)) {
             $action = $payload->method;
         }
-        parent::__construct($controller, $action, $verb);
+        parent::__construct($controller, $action, $verb, 'php://input');
         $this->payload = $payload;
     }
 

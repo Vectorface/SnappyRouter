@@ -2,6 +2,8 @@
 
 namespace Vectorface\SnappyRouter\Request;
 
+use Vectorface\SnappyRouter\Exception\InternalErrorException;
+
 /**
  * A class representing an controller-modelled web request.
  * @copyright Copyright (c) 2014, VectorFace, Inc.
@@ -15,10 +17,15 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     /** Holds the contents of the various inputs ($_GET, $_POST, etc) */
     private $input;
 
+    /** The input stream */
+    private $stream;
+
     /** Array key for query parameters */
     const INPUT_METHOD_QUERY = 'QUERY';
     /** Array key for post parameters */
     const INPUT_METHOD_POST = 'POST';
+    /** Array key for input stream */
+    const INPUT_METHOD_STREAM = 'STREAM';
 
     // mappings between magic filter strings and the filter functions
     private static $filterCallbacks = array(
@@ -35,14 +42,18 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      * @param string $controller The controller being requested.
      * @param string $action The action being invoked.
      * @param string $verb The HTTP verb used in the request.
+     * @param mixed $stream A stream or a string describing a stream location.
      */
-    public function __construct($controller, $action, $verb)
+    public function __construct($controller, $action, $verb, $stream)
     {
         parent::__construct($controller, $action);
         $this->setVerb($verb);
+        $this->setStream($stream);
+
         $this->input = array(
             self::INPUT_METHOD_QUERY  => array(),
-            self::INPUT_METHOD_POST   => array()
+            self::INPUT_METHOD_POST   => array(),
+            self::INPUT_METHOD_STREAM => ''
         );
     }
 
@@ -63,6 +74,17 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     public function setVerb($verb)
     {
         $this->verb = $verb;
+        return $this;
+    }
+
+    /**
+     * Sets the stream used in the request.
+     * @param mixed $stream The stream used in the request.
+     * @return RequestInterface Returns $this.
+     */
+    public function setStream($stream)
+    {
+        $this->stream = $stream;
         return $this;
     }
 
@@ -142,6 +164,42 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     {
         $this->input[self::INPUT_METHOD_POST] = (array)$postData;
         return $this;
+    }
+
+    /**
+     * Returns the input stream data for the current request
+     * @return string The input stream data
+     */
+    public function getInputStream()
+    {
+        // If this value has been read from the stream, retrieve it from storage
+        if (!empty($this->input[self::INPUT_METHOD_STREAM])) {
+            return $this->input[self::INPUT_METHOD_STREAM];
+        }
+
+        if (is_resource($this->stream) && 'stream' === get_resource_type($this->stream)) {
+            $streamData = stream_get_contents($this->stream);
+        } else if (is_string($this->stream)) {
+            $stream = @fopen($this->stream, "r");
+
+            if (false === $stream) {
+                throw new InternalErrorException('Unable to open request input stream.');
+            }
+
+            $streamData = stream_get_contents($stream);
+
+            fclose($stream);
+        } else {
+            $streamData = false;
+        }
+
+        if (false === $streamData) {
+            throw new InternalErrorException('Unable to open request input stream.');
+        }
+
+        $this->input[self::INPUT_METHOD_STREAM] = $streamData;
+
+        return $this->input[self::INPUT_METHOD_STREAM];
     }
 
     /**

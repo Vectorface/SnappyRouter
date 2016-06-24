@@ -4,6 +4,7 @@ namespace Vectorface\SnappyRouterTests\Request;
 
 use \PHPUnit_Framework_TestCase;
 use Vectorface\SnappyRouter\Request\HttpRequest;
+//use Vectorface\SnappyRouter\Exception\InternalErrorException;
 
 /**
  * Tests the HttpRequest class.
@@ -19,7 +20,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     public function synopsis()
     {
         // instantiate the class
-        $request = new HttpRequest('MyService', 'MyMethod', 'GET');
+        $request = new HttpRequest('MyService', 'MyMethod', 'GET', 'php://memory');
 
         $this->assertEquals('GET', $request->getVerb());
         $this->assertEquals('POST', $request->setVerb('POST')->getVerb());
@@ -42,12 +43,54 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests successful input stream set and fetch cases
+     */
+    public function testInputStream()
+    {
+        $tempStream = fopen('php://memory', 'w');
+        fwrite($tempStream, "test");
+        rewind($tempStream);
+
+        /* Mock a stream in memory */
+        $request = new HttpRequest('TestService', 'TestMethod', 'GET', $tempStream);
+        $this->assertEquals("test", $request->getInputStream());
+        fclose($tempStream);
+
+        /* Fetch previously stored value */
+        $this->assertEquals("test", $request->getInputStream());
+
+        /* Specify php://memory as a string */
+        $request = new HttpRequest('TestService', 'TestMethod', 'GET', 'php://memory');
+        $this->assertEquals("", $request->getInputStream());
+    }
+
+    /**
+     * Tests the input stream functionality where the stream source is not a string or a stream
+     * @expectedException Vectorface\SnappyRouter\Exception\InternalErrorException
+     */
+    public function testInputStreamIncorrectTypeFailure()
+    {
+        $request = new HttpRequest('TestService', 'TestMethod', 'GET', 1);
+        $request->getInputStream();
+    }
+
+    /**
+     * Tests the input stream functionality where the stream source does not exist
+     * @expectedException Vectorface\SnappyRouter\Exception\InternalErrorException
+     */
+    public function testInputStreamIncorrectFileFailure()
+    {
+        $request = new HttpRequest('TestService', 'TestMethod', 'GET', 'file');
+        $request->getInputStream();
+    }
+
+    /**
      * Tests the various filters.
      * @dataProvider filtersProvider
      */
     public function testInputFilters($expected, $value, $filters)
     {
-        $request = new HttpRequest('TestService', 'TestMethod', 'GET');
+        $request = new HttpRequest('TestService', 'TestMethod', 'GET', 'php://input');
         $request->setQuery(array('key' => $value));
         $this->assertTrue($expected === $request->getQuery('key', null, $filters));
     }
