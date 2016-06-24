@@ -4,7 +4,6 @@ namespace Vectorface\SnappyRouterTests\Request;
 
 use \PHPUnit_Framework_TestCase;
 use Vectorface\SnappyRouter\Request\HttpRequest;
-//use Vectorface\SnappyRouter\Exception\InternalErrorException;
 
 /**
  * Tests the HttpRequest class.

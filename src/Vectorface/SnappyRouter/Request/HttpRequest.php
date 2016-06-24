@@ -17,7 +17,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     /** Holds the contents of the various inputs ($_GET, $_POST, etc) */
     private $input;
 
-    /** The input stream */
+    /** The input stream (stream or location string) */
     private $stream;
 
     /** Array key for query parameters */
@@ -179,7 +179,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
 
         if (is_resource($this->stream) && 'stream' === get_resource_type($this->stream)) {
             $streamData = stream_get_contents($this->stream);
-        } else if (is_string($this->stream)) {
+        } elseif (is_string($this->stream)) {
             $stream = @fopen($this->stream, "r");
 
             if (false === $stream) {
