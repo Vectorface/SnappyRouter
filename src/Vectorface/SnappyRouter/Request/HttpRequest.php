@@ -53,7 +53,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
         $this->input = array(
             self::INPUT_METHOD_QUERY  => array(),
             self::INPUT_METHOD_POST   => array(),
-            self::INPUT_METHOD_BODY => null
+            self::INPUT_METHOD_BODY   => null
         );
     }
 
