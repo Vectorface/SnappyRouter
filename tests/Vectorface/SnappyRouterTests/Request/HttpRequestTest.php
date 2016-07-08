@@ -52,15 +52,15 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
 
         /* Mock a stream in memory */
         $request = new HttpRequest('TestService', 'TestMethod', 'GET', $tempStream);
-        $this->assertEquals("test", $request->getInputStream());
+        $this->assertEquals("test", $request->getBody());
         fclose($tempStream);
 
         /* Fetch previously stored value */
-        $this->assertEquals("test", $request->getInputStream());
+        $this->assertEquals("test", $request->getBody());
 
         /* Specify php://memory as a string */
         $request = new HttpRequest('TestService', 'TestMethod', 'GET', 'php://memory');
-        $this->assertEquals("", $request->getInputStream());
+        $this->assertEquals("", $request->getBody());
     }
 
     /**
@@ -70,7 +70,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     public function testInputStreamIncorrectTypeFailure()
     {
         $request = new HttpRequest('TestService', 'TestMethod', 'GET', 1);
-        $request->getInputStream();
+        $request->getBody();
     }
 
     /**
@@ -80,7 +80,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     public function testInputStreamIncorrectFileFailure()
     {
         $request = new HttpRequest('TestService', 'TestMethod', 'GET', 'file');
-        $request->getInputStream();
+        $request->getBody();
     }
 
     /**

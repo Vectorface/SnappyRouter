@@ -24,8 +24,8 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     const INPUT_METHOD_QUERY = 'QUERY';
     /** Array key for post parameters */
     const INPUT_METHOD_POST = 'POST';
-    /** Array key for input stream */
-    const INPUT_METHOD_STREAM = 'STREAM';
+    /** Array key for input stream body */
+    const INPUT_METHOD_BODY = 'BODY';
 
     // mappings between magic filter strings and the filter functions
     private static $filterCallbacks = array(
@@ -44,7 +44,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      * @param string $verb The HTTP verb used in the request.
      * @param mixed $stream A stream or a string describing a stream location.
      */
-    public function __construct($controller, $action, $verb, $stream)
+    public function __construct($controller, $action, $verb, $stream = 'php://input')
     {
         parent::__construct($controller, $action);
         $this->setVerb($verb);
@@ -53,7 +53,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
         $this->input = array(
             self::INPUT_METHOD_QUERY  => array(),
             self::INPUT_METHOD_POST   => array(),
-            self::INPUT_METHOD_STREAM => ''
+            self::INPUT_METHOD_BODY => null
         );
     }
 
@@ -170,11 +170,11 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      * Returns the input stream data for the current request
      * @return string The input stream data
      */
-    public function getInputStream()
+    public function getBody()
     {
         // If this value has been read from the stream, retrieve it from storage
-        if (!empty($this->input[self::INPUT_METHOD_STREAM])) {
-            return $this->input[self::INPUT_METHOD_STREAM];
+        if (null !== $this->input[self::INPUT_METHOD_BODY]) {
+            return $this->input[self::INPUT_METHOD_BODY];
         }
 
         if (is_resource($this->stream) && 'stream' === get_resource_type($this->stream)) {
@@ -197,9 +197,9 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
             throw new InternalErrorException('Unable to open request input stream.');
         }
 
-        $this->input[self::INPUT_METHOD_STREAM] = $streamData;
+        $this->input[self::INPUT_METHOD_BODY] = $streamData;
 
-        return $this->input[self::INPUT_METHOD_STREAM];
+        return $this->input[self::INPUT_METHOD_BODY];
     }
 
     /**
