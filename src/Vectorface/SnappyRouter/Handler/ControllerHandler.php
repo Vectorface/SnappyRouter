@@ -95,7 +95,7 @@ class ControllerHandler extends PatternMatchHandler
             ucfirst($controller).'Controller',
             $action.'Action',
             $verb,
-            'php://stdin'
+            'php://input'
         );
 
         $this->request->setQuery($query);
