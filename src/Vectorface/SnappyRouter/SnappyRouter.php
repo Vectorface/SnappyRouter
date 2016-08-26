@@ -116,7 +116,11 @@ class SnappyRouter
                 'afterHandlerSelected',
                 array($activeHandler)
             );
-            $response = $activeHandler->performRoute();
+				if ($handlerParams[3] === 'OPTIONS') {
+					$response = '';
+				} else {
+	            $response = $activeHandler->performRoute();
+				}
             $activeHandler->invokePluginsHook(
                 'afterFullRouteInvoked',
                 array($activeHandler)
