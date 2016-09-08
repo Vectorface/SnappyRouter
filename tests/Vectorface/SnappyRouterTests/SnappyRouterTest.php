@@ -68,6 +68,8 @@ class SnappyRouterTest extends PHPUnit_Framework_TestCase
         $config = $this->getStandardConfig();
         // instantiate the router
         $router = new SnappyRouter(new Config($config));
+        // configure a logger, if insight into router behavior is desired
+        $router->setLogger(new \Psr\Log\NullLogger());
 
         // an example MVC request
         $_SERVER['REQUEST_URI'] = '/Test/test';
