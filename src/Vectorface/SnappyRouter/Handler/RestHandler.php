@@ -45,16 +45,11 @@ class RestHandler extends ControllerHandler
         if ($routeInfo[1] & self::MATCHES_ID) {
             $this->routeParams[] = intval($routeInfo[2]['objectId']);
         }
-        return true;
-    }
 
-    /**
-     * Returns the active response encoder.
-     * @return EncoderInterface Returns the response encoder.
-     */
-    public function getEncoder()
-    {
-        return new JsonEncoder();
+        // use JSON encoder by default
+        $this->encoder = new JsonEncoder();
+
+        return true;
     }
 
     /**
