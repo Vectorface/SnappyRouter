@@ -3,6 +3,8 @@
 namespace Vectorface\SnappyRouter;
 
 use \Exception;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Config\ConfigInterface;
 use Vectorface\SnappyRouter\Di\Di;
@@ -27,6 +29,11 @@ class SnappyRouter
     private $handlers; // array of registered handlers
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * The constructor for the service router.
      * @param array $config The configuration array.
      */
@@ -34,6 +41,17 @@ class SnappyRouter
     {
         $this->config = $config;
         $this->parseConfig();
+        $this->logger = new NullLogger();
+    }
+
+    /**
+     * Configure SnappyRouter to log its actions.
+     *
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -85,6 +103,7 @@ class SnappyRouter
      */
     public function handleHttpRoute($path, $query, $post, $verb)
     {
+        $this->logger->debug("SnappyRouter: Handling HTTP route: $path");
         return $this->invokeHandler(false, array($path, $query, $post, $verb));
     }
 
@@ -95,6 +114,7 @@ class SnappyRouter
      */
     public function handleCliRoute($pathComponents)
     {
+        $this->logger->debug("SnappyRouter: Handling CLI route: " . implode("/", $pathComponents));
         return $this->invokeHandler(true, array($pathComponents));
     }
 
@@ -111,11 +131,13 @@ class SnappyRouter
         try {
             // determine which handler should handle this path
             $activeHandler = $this->determineHandler($isCli, $handlerParams);
+            $this->logger->debug("SnappyRouter: Selected handler: " . get_class($activeHandler));
             // invoke the initial plugin hook
             $activeHandler->invokePluginsHook(
                 'afterHandlerSelected',
                 array($activeHandler)
             );
+            $this->logger->debug("SnappyRouter: routing");
             $response = $activeHandler->performRoute();
             $activeHandler->invokePluginsHook(
                 'afterFullRouteInvoked',
@@ -123,27 +145,47 @@ class SnappyRouter
             );
             return $response;
         } catch (Exception $e) {
-            // if we have a valid handler give it a chance to handle the error
-            if (null !== $activeHandler) {
-                $activeHandler->invokePluginsHook(
-                    'errorOccurred',
-                    array($activeHandler, $e)
-                );
-                return $activeHandler->getEncoder()->encode(
-                    new Response($activeHandler->handleException($e))
-                );
-            }
-
-            // if not on the command line, set an HTTP response code
-            if (!$isCli) {
-                $responseCode = AbstractResponse::RESPONSE_SERVER_ERROR;
-                if ($e instanceof RouterExceptionInterface) {
-                    $responseCode = $e->getAssociatedStatusCode();
-                }
-                \Vectorface\SnappyRouter\http_response_code($responseCode);
-            }
-            return $e->getMessage();
+            return $this->handleInvocationException($e, $activeHandler, $isCli);
         }
+    }
+
+    /**
+     * Attempts to mop up after an exception during handler invocation.
+     *
+     * @param \Exception $exception The exception that occurred during invocation.
+     * @param HandlerInterface $activeHandler The active handler, or null.
+     * @param bool $isCli True for CLI handlers, false otherwise.
+     * @return mixed Returns a handler-dependent response type, usually a string.
+     */
+    private function handleInvocationException($exception, $activeHandler, $isCli)
+    {
+        $this->logger->debug(sprintf(
+            "SnappyRouter: caught exception while invoking handler: %s (%d)",
+            $exception->getMessage(),
+            $exception->getCode()
+        ));
+
+        // if we have a valid handler give it a chance to handle the error
+        if (null !== $activeHandler) {
+            $activeHandler->invokePluginsHook(
+                'errorOccurred',
+                array($activeHandler, $exception)
+            );
+            return $activeHandler->getEncoder()->encode(
+                new Response($activeHandler->handleException($exception))
+            );
+        }
+
+        // if not on the command line, set an HTTP response code
+        if (!$isCli) {
+            $responseCode = AbstractResponse::RESPONSE_SERVER_ERROR;
+            if ($exception instanceof RouterExceptionInterface) {
+                $responseCode = $exception->getAssociatedStatusCode();
+            }
+            \Vectorface\SnappyRouter\http_response_code($responseCode);
+        }
+        return $exception->getMessage();
+
     }
 
     /**

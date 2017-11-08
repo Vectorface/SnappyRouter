@@ -94,8 +94,10 @@ class ControllerHandler extends PatternMatchHandler
         $this->request = new HttpRequest(
             ucfirst($controller).'Controller',
             $action.'Action',
-            $verb
+            $verb,
+            'php://input'
         );
+
         $this->request->setQuery($query);
         $this->request->setPost($post);
 
