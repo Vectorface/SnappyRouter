@@ -13,7 +13,7 @@ class DiTest extends PHPUnit_Framework_TestCase
      */
     public function testSetAndGetService($key, $element, $expected)
     {
-        $di = new DI();
+        $di = new Di();
         $di->set($key, $element);
         // check that we get back what we expect
         $this->assertEquals(
@@ -64,12 +64,12 @@ class DiTest extends PHPUnit_Framework_TestCase
      */
     public function testGetDefaultAndSetDefault()
     {
-        DI::clearDefault(); // guard condition
-        $di = DI::getDefault(); // get a fresh default
+        Di::clearDefault(); // guard condition
+        $di = Di::getDefault(); // get a fresh default
         $this->assertInstanceOf('Vectorface\SnappyRouter\Di\Di', $di);
 
-        DI::setDefault($di);
-        $this->assertEquals($di, DI::getDefault());
+        Di::setDefault($di);
+        $this->assertEquals($di, Di::getDefault());
     }
 
     /**
@@ -80,7 +80,7 @@ class DiTest extends PHPUnit_Framework_TestCase
      */
     public function testMissingServiceThrowsException()
     {
-        $di = new DI();
+        $di = new Di();
         $di->get('TestElement');
     }
 }
