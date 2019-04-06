@@ -2,15 +2,13 @@
 
 namespace Vectorface\SnappyRouterTests\Plugin\AccessControl;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Exception\AccessDeniedException;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 use Vectorface\SnappyRouter\Handler\PatternMatchHandler;
 use Vectorface\SnappyRouter\Handler\JsonRpcHandler;
 use Vectorface\SnappyRouter\Plugin\AccessControl\CrossOriginRequestPlugin;
-use Vectorface\SnappyRouter\Request\HttpRequest;
-use Vectorface\SnappyRouterTests\Controller\TestDummyController;
 use Vectorface\SnappyRouterTests\Handler\JsonRpcHandlerTest;
 
 /**
@@ -18,7 +16,7 @@ use Vectorface\SnappyRouterTests\Handler\JsonRpcHandlerTest;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class CrossOriginRequestPluginTest extends PHPUnit_Framework_TestCase
+class CrossOriginRequestPluginTest extends TestCase
 {
     /**
      * An overview of how to use the plugin.
@@ -194,7 +192,6 @@ class CrossOriginRequestPluginTest extends PHPUnit_Framework_TestCase
         } catch (AccessDeniedException $e) {
             $this->fail('Cross origin plugin should not have denied access.');
         }
-
     }
 
     /**
@@ -225,6 +222,5 @@ class CrossOriginRequestPluginTest extends PHPUnit_Framework_TestCase
         } catch (AccessDeniedException $e) {
             $this->fail('Cross origin plugin should not have denied access.');
         }
-
     }
 }

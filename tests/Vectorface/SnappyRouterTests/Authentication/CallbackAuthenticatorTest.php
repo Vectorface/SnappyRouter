@@ -2,10 +2,10 @@
 
 namespace Vectorface\SnappyRouterTests\Authentication;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Authentication\CallbackAuthenticator;
 
-class CallbackAuthenticatorTest extends PHPUnit_Framework_TestCase
+class CallbackAuthenticatorTest extends TestCase
 {
     /**
      * A basic test showing standard functionality.

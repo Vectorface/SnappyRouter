@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Exception;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Exception\MethodNotAllowedException;
 
 /**
@@ -10,7 +10,7 @@ use Vectorface\SnappyRouter\Exception\MethodNotAllowedException;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class MethodNotAllowedExceptionTest extends PHPUnit_Framework_TestCase
+class MethodNotAllowedExceptionTest extends TestCase
 {
     /**
      * An overview of how the class works.

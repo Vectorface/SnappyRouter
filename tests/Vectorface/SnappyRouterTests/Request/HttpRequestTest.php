@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Request;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 
 /**
@@ -10,7 +10,7 @@ use Vectorface\SnappyRouter\Request\HttpRequest;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class HttpRequestTest extends PHPUnit_Framework_TestCase
+class HttpRequestTest extends TestCase
 {
     /**
      * An overview of how to use the RPCRequest class.
@@ -25,8 +25,9 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('POST', $request->setVerb('POST')->getVerb());
 
         $queryData = array('id' => '1234');
-        $this->assertTrue(
-            1234 === $request->setQuery($queryData)->getQuery('id', 0, 'int')
+        $this->assertSame(
+            1234,
+            $request->setQuery($queryData)->getQuery('id', 0, 'int')
         );
 
         $postData = array('username' => ' TEST_USER ');
@@ -91,7 +92,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     {
         $request = new HttpRequest('TestService', 'TestMethod', 'GET', 'php://input');
         $request->setQuery(array('key' => $value));
-        $this->assertTrue($expected === $request->getQuery('key', null, $filters));
+        $this->assertSame($expected, $request->getQuery('key', null, $filters));
     }
 
     /**

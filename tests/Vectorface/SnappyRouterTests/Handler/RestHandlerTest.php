@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Handler;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Handler\RestHandler;
 
@@ -11,7 +11,7 @@ use Vectorface\SnappyRouter\Handler\RestHandler;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class RestHandlerTest extends PHPUnit_Framework_TestCase
+class RestHandlerTest extends TestCase
 {
     /**
      * An overview of how to use the RestHandler class.

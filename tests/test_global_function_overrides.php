@@ -10,7 +10,7 @@ function function_exists($class)
 
     if (in_array($class, $blacklist)) {
         return false;
-    } else {
-        return \function_exists($class);
     }
+
+    return \function_exists($class);
 }

@@ -2,10 +2,10 @@
 
 namespace Vectorface\SnappyRouterTests;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Di\Di;
 
-class PhpFivePointThreeCompatTest extends PHPUnit_Framework_TestCase
+class PhpFivePointThreeCompatTest extends TestCase
 {
     public function testHttpResponseCode()
     {

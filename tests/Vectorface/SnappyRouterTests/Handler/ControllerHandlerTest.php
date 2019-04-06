@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Handler;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\SnappyRouter;
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
@@ -13,7 +13,7 @@ use Vectorface\SnappyRouter\Handler\ControllerHandler;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class ControllerHandlerTest extends PHPUnit_Framework_TestCase
+class ControllerHandlerTest extends TestCase
 {
     /**
      * An overview of how to use the ControllerHandler.

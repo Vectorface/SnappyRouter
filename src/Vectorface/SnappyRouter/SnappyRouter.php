@@ -185,7 +185,6 @@ class SnappyRouter
             \Vectorface\SnappyRouter\http_response_code($responseCode);
         }
         return $exception->getMessage();
-
     }
 
     /**

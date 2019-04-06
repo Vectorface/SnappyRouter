@@ -2,6 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Request;
 
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Request\JsonRpcRequest;
 
 /**
@@ -9,7 +10,7 @@ use Vectorface\SnappyRouter\Request\JsonRpcRequest;
  *
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  */
-class JsonRpcRequestTest extends \PHPUnit_Framework_TestCase
+class JsonRpcRequestTest extends TestCase
 {
     /**
      * An overview of how to use the JsonRpcRequest class.

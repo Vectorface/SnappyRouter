@@ -14,13 +14,17 @@
         }
     ],
     "autoload": {
-        "psr-0": {
-            "Vectorface\\SnappyRouter": "./src",
-            "Vectorface\\SnappyRouterTests": "./tests"
+        "psr-4": {
+            "Vectorface\\SnappyRouter\\": "./src/Vectorface/SnappyRouter"
         },
         "files": [
             "./src/Vectorface/SnappyRouter/php-5.3-compat.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Vectorface\\SnappyRouterTests\\": "./tests/Vectorface/SnappyRouterTests"
+        }
     },
     "homepage": "https://github.com/Vectorface/snappy-router",
     "support": {

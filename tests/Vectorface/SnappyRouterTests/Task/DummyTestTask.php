@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Task;
 
-use \Exception;
+use Exception;
 use Vectorface\SnappyRouter\Task\AbstractTask;
 
 class DummyTestTask extends AbstractTask

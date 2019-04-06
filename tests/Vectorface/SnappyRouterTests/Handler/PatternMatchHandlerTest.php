@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Handler;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Handler\PatternMatchHandler;
 
 /**
@@ -10,7 +10,7 @@ use Vectorface\SnappyRouter\Handler\PatternMatchHandler;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class PatternMatchHandlerTest extends PHPUnit_Framework_TestCase
+class PatternMatchHandlerTest extends TestCase
 {
     /**
      * Demonstrates how to use the PatternMatchHandler class.

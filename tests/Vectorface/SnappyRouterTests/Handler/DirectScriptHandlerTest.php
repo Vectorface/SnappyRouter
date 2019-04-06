@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Handler;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Handler\DirectScriptHandler;
 
 /**
@@ -10,7 +10,7 @@ use Vectorface\SnappyRouter\Handler\DirectScriptHandler;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class DirectScriptHandlerTest extends PHPUnit_Framework_TestCase
+class DirectScriptHandlerTest extends TestCase
 {
     /**
      * An overview of how to use the class.

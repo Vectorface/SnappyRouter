@@ -22,7 +22,6 @@ abstract class AbstractControllerPlugin extends AbstractPlugin implements Contro
         AbstractHandler $handler,
         HttpRequest $request
     ) {
-
     }
 
     /**
@@ -38,7 +37,6 @@ abstract class AbstractControllerPlugin extends AbstractPlugin implements Contro
         AbstractController $controller,
         $action
     ) {
-
     }
 
     /**
@@ -54,7 +52,6 @@ abstract class AbstractControllerPlugin extends AbstractPlugin implements Contro
         AbstractController $controller,
         $action
     ) {
-
     }
 
     /**
@@ -72,6 +69,5 @@ abstract class AbstractControllerPlugin extends AbstractPlugin implements Contro
         $action,
         $response
     ) {
-
     }
 }

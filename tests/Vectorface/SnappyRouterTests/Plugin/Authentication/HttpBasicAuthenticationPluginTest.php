@@ -2,7 +2,7 @@
 
 namespace casino\Tests\engine\ServiceRouter\Plugin\Authentication;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Authentication\CallbackAuthenticator;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
@@ -16,7 +16,7 @@ use Vectorface\SnappyRouter\Plugin\Authentication\HttpBasicAuthenticationPlugin;
  * @author J. Anderson <janderson@vectorface.com>
  * @author Dan Bruce   <dbruce@vectorface.com>
  */
-class HttpBasicAuthenticationPluginTest extends PHPUnit_Framework_TestCase
+class HttpBasicAuthenticationPluginTest extends TestCase
 {
     /**
      * Test the HTTPBasicAuthenticationPlugin; All in one test!
