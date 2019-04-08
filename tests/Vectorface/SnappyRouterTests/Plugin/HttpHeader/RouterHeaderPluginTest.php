@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Plugin\HttpHeader;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 use Vectorface\SnappyRouter\Plugin\HttpHeader\RouterHeaderPlugin;
 
@@ -11,7 +11,7 @@ use Vectorface\SnappyRouter\Plugin\HttpHeader\RouterHeaderPlugin;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class RouterHeaderPluginTest extends PHPUnit_Framework_TestCase
+class RouterHeaderPluginTest extends TestCase
 {
     /**
      * An overview of how to use the plugin.

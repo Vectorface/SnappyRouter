@@ -2,16 +2,17 @@
 
 namespace Vectorface\SnappyRouterTests\Response;
 
-use \Exception;
-use \Vectorface\SnappyRouter\Request\JsonRpcRequest;
-use \Vectorface\SnappyRouter\Response\JsonRpcResponse;
+use Exception;
+use PHPUnit\Framework\TestCase;
+use Vectorface\SnappyRouter\Request\JsonRpcRequest;
+use Vectorface\SnappyRouter\Response\JsonRpcResponse;
 
 /**
  * Tests the JsonRpcResponse class.
  *
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  */
-class JsonRpcResponseTest extends \PHPUnit_Framework_TestCase
+class JsonRpcResponseTest extends TestCase
 {
     /**
      * An overview of how to use the JsonRpcResponse class.
@@ -44,6 +45,5 @@ class JsonRpcResponseTest extends \PHPUnit_Framework_TestCase
         $obj = $response->getResponseObject();
         $this->assertEquals(123, $obj->error->code);
         $this->assertEquals("ex", $obj->error->message);
-
     }
 }

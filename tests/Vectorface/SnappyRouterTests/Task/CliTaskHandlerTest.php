@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Task;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Handler\CliTaskHandler;
 
@@ -11,7 +11,7 @@ use Vectorface\SnappyRouter\Handler\CliTaskHandler;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class CliTaskHandlerTest extends PHPUnit_Framework_TestCase
+class CliTaskHandlerTest extends TestCase
 {
     /**
      * An overview of how to use the CliTaskHandler class.

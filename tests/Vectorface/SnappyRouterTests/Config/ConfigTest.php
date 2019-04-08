@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Config;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Config\Config;
 
 /**
@@ -10,7 +10,7 @@ use Vectorface\SnappyRouter\Config\Config;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class ConfigTest extends PHPUnit_Framework_TestCase
+class ConfigTest extends TestCase
 {
     /**
      * Demonstrates basic usage of the Config wrapper class.

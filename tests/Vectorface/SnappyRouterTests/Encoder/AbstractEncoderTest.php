@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Encoder;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Response\Response;
 
 /**
@@ -10,7 +10,7 @@ use Vectorface\SnappyRouter\Response\Response;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-abstract class AbstractEncoderTest extends PHPUnit_Framework_TestCase
+abstract class AbstractEncoderTest extends TestCase
 {
     /**
      * Tests the encode method of the encoder.

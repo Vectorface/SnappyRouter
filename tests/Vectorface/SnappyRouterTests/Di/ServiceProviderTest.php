@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Di;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Di\ServiceProvider;
 
 /**
@@ -10,7 +10,7 @@ use Vectorface\SnappyRouter\Di\ServiceProvider;
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class ServiceProviderTest extends PHPUnit_Framework_TestCase
+class ServiceProviderTest extends TestCase
 {
     /**
      * An overview of how to use the ServiceProvider class.

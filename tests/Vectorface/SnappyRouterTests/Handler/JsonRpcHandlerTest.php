@@ -4,7 +4,7 @@ namespace Vectorface\SnappyRouterTests\Handler;
 
 use \Exception;
 use \ReflectionClass;
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Handler\JsonRpcHandler;
 
@@ -13,7 +13,7 @@ use Vectorface\SnappyRouter\Handler\JsonRpcHandler;
  *
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  */
-class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
+class JsonRpcHandlerTest extends TestCase
 {
     /**
      * Helper method to override the internals of php://input for test purposes.
@@ -62,10 +62,10 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
             array('jsonrpc' => '2.0', 'method' => 'testAction', 'id' => '2')
         ));
         $this->assertTrue($handler->isAppropriate('/x/y/z/TestController', array(), array(), 'POST'));
-        $this->assertEquals(2, count($handler->getRequests()));
+        $this->assertCount(2, $handler->getRequests());
 
         $result = json_decode($handler->performRoute());
-        $this->assertEquals(2, count($result), "Expect 2 responses for 2 calls");
+        $this->assertCount(2, $result, "Expect 2 responses for 2 calls");
         $this->assertEquals("2.0", $result[0]->jsonrpc);
         $this->assertEquals("This is a test service.", $result[0]->result);
         $this->assertEquals("1", $result[0]->id);
@@ -80,7 +80,7 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
         ));
         $this->assertTrue($handler->isAppropriate('/x/y/z/TestController', array(), array(), 'POST'));
         $result = json_decode($handler->performRoute());
-        $this->assertEquals(1, count($result), "Expect 1 response for 1 call and 1 notification");
+        $this->assertCount(1, $result, "Expect 1 response for 1 call and 1 notification");
         $this->assertEquals("1", $result[0]->id);
     }
 
@@ -111,7 +111,6 @@ class JsonRpcHandlerTest extends PHPUnit_Framework_TestCase
         $handler = new JsonRpcHandler($options);
         $this->setRequestPayload($handler, array());
         $this->assertTrue($handler->isAppropriate("/x////y//z/Test/TestController.php", array(), array(), 'POST'));
-
     }
 
     /**

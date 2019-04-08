@@ -2,10 +2,10 @@
 
 namespace Vectorface\SnappyRouterTests\Di;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Di\Di;
 
-class DiTest extends PHPUnit_Framework_TestCase
+class DiTest extends TestCase
 {
     /**
      * Tests the standard set/get methods of the DI.

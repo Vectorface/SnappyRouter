@@ -9,14 +9,14 @@ use Vectorface\SnappyRouter\Plugin\PluginInterface;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests the main SnappyRouter class.
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
-class SnappyRouterTest extends PHPUnit_Framework_TestCase
+class SnappyRouterTest extends TestCase
 {
     /**
      * Returns a standard router config array.

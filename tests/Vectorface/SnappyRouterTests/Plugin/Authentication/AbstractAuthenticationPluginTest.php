@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Plugin\Authentication;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 use Vectorface\SnappyRouter\Authentication\CallbackAuthenticator;
 use Vectorface\SnappyRouter\Di\Di;
@@ -17,7 +17,7 @@ use Vectorface\SnappyRouter\Handler\ControllerHandler;
  * @author J. Anderson <janderson@vectorface.com>
  * @author Dan Bruce   <dbruce@vectorface.com>
  */
-class AbstractAuthenticationPluginTest extends PHPUnit_Framework_TestCase
+class AbstractAuthenticationPluginTest extends TestCase
 {
     /**
      * Authentication of service requests happens by intercepting preInvoke; Validate that.

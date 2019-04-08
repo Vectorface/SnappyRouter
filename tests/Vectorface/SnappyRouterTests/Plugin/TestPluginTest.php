@@ -2,11 +2,10 @@
 
 namespace Vectorface\SnappyRouterTests\Plugin;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Plugin\AbstractPlugin;
-use Vectorface\SnappyRouter\Plugin\PluginInterface;
 
-class TestPluginTest extends PHPUnit_Framework_TestCase
+class TestPluginTest extends TestCase
 {
     /**
      * A demonstrate of a simple test plugin.

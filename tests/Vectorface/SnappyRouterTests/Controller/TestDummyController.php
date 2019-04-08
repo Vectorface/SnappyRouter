@@ -16,7 +16,6 @@ class TestDummyController extends AbstractController
 
     public function indexAction()
     {
-
     }
 
     public function testAction()

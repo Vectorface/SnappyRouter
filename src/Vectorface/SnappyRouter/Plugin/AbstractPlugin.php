@@ -48,7 +48,6 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
      */
     public function afterHandlerSelected(AbstractHandler $handler)
     {
-
     }
 
     /**
@@ -57,7 +56,6 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
      */
     public function afterFullRouteInvoked(AbstractHandler $handler)
     {
-
     }
 
     /**
@@ -67,7 +65,6 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
      */
     public function errorOccurred(AbstractHandler $handler, Exception $exception)
     {
-
     }
 
     /**
