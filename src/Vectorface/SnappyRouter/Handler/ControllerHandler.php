@@ -158,7 +158,7 @@ class ControllerHandler extends PatternMatchHandler
      */
     protected function extractPathFromBasePath($path, $options)
     {
-        if (isset($options[self::KEY_BASE_PATH])) {
+        if (!empty($options[self::KEY_BASE_PATH])) {
             $pos = strpos($path, $options[self::KEY_BASE_PATH]);
             if (false !== $pos) {
                 $path = substr($path, $pos + strlen($options[self::KEY_BASE_PATH]));
