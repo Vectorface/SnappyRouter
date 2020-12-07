@@ -38,7 +38,7 @@ class DiTest extends TestCase
         );
         $this->assertTrue($di->hasElement($key));
         $this->assertEquals(
-            array($key),
+            [$key],
             $di->allRegisteredElements()
         );
     }
@@ -48,20 +48,20 @@ class DiTest extends TestCase
      */
     public function setAndGetServiceProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'HelloWorldService',
                 'Hello world!',
                 'Hello world!'
-            ),
-            array(
+            ],
+            [
                 'HelloWorldService',
-                function () {
+                function() {
                     return 'Hello world!';
                 },
                 'Hello world!'
-            )
-        );
+            ]
+        ];
     }
 
     /**

@@ -31,28 +31,28 @@ class JsonEncoderTest extends AbstractEncoderTest
     {
         $testObject = new stdClass();
         $testObject->id = 1234;
-        return array(
-            array(
+        return [
+            [
                 '"test1234"',
                 'test1234'
-            ),
-            array(
+            ],
+            [
                 '{"id":1234}',
-                array('id' => 1234)
-            ),
-            array(
+                ['id' => 1234]
+            ],
+            [
                 '{"id":1234}',
                 $testObject,
-            ),
-            array(
+            ],
+            [
                 'null',
                 null
-            ),
-            array(
+            ],
+            [
                 '"testSerialize"',
                 $this
-            )
-        );
+            ]
+        ];
     }
 
     /**

@@ -19,7 +19,7 @@ class MethodNotAllowedExceptionTest extends TestCase
     {
         $exception = new MethodNotAllowedException(
             'Cannot use GET',
-            array('POST')
+            ['POST']
         );
         $this->assertEquals(405, $exception->getAssociatedStatusCode());
         try {

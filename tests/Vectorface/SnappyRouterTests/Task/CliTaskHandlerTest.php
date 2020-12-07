@@ -22,19 +22,19 @@ class CliTaskHandlerTest extends TestCase
      */
     public function testSynopsis()
     {
-        $options = array(
-            Config::KEY_TASKS => array(
+        $options = [
+            Config::KEY_TASKS => [
                 'TestTask' => DummyTestTask::class,
-            )
-        );
+            ]
+        ];
         $handler = new CliTaskHandler($options);
-        $components = array(
+        $components = [
             'dummyScript.php',
             '--task',
             'TestTask',
             '--action',
             'testAction'
-        );
+        ];
 
         // the components needs to be at least 5 elements with --task and --action
         $this->assertTrue($handler->isAppropriate($components));
@@ -58,19 +58,19 @@ class CliTaskHandlerTest extends TestCase
     {
         $this->setExpectedException(ResourceNotFoundException::class, "TestTask task does not have action missingAction.");
 
-        $options = array(
-            Config::KEY_TASKS => array(
+        $options = [
+            Config::KEY_TASKS => [
                 'TestTask' => DummyTestTask::class,
-            )
-        );
+            ]
+        ];
         $handler = new CliTaskHandler($options);
-        $components = array(
+        $components = [
             'dummyScript.php',
             '--task',
             'TestTask',
             '--action',
             'missingAction'
-        );
+        ];
         $this->assertTrue($handler->isAppropriate($components));
         $handler->performRoute();
     }

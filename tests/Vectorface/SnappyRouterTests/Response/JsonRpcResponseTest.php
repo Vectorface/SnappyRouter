@@ -20,12 +20,12 @@ class JsonRpcResponseTest extends TestCase
     public function testSynopsis()
     {
         /* Needs to be based on a related request */
-        $request = new JsonRpcRequest('MyService', (object)array(
+        $request = new JsonRpcRequest('MyService', (object)[
             'jsonrpc' => '2.0',
-            'method' => 'remoteProcedure',
-            'params' => array(1, 2, 3),
-            'id' => 'identifier'
-        ));
+            'method'  => 'remoteProcedure',
+            'params'  => [1, 2, 3],
+            'id'      => 'identifier'
+        ]);
 
         $response = new JsonRpcResponse('object, array, or scalar', null, $request);
         $obj = $response->getResponseObject();
@@ -34,12 +34,12 @@ class JsonRpcResponseTest extends TestCase
         $this->assertEquals("identifier", $obj->id, "Request ID is passed back");
 
         /* Notifications generate no response */
-        $request = new JsonRpcRequest('MyService', (object)array('method' => 'notifyProcedure'));
+        $request = new JsonRpcRequest('MyService', (object)['method' => 'notifyProcedure']);
         $response = new JsonRpcResponse("anything", null, $request);
         $this->assertEquals("", $response->getResponseObject());
 
         /* An error passes back a message and a code */
-        $request = new JsonRpcRequest('MyService', (object)array('method' => 'any', 'id' => 123));
+        $request = new JsonRpcRequest('MyService', (object)['method' => 'any', 'id' => 123]);
         $response = new JsonRpcResponse(null, new Exception("ex", 123), $request);
         $obj = $response->getResponseObject();
         $this->assertEquals(123, $obj->error->code);

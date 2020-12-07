@@ -30,22 +30,22 @@ class CrossOriginRequestPluginTest extends TestCase
         // make it appear that we are generating a cross origin request
         $_SERVER['HTTP_ORIGIN'] = 'cross.example.com';
         // some dummy variables that are needed by the plugin
-        $handler = new ControllerHandler(array());
-        $this->assertTrue($handler->isAppropriate('/testDummy', array(), array(), 'OPTIONS'));
+        $handler = new ControllerHandler([]);
+        $this->assertTrue($handler->isAppropriate('/testDummy', [], [], 'OPTIONS'));
 
         // configure the plugin to allow cross origin access to all methods
         // within the TestDummyController controller
-        $plugin = new CrossOriginRequestPlugin(array(
-            'whitelist' => array(
+        $plugin = new CrossOriginRequestPlugin([
+            'whitelist' => [
                 'TestdummyController' => 'all'
-            ),
-            'ignoreOrigins' => array(
+            ],
+            'ignoreOrigins' => [
                 'www.example.com'
-            ),
-            'Access-Control-Max-Age' => 3600,
-            'Access-Control-Allow-Headers' => array('accept', 'content-type', 'content-length'),
-            'Access-Control-Allow-Methods' => array('GET', 'POST', 'OPTIONS', 'PUT', 'DELETE')
-        ));
+            ],
+            'Access-Control-Max-Age'       => 3600,
+            'Access-Control-Allow-Headers' => ['accept', 'content-type', 'content-length'],
+            'Access-Control-Allow-Methods' => ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE']
+        ]);
 
         // if the plugin allows the cross origin request then no exception
         // should be thrown
@@ -64,16 +64,16 @@ class CrossOriginRequestPluginTest extends TestCase
         // make it appear that we are not generating a cross origin request
         unset($_SERVER['HTTP_ORIGIN']);
         // some dummy variables that are needed by the plugin
-        $handler = new ControllerHandler(array());
-        $this->assertTrue($handler->isAppropriate('/testDummy', array(), array(), 'GET'));
+        $handler = new ControllerHandler([]);
+        $this->assertTrue($handler->isAppropriate('/testDummy', [], [], 'GET'));
         // an empty whitelist indicates that every cross origin request should
         // be blocked
-        $plugin = new CrossOriginRequestPlugin(array(
-            'whitelist' => array(),
-            'ignoreOrigins' => array(
+        $plugin = new CrossOriginRequestPlugin([
+            'whitelist'     => [],
+            'ignoreOrigins' => [
                 'www.example.com'
-            )
-        ));
+            ]
+        ]);
 
         // this request should not be a cross origin one so no exception should
         // be thrown
@@ -97,9 +97,9 @@ class CrossOriginRequestPluginTest extends TestCase
         // make it appear that we are generating a cross origin request
         $_SERVER['HTTP_ORIGIN'] = 'www.example.com';
         // some dummy variables that are needed by the plugin
-        $handler = new ControllerHandler(array());
-        $this->assertTrue($handler->isAppropriate('/testDummy', array(), array(), 'GET'));
-        $plugin = new CrossOriginRequestPlugin(array());
+        $handler = new ControllerHandler([]);
+        $this->assertTrue($handler->isAppropriate('/testDummy', [], [], 'GET'));
+        $plugin = new CrossOriginRequestPlugin([]);
         try {
             $plugin->afterHandlerSelected($handler);
             $this->fail();
@@ -118,11 +118,11 @@ class CrossOriginRequestPluginTest extends TestCase
         // make it appear that we are generating a cross origin request
         $_SERVER['HTTP_ORIGIN'] = 'www.example.com';
         // some dummy variables that are needed by the plugin
-        $handler = new ControllerHandler(array());
-        $this->assertTrue($handler->isAppropriate('/testDummy', array(), array(), 'GET'));
-        $plugin = new CrossOriginRequestPlugin(array(
-            'whitelist' => array()
-        ));
+        $handler = new ControllerHandler([]);
+        $this->assertTrue($handler->isAppropriate('/testDummy', [], [], 'GET'));
+        $plugin = new CrossOriginRequestPlugin([
+            'whitelist' => []
+        ]);
         try {
             $plugin->afterHandlerSelected($handler);
         } catch (AccessDeniedException $e) {
@@ -141,13 +141,13 @@ class CrossOriginRequestPluginTest extends TestCase
         // make it appear that we are generating a cross origin request
         $_SERVER['HTTP_ORIGIN'] = 'www.example.com';
         // some dummy variables that are needed by the plugin
-        $handler = new ControllerHandler(array());
-        $this->assertTrue($handler->isAppropriate('/testDummy', array(), array(), 'GET'));
-        $plugin = new CrossOriginRequestPlugin(array(
-            'whitelist' => array(
-                'TestdummyController' => array()
-            )
-        ));
+        $handler = new ControllerHandler([]);
+        $this->assertTrue($handler->isAppropriate('/testDummy', [], [], 'GET'));
+        $plugin = new CrossOriginRequestPlugin([
+            'whitelist' => [
+                'TestdummyController' => []
+            ]
+        ]);
         try {
             $plugin->afterHandlerSelected($handler);
         } catch (AccessDeniedException $e) {
@@ -166,11 +166,11 @@ class CrossOriginRequestPluginTest extends TestCase
         // make it appear that we are generating a cross origin request
         $_SERVER['HTTP_ORIGIN'] = 'www.example.com';
         // some dummy variables that are needed by the plugin
-        $handler = new ControllerHandler(array());
-        $this->assertTrue($handler->isAppropriate('/testDummy', array(), array(), 'GET'));
-        $plugin = new CrossOriginRequestPlugin(array(
+        $handler = new ControllerHandler([]);
+        $this->assertTrue($handler->isAppropriate('/testDummy', [], [], 'GET'));
+        $plugin = new CrossOriginRequestPlugin([
             'whitelist' => 'all'
-        ));
+        ]);
         try {
             $plugin->afterHandlerSelected($handler);
             $this->assertTrue(true);
@@ -189,18 +189,18 @@ class CrossOriginRequestPluginTest extends TestCase
         // make it appear that we are generating a cross origin request
         $_SERVER['HTTP_ORIGIN'] = 'www.example.com';
         // some dummy variables that are needed by the plugin
-        $config = array(
-            'routes' => array(
-                '/testDummy' => function () {
+        $config = [
+            'routes' => [
+                '/testDummy' => function() {
                     return true;
                 }
-            )
-        );
+            ]
+        ];
         $handler = new PatternMatchHandler($config);
-        $this->assertTrue($handler->isAppropriate('/testDummy', array(), array(), 'GET'));
-        $plugin = new CrossOriginRequestPlugin(array(
+        $this->assertTrue($handler->isAppropriate('/testDummy', [], [], 'GET'));
+        $plugin = new CrossOriginRequestPlugin([
             'whitelist' => 'all'
-        ));
+        ]);
         try {
             $plugin->afterHandlerSelected($handler);
             $this->assertTrue(true);
@@ -219,20 +219,20 @@ class CrossOriginRequestPluginTest extends TestCase
         // make it appear that we are generating a cross origin request
         $_SERVER['HTTP_ORIGIN'] = 'www.example.com';
         // some dummy variables that are needed by the plugin
-        $config = array(
-            'controllers' => array(
+        $config = [
+            'controllers' => [
                 'TestController' => TestDummyController::class,
-            )
-        );
+            ]
+        ];
         $handler = new JsonRpcHandler($config);
-        $payload = array('jsonrpc' => '2.0', 'method' => 'testAction', 'id' => '1');
+        $payload = ['jsonrpc' => '2.0', 'method' => 'testAction', 'id' => '1'];
         JsonRpcHandlerTest::setRequestPayload($handler, $payload);
-        $this->assertTrue($handler->isAppropriate('/testDummy', array(), array(), 'POST'));
-        $plugin = new CrossOriginRequestPlugin(array(
-            'whitelist' => array(
-                'testDummy' => array('testAction')
-            )
-        ));
+        $this->assertTrue($handler->isAppropriate('/testDummy', [], [], 'POST'));
+        $plugin = new CrossOriginRequestPlugin([
+            'whitelist' => [
+                'testDummy' => ['testAction']
+            ]
+        ]);
         try {
             $plugin->afterHandlerSelected($handler);
             $this->assertTrue(true);

@@ -29,18 +29,18 @@ class ControllerHandlerTest extends TestCase
      */
     public function testSynopsis()
     {
-        $options = array(
+        $options = [
             ControllerHandler::KEY_BASE_PATH => '/',
-            Config::KEY_CONTROLLERS => array(
+            Config::KEY_CONTROLLERS          => [
                 'ControllerController' => TestDummyController::class,
-                'IndexController' => TestDummyController::class,
-            )
-        );
+                'IndexController'      => TestDummyController::class,
+            ]
+        ];
         $handler = new ControllerHandler($options);
 
         $path = '/controller/default/param1/param2';
-        $query = array('id' => '1234');
-        $post  = array('key' => 'value');
+        $query = ['id' => '1234'];
+        $post = ['key' => 'value'];
 
         // a route with parameters
         $this->assertTrue($handler->isAppropriate($path, $query, $post, 'POST'));
@@ -80,11 +80,11 @@ class ControllerHandlerTest extends TestCase
     {
         $this->setExpectedException(ResourceNotFoundException::class, 'No such controller found "TestController".');
 
-        $options = array();
+        $options = [];
         $handler = new ControllerHandler($options);
 
         $path = '/test/test';
-        $this->assertTrue($handler->isAppropriate($path, array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate($path, [], [], 'GET'));
         $handler->performRoute();
     }
 
@@ -98,15 +98,15 @@ class ControllerHandlerTest extends TestCase
     {
         $this->setExpectedException(ResourceNotFoundException::class, 'TestController does not have method notexistsAction');
 
-        $options = array(
-            Config::KEY_CONTROLLERS => array(
+        $options = [
+            Config::KEY_CONTROLLERS => [
                 'TestController' => TestDummyController::class
-            )
-        );
+            ]
+        ];
         $handler = new ControllerHandler($options);
 
         $path = '/test/notExists';
-        $this->assertTrue($handler->isAppropriate($path, array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate($path, [], [], 'GET'));
 
         $handler->performRoute();
     }
@@ -121,11 +121,11 @@ class ControllerHandlerTest extends TestCase
     {
         $this->setExpectedException(PluginException::class, 'Invalid or missing class for plugin TestPlugin');
 
-        $options = array(
-            Config::KEY_PLUGINS => array(
-                'TestPlugin' => array()
-            )
-        );
+        $options = [
+            Config::KEY_PLUGINS => [
+                'TestPlugin' => []
+            ]
+        ];
         return new ControllerHandler($options);
     }
 
@@ -139,13 +139,13 @@ class ControllerHandlerTest extends TestCase
     {
         $this->setExpectedException(PluginException::class, 'Invalid or missing class for plugin TestPlugin');
 
-        $options = array(
-            Config::KEY_PLUGINS => array(
-                'TestPlugin' => array(
+        $options = [
+            Config::KEY_PLUGINS => [
+                'TestPlugin' => [
                     'class' => 'Vectorface\\SnappyRouter\\Plugin\\NonExistentPlugin'
-                )
-            )
-        );
+                ]
+            ]
+        ];
         return new ControllerHandler($options);
     }
 
@@ -158,15 +158,15 @@ class ControllerHandlerTest extends TestCase
     {
         $this->setExpectedException(InternalErrorException::class, 'View environment missing views path.');
 
-        $options = array(
+        $options = [
             ControllerHandler::KEY_BASE_PATH => '/',
-            Config::KEY_CONTROLLERS => array(
+            Config::KEY_CONTROLLERS          => [
                 'ControllerController' => TestDummyController::class,
-            ),
-            ControllerHandler::KEY_VIEWS => array()
-        );
+            ],
+            ControllerHandler::KEY_VIEWS => []
+        ];
         $handler = new ControllerHandler($options);
-        $handler->isAppropriate('/controller', array(), array(), 'GET');
+        $handler->isAppropriate('/controller', [], [], 'GET');
     }
 
     /**
@@ -177,26 +177,26 @@ class ControllerHandlerTest extends TestCase
      */
     public function testRenderDefaultView()
     {
-        $routerOptions = array(
-            Config::KEY_DI => Di::class,
-            Config::KEY_HANDLERS => array(
-                'ControllerHandler' => array(
-                    Config::KEY_CLASS => ControllerHandler::class,
-                    Config::KEY_OPTIONS => array(
-                        Config::KEY_CONTROLLERS => array(
+        $routerOptions = [
+            Config::KEY_DI       => Di::class,
+            Config::KEY_HANDLERS => [
+                'ControllerHandler' => [
+                    Config::KEY_CLASS   => ControllerHandler::class,
+                    Config::KEY_OPTIONS => [
+                        Config::KEY_CONTROLLERS => [
                             'TestController' => TestDummyController::class,
-                        ),
-                        ControllerHandler::KEY_VIEWS => array(
+                        ],
+                        ControllerHandler::KEY_VIEWS => [
                             ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
-                        )
-                    )
-                )
-            )
-        );
+                        ]
+                    ]
+                ]
+            ]
+        ];
         $router = new SnappyRouter(new Config($routerOptions));
 
         $path = '/test/default';
-        $response = $router->handleHttpRoute($path, array(), array(), 'GET');
+        $response = $router->handleHttpRoute($path, [], [], 'GET');
         $expected = file_get_contents(__DIR__.'/../Controller/Views/test/default.twig');
         $this->assertEquals($expected, $response);
     }
@@ -209,16 +209,16 @@ class ControllerHandlerTest extends TestCase
      */
     public function testActionReturnsString()
     {
-        $options = array(
-            Config::KEY_CONTROLLERS => array(
+        $options = [
+            Config::KEY_CONTROLLERS => [
                 'TestController' => TestDummyController::class,
-            ),
-            ControllerHandler::KEY_VIEWS => array(
+            ],
+            ControllerHandler::KEY_VIEWS => [
                 ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
-            )
-        );
+            ]
+        ];
         $handler = new ControllerHandler($options);
-        $this->assertTrue($handler->isAppropriate('/test/test', array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate('/test/test', [], [], 'GET'));
         $this->assertEquals('This is a test service.', $handler->performRoute());
     }
 
@@ -230,16 +230,16 @@ class ControllerHandlerTest extends TestCase
      */
     public function testActionReturnsArray()
     {
-        $options = array(
-            Config::KEY_CONTROLLERS => array(
+        $options = [
+            Config::KEY_CONTROLLERS => [
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
-            ),
-            ControllerHandler::KEY_VIEWS => array(
+            ],
+            ControllerHandler::KEY_VIEWS => [
                 ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
-            )
-        );
+            ]
+        ];
         $handler = new ControllerHandler($options);
-        $this->assertTrue($handler->isAppropriate('/test/array', array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate('/test/array', [], [], 'GET'));
         $this->assertEquals('This is a test service.', $handler->performRoute());
     }
 
@@ -250,16 +250,16 @@ class ControllerHandlerTest extends TestCase
      */
     public function testActionRendersNonDefaultView()
     {
-        $options = array(
-            Config::KEY_CONTROLLERS => array(
+        $options = [
+            Config::KEY_CONTROLLERS => [
                 'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
-            ),
-            ControllerHandler::KEY_VIEWS => array(
+            ],
+            ControllerHandler::KEY_VIEWS => [
                 ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
-            )
-        );
+            ]
+        ];
         $handler = new ControllerHandler($options);
-        $this->assertTrue($handler->isAppropriate('/test/otherView', array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate('/test/otherView', [], [], 'GET'));
         $this->assertEquals('This is a test service.', $handler->performRoute());
     }
 
@@ -272,16 +272,16 @@ class ControllerHandlerTest extends TestCase
     {
         $this->setExpectedException(Exception::class, 'The current encoder does not support the render view method.');
 
-        $options = array(
-            Config::KEY_CONTROLLERS => array(
+        $options = [
+            Config::KEY_CONTROLLERS => [
                 'TestController' => TestDummyController::class
-            ),
-            ControllerHandler::KEY_VIEWS => array(
+            ],
+            ControllerHandler::KEY_VIEWS => [
                 ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
-            )
-        );
+            ]
+        ];
         $handler = new ControllerHandler($options);
-        $this->assertTrue($handler->isAppropriate('/test/otherView', array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate('/test/otherView', [], [], 'GET'));
         $handler->setEncoder(new NullEncoder());
         $handler->performRoute();
     }
@@ -293,16 +293,16 @@ class ControllerHandlerTest extends TestCase
      */
     public function testNamespaceProvisioning()
     {
-        $options = array(
-            Config::KEY_NAMESPACES => array(
+        $options = [
+            Config::KEY_NAMESPACES => [
                 'Vectorface\\SnappyRouterTests\\Controller'
-            ),
-            ControllerHandler::KEY_VIEWS => array(
+            ],
+            ControllerHandler::KEY_VIEWS => [
                 ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
-            )
-        );
+            ]
+        ];
         $handler = new ControllerHandler($options);
-        $this->assertTrue($handler->isAppropriate('/testDummy/test', array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate('/testDummy/test', [], [], 'GET'));
         $this->assertEquals('This is a test service.', $handler->performRoute());
     }
 
@@ -313,16 +313,16 @@ class ControllerHandlerTest extends TestCase
      */
     public function testFolderProvisioning()
     {
-        $options = array(
-            Config::KEY_FOLDERS => array(
+        $options = [
+            Config::KEY_FOLDERS => [
                 realpath(__DIR__.'/../Controller')
-            ),
-            ControllerHandler::KEY_VIEWS => array(
+            ],
+            ControllerHandler::KEY_VIEWS => [
                 ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
-            )
-        );
+            ]
+        ];
         $handler = new ControllerHandler($options);
-        $this->assertTrue($handler->isAppropriate('/nonNamespaced/test', array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate('/nonNamespaced/test', [], [], 'GET'));
         $this->assertEquals('This is a test string.', $handler->performRoute());
     }
 }

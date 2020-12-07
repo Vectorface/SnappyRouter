@@ -18,7 +18,7 @@ class TestAuthenticationPlugin extends AbstractAuthenticationPlugin
      *
      * @var mixed
      */
-    public $credentials = array('ignored', 'ignored');
+    public $credentials = ['ignored', 'ignored'];
 
     /**
      * Extract credentials from the "request"... Or the hard-coded test values above.

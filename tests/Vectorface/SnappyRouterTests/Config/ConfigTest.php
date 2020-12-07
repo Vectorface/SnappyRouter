@@ -20,10 +20,10 @@ class ConfigTest extends TestCase
      */
     public function testSynopsis()
     {
-        $arrayConfig = array(
+        $arrayConfig = [
             'key1' => 'value1',
             'key2' => 'value2'
-        );
+        ];
 
         // initialize the class from an array
         $config = new Config($arrayConfig);
@@ -57,7 +57,7 @@ class ConfigTest extends TestCase
     {
         $this->setExpectedException(Exception::class, "Config values must contain a key.");
 
-        $config = new Config(array());
+        $config = new Config([]);
         $config[] = 'new value';
     }
 }

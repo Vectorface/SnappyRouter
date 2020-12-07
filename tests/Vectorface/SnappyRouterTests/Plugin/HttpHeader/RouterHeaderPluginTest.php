@@ -21,8 +21,8 @@ class RouterHeaderPluginTest extends TestCase
      */
     public function testSynopsis()
     {
-        $handler = new ControllerHandler(array());
-        $plugin = new RouterHeaderPlugin(array());
+        $handler = new ControllerHandler([]);
+        $plugin = new RouterHeaderPlugin([]);
         $plugin->afterhandlerSelected($handler);
     }
 }

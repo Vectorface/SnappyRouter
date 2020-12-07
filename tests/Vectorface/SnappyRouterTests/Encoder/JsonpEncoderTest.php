@@ -21,9 +21,9 @@ class JsonpEncoderTest extends AbstractEncoderTest
      */
     public function getEncoder()
     {
-        $options = array(
+        $options = [
             'clientMethod' => 'doSomething'
-        );
+        ];
         return new JsonpEncoder($options);
     }
 
@@ -32,12 +32,12 @@ class JsonpEncoderTest extends AbstractEncoderTest
      */
     public function encodeProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'doSomething("test1234");',
                 'test1234'
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -48,6 +48,6 @@ class JsonpEncoderTest extends AbstractEncoderTest
     {
         $this->setExpectedException(Exception::class, "Client method missing from plugin options.");
 
-        new JsonpEncoder(array());
+        new JsonpEncoder([]);
     }
 }

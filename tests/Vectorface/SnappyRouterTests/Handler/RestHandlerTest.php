@@ -24,14 +24,14 @@ class RestHandlerTest extends TestCase
      */
     public function testSynopsis()
     {
-        $options = array(
+        $options = [
             RestHandler::KEY_BASE_PATH => '/',
-            Config::KEY_CONTROLLERS => array(
+            Config::KEY_CONTROLLERS    => [
                 'TestController' => TestDummyController::class
-            )
-        );
+            ]
+        ];
         $handler = new RestHandler($options);
-        $this->assertTrue($handler->isAppropriate('/v1/test', array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate('/v1/test', [], [], 'GET'));
         $result = json_decode($handler->performRoute());
         $this->assertTrue(empty($result));
     }
@@ -47,14 +47,14 @@ class RestHandlerTest extends TestCase
      */
     public function testRestHandlerHandlesPath($expected, $path)
     {
-        $options = array(
+        $options = [
             RestHandler::KEY_BASE_PATH => '/',
-            Config::KEY_CONTROLLERS => array(
+            Config::KEY_CONTROLLERS    => [
                 'TestController' => TestDummyController::class,
-            )
-        );
+            ]
+        ];
         $handler = new RestHandler($options);
-        $this->assertEquals($expected, $handler->isAppropriate($path, array(), array(), 'GET'));
+        $this->assertEquals($expected, $handler->isAppropriate($path, [], [], 'GET'));
     }
 
     /**
@@ -62,43 +62,43 @@ class RestHandlerTest extends TestCase
      */
     public function restPathsProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 true,
                 '/v1/test'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/test'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/Test'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/test/1234'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/test/someAction'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/test/1234/someAction'
-            ),
-            array(
+            ],
+            [
                 false,
                 '/v1.2'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/noController'
-            ),
-            array(
+            ],
+            [
                 false,
                 '/v1.2/1234/5678'
-            )
-        );
+            ]
+        ];
     }
 }

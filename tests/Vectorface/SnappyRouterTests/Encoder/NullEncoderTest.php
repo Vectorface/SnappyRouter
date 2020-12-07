@@ -26,15 +26,15 @@ class NullEncoderTest extends AbstractEncoderTest
      */
     public function encodeProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'test1234',
                 'test1234'
-            ),
-            array(
+            ],
+            [
                 '',
                 null
-            )
-        );
+            ]
+        ];
     }
 }
