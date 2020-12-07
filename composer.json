@@ -40,5 +40,11 @@
     "phpunit/phpunit": "^4.8",
     "squizlabs/php_codesniffer": "1.*",
     "vectorface/dunit": "~2.0"
+  },
+  "scripts": {
+    "test": [
+      "@test-unit"
+    ],
+    "test-unit": "phpunit --color=always"
   }
 }
