@@ -4,7 +4,11 @@ namespace Vectorface\SnappyRouterTests\Handler;
 
 use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Config\Config;
+use Vectorface\SnappyRouter\Exception\InternalErrorException;
+use Vectorface\SnappyRouter\Exception\PluginException;
+use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\Handler\RestHandler;
+use Vectorface\SnappyRouterTests\Controller\TestDummyController;
 
 /**
  * A test for the RestHandler class.
@@ -15,36 +19,42 @@ class RestHandlerTest extends TestCase
 {
     /**
      * An overview of how to use the RestHandler class.
-     * @test
+     *
+     * @throws InternalErrorException|PluginException|ResourceNotFoundException
      */
-    public function synopsis()
+    public function testSynopsis()
     {
-        $options = array(
+        $options = [
             RestHandler::KEY_BASE_PATH => '/',
-            Config::KEY_CONTROLLERS => array(
-                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
-            )
-        );
+            Config::KEY_CONTROLLERS    => [
+                'TestController' => TestDummyController::class
+            ]
+        ];
         $handler = new RestHandler($options);
-        $this->assertTrue($handler->isAppropriate('/v1/test', array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate('/v1/test', [], [], 'GET'));
         $result = json_decode($handler->performRoute());
         $this->assertTrue(empty($result));
     }
 
     /**
      * Tests the possible paths that could be handled by the RestHandler.
+     *
      * @dataProvider restPathsProvider
+     * @param bool $expected
+     * @param string $path
+     * @throws InternalErrorException
+     * @throws PluginException
      */
     public function testRestHandlerHandlesPath($expected, $path)
     {
-        $options = array(
+        $options = [
             RestHandler::KEY_BASE_PATH => '/',
-            Config::KEY_CONTROLLERS => array(
-                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
-            )
-        );
+            Config::KEY_CONTROLLERS    => [
+                'TestController' => TestDummyController::class,
+            ]
+        ];
         $handler = new RestHandler($options);
-        $this->assertEquals($expected, $handler->isAppropriate($path, array(), array(), 'GET'));
+        $this->assertEquals($expected, $handler->isAppropriate($path, [], [], 'GET'));
     }
 
     /**
@@ -52,43 +62,43 @@ class RestHandlerTest extends TestCase
      */
     public function restPathsProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 true,
                 '/v1/test'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/test'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/Test'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/test/1234'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/test/someAction'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/test/1234/someAction'
-            ),
-            array(
+            ],
+            [
                 false,
                 '/v1.2'
-            ),
-            array(
+            ],
+            [
                 true,
                 '/v1.2/noController'
-            ),
-            array(
+            ],
+            [
                 false,
                 '/v1.2/1234/5678'
-            )
-        );
+            ]
+        ];
     }
 }

@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Authentication\CallbackAuthenticator;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
+use Vectorface\SnappyRouter\Exception\PluginException;
 use Vectorface\SnappyRouter\Exception\UnauthorizedException;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 
@@ -21,21 +22,23 @@ class AbstractAuthenticationPluginTest extends TestCase
 {
     /**
      * Authentication of service requests happens by intercepting preInvoke; Validate that.
+     *
+     * @throws InternalErrorException|UnauthorizedException|PluginException
      */
     public function testAfterHandlerInvoked()
     {
-        $ignored = new ControllerHandler(array());
+        $ignored = new ControllerHandler([]);
 
         /* Configure DI */
         $bool = false;
-        $auth = new CallbackAuthenticator(function () use (&$bool) {
+        $auth = new CallbackAuthenticator(function() use (&$bool) {
             return $bool;
         });
-        $di = new Di(array('AuthMechanism' => false));
+        $di = new Di(['AuthMechanism' => false]);
         Di::setDefault($di);
 
         /* Direct testing. */
-        $plugin = new TestAuthenticationPlugin(array());
+        $plugin = new TestAuthenticationPlugin([]);
 
         try {
             $plugin->afterHandlerSelected($ignored);
@@ -55,7 +58,7 @@ class AbstractAuthenticationPluginTest extends TestCase
             $this->assertEquals(401, $e->getAssociatedStatusCode()); /* HTTP 401 Unauthorized */
         }
 
-        $plugin->credentials = array('ignored' , 'ignored');
+        $plugin->credentials = ['ignored', 'ignored'];
         try {
             $plugin->afterHandlerSelected($ignored);
             $this->fail("Callback expected to return false auth result. UnauthorizedException expected.");

@@ -4,6 +4,8 @@ namespace Vectorface\SnappyRouterTests\Task;
 
 use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Config\Config;
+use Vectorface\SnappyRouter\Exception\PluginException;
+use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\Handler\CliTaskHandler;
 
 /**
@@ -15,23 +17,24 @@ class CliTaskHandlerTest extends TestCase
 {
     /**
      * An overview of how to use the CliTaskHandler class.
-     * @test
+     *
+     * @throws PluginException
      */
-    public function synopsis()
+    public function testSynopsis()
     {
-        $options = array(
-            Config::KEY_TASKS => array(
-                'TestTask' => 'Vectorface\SnappyRouterTests\Task\DummyTestTask'
-            )
-        );
+        $options = [
+            Config::KEY_TASKS => [
+                'TestTask' => DummyTestTask::class,
+            ]
+        ];
         $handler = new CliTaskHandler($options);
-        $components = array(
+        $components = [
             'dummyScript.php',
             '--task',
             'TestTask',
             '--action',
             'testAction'
-        );
+        ];
 
         // the components needs to be at least 5 elements with --task and --action
         $this->assertTrue($handler->isAppropriate($components));
@@ -48,24 +51,26 @@ class CliTaskHandlerTest extends TestCase
     /**
      * A test that asserts an exception is thrown if we call an action missing
      * from a registered task.
-     * @expectedException Vectorface\SnappyRouter\Exception\ResourceNotFoundException
-     * @expectedExceptionMessage TestTask task does not have action missingAction.
+     *
+     * @throws PluginException|ResourceNotFoundException
      */
     public function testMissingActionOnTask()
     {
-        $options = array(
-            Config::KEY_TASKS => array(
-                'TestTask' => 'Vectorface\SnappyRouterTests\Task\DummyTestTask'
-            )
-        );
+        $this->setExpectedException(ResourceNotFoundException::class, "TestTask task does not have action missingAction.");
+
+        $options = [
+            Config::KEY_TASKS => [
+                'TestTask' => DummyTestTask::class,
+            ]
+        ];
         $handler = new CliTaskHandler($options);
-        $components = array(
+        $components = [
             'dummyScript.php',
             '--task',
             'TestTask',
             '--action',
             'missingAction'
-        );
+        ];
         $this->assertTrue($handler->isAppropriate($components));
         $handler->performRoute();
     }

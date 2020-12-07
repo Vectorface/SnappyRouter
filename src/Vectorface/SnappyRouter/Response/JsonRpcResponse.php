@@ -2,8 +2,8 @@
 
 namespace Vectorface\SnappyRouter\Response;
 
-use \stdClass;
-use \Exception;
+use stdClass;
+use Exception;
 use Vectorface\SnappyRouter\Request\JsonRpcRequest;
 
 /**
@@ -26,10 +26,10 @@ class JsonRpcResponse extends Response
 
         /* JSON-RPC spec: either error or result, never both. */
         if ($error) {
-            $response->error = (object)array(
-                'code' => $error->getCode(),
+            $response->error = (object)[
+                'code'    => $error->getCode(),
                 'message' => $error->getMessage()
-            );
+            ];
         } else {
             $response->result = $result;
         }

@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouterTests\Encoder;
 
 use PHPUnit\Framework\TestCase;
+use Vectorface\SnappyRouter\Encoder\AbstractEncoder;
 use Vectorface\SnappyRouter\Response\Response;
 
 /**
@@ -14,7 +15,10 @@ abstract class AbstractEncoderTest extends TestCase
 {
     /**
      * Tests the encode method of the encoder.
+     *
      * @dataProvider encodeProvider
+     * @param string $expected
+     * @param mixed $input
      */
     public function testEncode($expected, $input)
     {
@@ -29,7 +33,7 @@ abstract class AbstractEncoderTest extends TestCase
 
     /**
      * Returns the encoder to be tested.
-     * @return \Vectorface\SnappyRouter\Encoder\AbstractEncoder Returns an instance of an encoder.
+     * @return AbstractEncoder Returns an instance of an encoder.
      */
     abstract public function getEncoder();
 

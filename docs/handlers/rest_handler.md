@@ -41,7 +41,7 @@ Example:
 
 namespace Vendor\MyNamespace\Handler;
 
-use \Exception;
+use Exception;
 use Vectorface\SnappyRouter\Handler\RestHandler;
 
 class MyRestHandler extends RestHandler
@@ -76,7 +76,7 @@ Example controller:
 
 namespace Vendor\MyNamespace\Controller;
 
-use \Exception;
+use Exception;
 use Vectorface\SnappyRouter\Controller\AbstractController;
 
 class RestUsersController extends AbstractController

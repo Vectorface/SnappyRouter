@@ -2,7 +2,6 @@
 
 namespace Vectorface\SnappyRouterTests\Controller;
 
-use \Exception;
 use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
 
@@ -13,7 +12,6 @@ use Vectorface\SnappyRouter\Exception\InternalErrorException;
  */
 class TestDummyController extends AbstractController
 {
-
     public function indexAction()
     {
     }
@@ -38,13 +36,13 @@ class TestDummyController extends AbstractController
     public function arrayAction()
     {
         $this->viewContext['variable'] = 'broken';
-        return array('variable' => 'test');
+        return ['variable' => 'test'];
     }
 
     public function otherViewAction()
     {
         return $this->renderView(
-            array('variable' => 'test'),
+            ['variable' => 'test'],
             'test/array.twig'
         );
     }

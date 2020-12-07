@@ -2,7 +2,8 @@
 
 namespace Vectorface\SnappyRouter\Encoder;
 
-use \Exception;
+use Exception;
+use Vectorface\SnappyRouter\Exception\EncoderException;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
 
 /**
@@ -20,9 +21,11 @@ class JsonpEncoder extends JsonEncoder
 
     /**
      * Constructor for the encoder.
+     *
      * @param array $options (optional) The array of plugin options.
+     * @throws Exception
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         parent::__construct($options);
         if (!isset($options[self::KEY_CLIENT_METHOD])) {
@@ -33,7 +36,8 @@ class JsonpEncoder extends JsonEncoder
 
     /**
      * @param AbstractResponse $response The response to be encoded.
-     * @return Returns the response encoded in JSON.
+     * @return string Returns the response encoded in JSON.
+     * @throws EncoderException
      */
     public function encode(AbstractResponse $response)
     {

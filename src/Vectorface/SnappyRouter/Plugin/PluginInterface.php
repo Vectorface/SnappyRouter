@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Plugin;
 
-use \Exception;
+use Exception;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 
 /**
@@ -45,7 +45,7 @@ interface PluginInterface
      * Sets the controller/action whitelist of this particular plugin. Note that
      * setting a whitelist will remove any previously set blacklists.
      * @param array $whitelist The controller/action whitelist.
-     * @return Returns $this.
+     * @return self Returns $this.
      */
     public function setWhitelist($whitelist);
 
@@ -53,7 +53,7 @@ interface PluginInterface
      * Sets the controller/action blacklist of this particular plugin. Note that
      * setting a blacklist will remove any previously set whitelists.
      * @param array $blacklist The controller/action blacklist.
-     * @return Returns $this.
+     * @return self Returns $this.
      */
     public function setBlacklist($blacklist);
 

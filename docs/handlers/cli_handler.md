@@ -35,19 +35,20 @@ The task can be registered with the router config:
 require_once 'vendor/autoload.php';
 
 use Vectorface\SnappyRouter\Config\Config;
+use Vectorface\SnappyRouter\Handler\CliTaskHandler;
 
-$config = new Config(array(
-    Config::KEY_HANDLERS => array(
-        'CliHandler' => array(
-            Config::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handler\\CliTaskHandler',
-            Config::KEY_OPTIONS => array(
-                Config::KEY_TASKS => array(
+$config = new Config([
+    Config::KEY_HANDLERS => [
+        'CliHandler' => [
+            Config::KEY_CLASS => CliTaskHandler::class,
+            Config::KEY_OPTIONS => [
+                Config::KEY_TASKS => [
                     'DatabaseTask' => 'Vendor\\MyNamespace\\Tasks\\DatabaseTask'
-                )
-            )
-        )
-    )
-));
+                ]
+            ]
+        ]
+    ]
+]);
 $router = new Vectorface\SnappyRouter\SnappyRouter($config);
 echo $router->handleRoute();
 ```
@@ -74,13 +75,13 @@ Example:
 
 ```php
     ...
-    Config::KEY_OPTIONS => array(
-        Config::KEY_TASKS => array(
+    Config::KEY_OPTIONS => [
+        Config::KEY_TASKS => [
             'DatabaseTask' => 'Vendor\\MyNamespace\\Tasks\\DatabaseTask',
             'EmailTask'    => 'Vendor\\MyNamespace\\Tasks\\SendEmailTask',
             ...
-        )
-    ),
+        ]
+    ],
     ...
 ```
 
@@ -91,13 +92,13 @@ SnappyRouter to use to autodetect the appropriate task class.
 
 ```php
     ...
-    Config::KEY_OPTIONS => array(
-        Config::KEY_NAMESPACES => array(
+    Config::KEY_OPTIONS => [
+        Config::KEY_NAMESPACES => [
             'Vendor\\MyNamespace\\Tasks',
             'Vendor\\AnotherNamespace\\Tasks',
             ...
-        )
-    ),
+        ]
+    ],
     ...
 ```
 
@@ -110,12 +111,12 @@ to check (recursively) for a PHP file matching `${NAME}Task.php`.
 
 ```php
     ...
-    Config::KEY_OPTIONS => array(
-        Config::KEY_FOLDERS => array(
+    Config::KEY_OPTIONS => [
+        Config::KEY_FOLDERS => [
             '/home/user/project/app/tasks',
-            '/home/user/project/app/moretasks',
+            '/home/user/project/app/moreTasks',
             ...
-        )
-    ),
+        ]
+    ],
     ...
 ```

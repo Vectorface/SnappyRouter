@@ -2,6 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Encoder;
 
+use Vectorface\SnappyRouter\Encoder\AbstractEncoder;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
 
 /**
@@ -13,7 +14,7 @@ class NullEncoderTest extends AbstractEncoderTest
 {
     /**
      * Returns the encoder to be tested.
-     * @return \Vectorface\SnappyRouter\Encoder\AbstractEncoder Returns an instance of an encoder.
+     * @return AbstractEncoder Returns an instance of an encoder.
      */
     public function getEncoder()
     {
@@ -25,15 +26,15 @@ class NullEncoderTest extends AbstractEncoderTest
      */
     public function encodeProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'test1234',
                 'test1234'
-            ),
-            array(
+            ],
+            [
                 '',
                 null
-            )
-        );
+            ]
+        ];
     }
 }

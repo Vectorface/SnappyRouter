@@ -2,9 +2,6 @@
 
 namespace Vectorface\SnappyRouter\Request;
 
-use \Exception;
-use \Vectorface\SnappyRouter\Handler\JsonRpcHandler;
-
 /**
  * A class representing a JSON-RPC request.
  *
@@ -15,7 +12,7 @@ class JsonRpcRequest extends HttpRequest
     /**
      * Holds the JSON-RPC request payload.
      *
-     * @var Object
+     * @var object
      */
     private $payload;
 
@@ -33,7 +30,7 @@ class JsonRpcRequest extends HttpRequest
         if (is_object($payload) && isset($payload->method)) {
             $action = $payload->method;
         }
-        parent::__construct($controller, $action, $verb, 'php://input');
+        parent::__construct($controller, $action, $verb);
         $this->payload = $payload;
     }
 
@@ -47,9 +44,9 @@ class JsonRpcRequest extends HttpRequest
      * @param mixed $filters The array of filters (or single filter) to apply to the data. Ignored.
      * @return mixed Returns null because POST is not possible, or the default value if the parameter is not present.
      */
-    public function getPost($param, $defaultValue = null, $filters = array())
+    public function getPost($param, $defaultValue = null, $filters = [])
     {
-        return isset($defaultValue) ? $defaultValue : null;
+        return $defaultValue ?? null;
     }
 
     /**
@@ -59,7 +56,7 @@ class JsonRpcRequest extends HttpRequest
      */
     public function getVersion()
     {
-        return isset($this->payload->jsonrpc) ? $this->payload->jsonrpc : "1.0";
+        return $this->payload->jsonrpc ?? "1.0";
     }
 
     /**
@@ -79,7 +76,7 @@ class JsonRpcRequest extends HttpRequest
      */
     public function getIdentifier()
     {
-        return isset($this->payload->id) ? $this->payload->id : null;
+        return $this->payload->id ?? null;
     }
 
     /**
@@ -93,14 +90,14 @@ class JsonRpcRequest extends HttpRequest
     {
         if (isset($this->payload->params)) {
             /* JSON-RPC 2 can pass named params. For PHP's sake, turn that into a single object param. */
-            return is_array($this->payload->params) ? $this->payload->params : array($this->payload->params);
+            return is_array($this->payload->params) ? $this->payload->params : [$this->payload->params];
         }
-        return array();
+        return [];
     }
 
     /**
      * Returns whether this request is minimally valid for JSON RPC.
-     * @return Returns true if the payload is valid and false otherwise.
+     * @return bool Returns true if the payload is valid and false otherwise.
      */
     public function isValid()
     {

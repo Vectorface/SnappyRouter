@@ -9,5 +9,4 @@ namespace Vectorface\SnappyRouter\Exception;
  */
 class EncoderException extends InternalErrorException
 {
-
 }

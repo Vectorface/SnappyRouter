@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouter;
 
-use \Exception;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Vectorface\SnappyRouter\Config\Config;
@@ -14,6 +14,7 @@ use Vectorface\SnappyRouter\Exception\RouterExceptionInterface;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
 use Vectorface\SnappyRouter\Response\Response;
+use function http_response_code;
 
 /**
  * The main routing class that handles the full request.
@@ -25,17 +26,20 @@ class SnappyRouter
     /** the DI key for the main configuration */
     const KEY_CONFIG = 'config';
 
-    private $config; // the configuration
-    private $handlers; // array of registered handlers
+    /** @var ConfigInterface */
+    private $config;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var AbstractHandler[] */
+    private $handlers;
+
+    /** @var LoggerInterface */
     private $logger;
 
     /**
      * The constructor for the service router.
-     * @param array $config The configuration array.
+     *
+     * @param ConfigInterface $config The configuration array.
+     * @throws Exception
      */
     public function __construct(ConfigInterface $config)
     {
@@ -56,7 +60,7 @@ class SnappyRouter
 
     /**
      * Returns the array of registered handlers.
-     * @return The array of registered handlers.
+     * @return AbstractHandler[] The array of registered handlers.
      */
     public function getHandlers()
     {
@@ -79,7 +83,7 @@ class SnappyRouter
         switch ($environment) {
             case 'cli':
             case 'phpdbg':
-                $components = empty($_SERVER['argv']) ? array() : $_SERVER['argv'];
+                $components = empty($_SERVER['argv']) ? [] : $_SERVER['argv'];
                 return $this->handleCliRoute($components).PHP_EOL;
             default:
                 $queryPos = strpos($_SERVER['REQUEST_URI'], '?');
@@ -88,7 +92,7 @@ class SnappyRouter
                     $path,
                     $_GET,
                     $_POST,
-                    isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET'
+                    $_SERVER['REQUEST_METHOD'] ?? 'GET'
                 );
         }
     }
@@ -104,7 +108,7 @@ class SnappyRouter
     public function handleHttpRoute($path, $query, $post, $verb)
     {
         $this->logger->debug("SnappyRouter: Handling HTTP route: $path");
-        return $this->invokeHandler(false, array($path, $query, $post, $verb));
+        return $this->invokeHandler(false, [$path, $query, $post, $verb]);
     }
 
     /**
@@ -115,7 +119,7 @@ class SnappyRouter
     public function handleCliRoute($pathComponents)
     {
         $this->logger->debug("SnappyRouter: Handling CLI route: " . implode("/", $pathComponents));
-        return $this->invokeHandler(true, array($pathComponents));
+        return $this->invokeHandler(true, [$pathComponents]);
     }
 
     /**
@@ -123,7 +127,7 @@ class SnappyRouter
      *
      * @param bool $isCli True for CLI handlers, false otherwise.
      * @param array $handlerParams An array parameters required by the handler.
-     * @return Returns the handler to be used for the route.
+     * @return AbstractHandler Returns the handler to be used for the route.
      */
     private function invokeHandler($isCli, $handlerParams)
     {
@@ -135,13 +139,13 @@ class SnappyRouter
             // invoke the initial plugin hook
             $activeHandler->invokePluginsHook(
                 'afterHandlerSelected',
-                array($activeHandler)
+                [$activeHandler]
             );
             $this->logger->debug("SnappyRouter: routing");
             $response = $activeHandler->performRoute();
             $activeHandler->invokePluginsHook(
                 'afterFullRouteInvoked',
-                array($activeHandler)
+                [$activeHandler]
             );
             return $response;
         } catch (Exception $e) {
@@ -152,8 +156,8 @@ class SnappyRouter
     /**
      * Attempts to mop up after an exception during handler invocation.
      *
-     * @param \Exception $exception The exception that occurred during invocation.
-     * @param HandlerInterface $activeHandler The active handler, or null.
+     * @param Exception $exception The exception that occurred during invocation.
+     * @param AbstractHandler $activeHandler The active handler, or null.
      * @param bool $isCli True for CLI handlers, false otherwise.
      * @return mixed Returns a handler-dependent response type, usually a string.
      */
@@ -169,7 +173,7 @@ class SnappyRouter
         if (null !== $activeHandler) {
             $activeHandler->invokePluginsHook(
                 'errorOccurred',
-                array($activeHandler, $exception)
+                [$activeHandler, $exception]
             );
             return $activeHandler->getEncoder()->encode(
                 new Response($activeHandler->handleException($exception))
@@ -182,7 +186,7 @@ class SnappyRouter
             if ($exception instanceof RouterExceptionInterface) {
                 $responseCode = $exception->getAssociatedStatusCode();
             }
-            \Vectorface\SnappyRouter\http_response_code($responseCode);
+            http_response_code($responseCode);
         }
         return $exception->getMessage();
     }
@@ -192,7 +196,9 @@ class SnappyRouter
      *
      * @param bool $isCli True for CLI handlers, false otherwise.
      * @param array $checkParams An array parameters for the handler isAppropriate method.
-     * @return Returns the handler to be used for the route.
+     * @return AbstractHandler Returns the handler to be used for the route.
+     * @throws ResourceNotFoundException
+     * @throws Exception
      */
     private function determineHandler($isCli, $checkParams)
     {
@@ -201,7 +207,7 @@ class SnappyRouter
             if ($isCli !== $handler->isCliHandler()) {
                 continue;
             }
-            $callback = array($handler, 'isAppropriate');
+            $callback = [$handler, 'isAppropriate'];
             if (true === call_user_func_array($callback, $checkParams)) {
                 return $handler;
             }
@@ -219,6 +225,8 @@ class SnappyRouter
     /**
      * Parses the config, sets up the default DI and registers the config
      * in the DI.
+     *
+     * @throws Exception
      */
     private function parseConfig()
     {
@@ -232,16 +240,21 @@ class SnappyRouter
         }
         Di::getDefault()->set(self::KEY_CONFIG, $this->config);
         $this->setupHandlers(
-            $this->config->get(Config::KEY_HANDLERS, array())
+            $this->config->get(Config::KEY_HANDLERS, [])
         );
     }
 
-    // helper to setup the array of handlers
+    /**
+     * Helper to setup the array of handlers
+     *
+     * @param AbstractHandler[] $handlers
+     * @throws Exception
+     */
     private function setupHandlers($handlers)
     {
-        $this->handlers = array();
+        $this->handlers = [];
         foreach ($handlers as $handlerClass => $handlerDetails) {
-            $options = array();
+            $options = [];
             if (isset($handlerDetails[Config::KEY_OPTIONS])) {
                 $options = (array)$handlerDetails[Config::KEY_OPTIONS];
             }

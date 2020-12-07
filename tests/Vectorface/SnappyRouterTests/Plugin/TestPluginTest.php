@@ -9,11 +9,10 @@ class TestPluginTest extends TestCase
 {
     /**
      * A demonstrate of a simple test plugin.
-     * @test
      */
-    public function synopsis()
+    public function testSynopsis()
     {
-        $options = array();
+        $options = [];
         $plugin = new TestPlugin($options);
 
         $this->assertEquals(
@@ -22,9 +21,9 @@ class TestPluginTest extends TestCase
         );
 
         $plugin->setWhitelist(
-            array(
+            [
                 'TestController' => AbstractPlugin::ALL_ACTIONS
-            )
+            ]
         );
         $this->assertTrue(
             $plugin->supportsControllerAndAction(
@@ -39,7 +38,7 @@ class TestPluginTest extends TestCase
      */
     public function testSupportsControllerAndAction()
     {
-        $plugin = new TestPlugin(array());
+        $plugin = new TestPlugin([]);
 
         // no lists yet, so plugin supports everything
         $this->assertTrue(
@@ -51,12 +50,12 @@ class TestPluginTest extends TestCase
 
         // set a whitelist
         $plugin->setWhitelist(
-            array(
-                'TestController' => AbstractPlugin::ALL_ACTIONS,
-                'AnotherController' => array(
+            [
+                'TestController'    => AbstractPlugin::ALL_ACTIONS,
+                'AnotherController' => [
                     'specificAction'
-                )
-            )
+                ]
+            ]
         );
         // all actions enabled for this controller
         $this->assertTrue(
@@ -89,12 +88,12 @@ class TestPluginTest extends TestCase
 
         // now the reverse logic for the blacklist
         $plugin->setBlacklist(
-            array(
-                'TestController' => array(
+            [
+                'TestController' => [
                     'bannedAction'
-                ),
+                ],
                 'BannedController' => AbstractPlugin::ALL_ACTIONS
-            )
+            ]
         );
         // controller is missing from blacklist
         $this->assertTrue(

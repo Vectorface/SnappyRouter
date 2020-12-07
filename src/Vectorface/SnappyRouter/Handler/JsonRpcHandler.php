@@ -2,11 +2,11 @@
 
 namespace Vectorface\SnappyRouter\Handler;
 
-use \stdClass;
-use \Exception;
+use Exception;
+use Vectorface\SnappyRouter\Encoder\EncoderInterface;
 use Vectorface\SnappyRouter\Encoder\JsonEncoder;
+use Vectorface\SnappyRouter\Exception\EncoderException;
 use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
-use Vectorface\SnappyRouter\Handler\AbstractRequestHandler;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 use Vectorface\SnappyRouter\Request\JsonRpcRequest;
 use Vectorface\SnappyRouter\Response\Response;
@@ -58,7 +58,7 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
     /**
      * The encoder instance to be used to encode responses.
      *
-     * @var \Vectorface\SnappyRouter\Encoder\EncoderInterface|\Vectorface\SnappyRouter\Encoder\JsonEncoder
+     * @var EncoderInterface|JsonEncoder
      */
     private $encoder;
 
@@ -125,9 +125,9 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
     {
         $this->batch = is_array($post);
         if (false === $this->batch) {
-            $post = array($post);
+            $post = [$post];
         }
-        $this->requests = array_map(function ($payload) use ($service, $verb) {
+        $this->requests = array_map(function($payload) use ($service, $verb) {
             return new JsonRpcRequest($service, $payload, $verb);
         }, $post);
     }
@@ -135,7 +135,7 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
     /**
      * Returns a request object extracted from the request details (path, query, etc). The method
      * isAppropriate() must have returned true, otherwise this method should return null.
-     * @return HttpRequest Returns a Request object or null if this handler is not appropriate.
+     * @return HttpRequest|null Returns a Request object or null if this handler is not appropriate.
      */
     public function getRequest()
     {
@@ -155,12 +155,14 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
      * Performs the actual routing.
      *
      * @return string Returns the result of the route.
+     * @throws ResourceNotFoundException
+     * @throws EncoderException
      */
     public function performRoute()
     {
         $this->invokePluginsHook(
             'beforeServiceSelected',
-            array($this, $this->getRequest())
+            [$this, $this->getRequest()]
         );
 
         /* Check if we can get the service. */
@@ -175,7 +177,7 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
         }
 
         /* Loop through each call in the possible batch. */
-        $response = array();
+        $response = [];
         foreach ($this->requests as $request) {
             $callResponse = $this->invokeMethod($service, $request);
 
@@ -200,8 +202,7 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
      * Invokes a method on a service class, based on the raw JSON-RPC request.
      *
      * @param mixed $service The service being invoked.
-     * @param Vectorface\SnappyRouter\Request\JsonRpcRequest $request The request
-     *        to invoke.
+     * @param JsonRpcRequest $request The request to invoke.
      * @return JsonRpcResponse A response based on the result of the procedure call.
      */
     private function invokeMethod($service, JsonRpcRequest $request)
@@ -220,17 +221,17 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
         $action = $request->getAction();
         $this->invokePluginsHook(
             'afterServiceSelected',
-            array($this, $request, $service, $action)
+            [$this, $request, $service, $action]
         );
 
         $this->invokePluginsHook(
             'beforeMethodInvoked',
-            array($this, $request, $service, $action)
+            [$this, $request, $service, $action]
         );
 
         try {
             $response = new JsonRpcResponse(
-                call_user_func_array(array($service, $action), $request->getParameters()),
+                call_user_func_array([$service, $action], $request->getParameters()),
                 null,
                 $request
             );
@@ -241,7 +242,7 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
 
         $this->invokePluginsHook(
             'afterMethodInvoked',
-            array($this, $request, $service, $action, $response)
+            [$this, $request, $service, $action, $response]
         );
 
         return $response;
@@ -250,7 +251,7 @@ class JsonRpcHandler extends AbstractRequestHandler implements BatchRequestHandl
     /**
      * Returns the active response encoder.
      *
-     * @return \Vectorface\SnappyRouter\Encoder\EncoderInterface Returns the response encoder.
+     * @return EncoderInterface Returns the response encoder.
      */
     public function getEncoder()
     {

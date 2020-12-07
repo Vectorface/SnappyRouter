@@ -35,22 +35,22 @@ The handler can then be configured as such:
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Handler\DirectScriptHandler;
 
-$config = new Config(array(
-    Config::KEY_HANDLERS => array(
-        'DirectHandler' => array(
-            Config::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handlers\\DirectScriptHandler',
-            Config::KEY_OPTIONS => array(
-                DirectScriptHandler::KEY_PATH_MAP => array(
+$config = new Config([
+    Config::KEY_HANDLERS => [
+        'DirectHandler' => [
+            Config::KEY_CLASS => DirectScriptHandler::class,
+            Config::KEY_OPTIONS => [
+                DirectScriptHandler::KEY_PATH_MAP => [
                     '/scripts/' => '/home/user/webroot/scripts',
                     '/' => '/home/user/webroot/scripts'
-                )
-            ),
-            Config::KEY_PLUGINS => array(
+                ]
+            ],
+            Config::KEY_PLUGINS => [
                 // optional list of plugins to put in front of your scripts
-            )
-        )
-    )
-));
+            ]
+        ]
+    ]
+]);
 $router = new Vectorface\SnappyRouter\SnappyRouter($config);
 echo $router->handleRoute();
 ```

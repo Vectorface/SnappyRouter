@@ -2,8 +2,10 @@
 
 namespace Vectorface\SnappyRouterTests\Di;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Di\ServiceProvider;
+use Vectorface\SnappyRouterTests\Controller\TestDummyController;
 
 /**
  * Tests the ServiceProvider class.
@@ -14,32 +16,33 @@ class ServiceProviderTest extends TestCase
 {
     /**
      * An overview of how to use the ServiceProvider class.
-     * @test
+     *
+     * @throws Exception
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         // instantiate the class
-        $config = array(
-            'TestController' => 'Vectorface\SnappyRouterTests\Controller\TestDummyController'
-        );
+        $config = [
+            'TestController' => TestDummyController::class
+        ];
         $serviceProvider = new ServiceProvider($config);
 
         // public setters (object chaining)
         $services = array_merge(
             $config,
-            array(
-                'AnotherService' => '/path/to/anotherService.php',
+            [
+                'AnotherService'             => '/path/to/anotherService.php',
                 'AnotherServiceForFileClass' => null
-            )
+            ]
         );
 
         $serviceProvider->setService('AnotherService', '/path/to/anotherService.php');
         $serviceProvider->setService(
             'AnotherServiceForFileClass',
-            array(
-                'file' => 'tests/Vectorface/SnappyRouterTests/Controller/NonNamespacedController.php',
+            [
+                'file'  => 'tests/Vectorface/SnappyRouterTests/Controller/NonNamespacedController.php',
                 'class' => 'NonNamespacedController',
-            )
+            ]
         );
 
         // public getters
@@ -53,13 +56,13 @@ class ServiceProviderTest extends TestCase
         );
 
         $this->assertInstanceOf(
-            'Vectorface\SnappyRouterTests\Controller\TestDummyController',
+            TestDummyController::class,
             $serviceProvider->getServiceInstance('TestController')
         );
 
         //Tests instanceCache
         $this->assertInstanceOf(
-            'Vectorface\SnappyRouterTests\Controller\TestDummyController',
+            TestDummyController::class,
             $serviceProvider->getServiceInstance('TestController')
         );
 
@@ -71,12 +74,14 @@ class ServiceProviderTest extends TestCase
 
     /**
      * Test that we can retrieve a non namespaced service.
+     *
+     * @throws Exception
      */
     public function testNonNamespacedService()
     {
-        $config = array(
+        $config = [
             'NonNamespacedController' => 'tests/Vectorface/SnappyRouterTests/Controller/NonNamespacedController.php'
-        );
+        ];
         $serviceProvider = new ServiceProvider($config);
 
         $this->assertInstanceOf(
@@ -87,15 +92,17 @@ class ServiceProviderTest extends TestCase
 
     /**
      * Test that we can retrieve a service while in namespace provisioning mode.
+     *
+     * @throws Exception
      */
     public function testNamespaceProvisioning()
     {
-        $serviceProvider = new ServiceProvider(array());
-        $namespaces = array('Vectorface\SnappyRouterTests\Controller');
+        $serviceProvider = new ServiceProvider([]);
+        $namespaces = ['Vectorface\SnappyRouterTests\Controller'];
         $serviceProvider->setNamespaces($namespaces);
 
         $this->assertInstanceOf(
-            'Vectorface\SnappyRouterTests\Controller\TestDummyController',
+            TestDummyController::class,
             $serviceProvider->getServiceInstance('TestDummyController')
         );
     }
@@ -103,27 +110,31 @@ class ServiceProviderTest extends TestCase
     /**
      * Test that we get an exception if we cannot find the service in any
      * of the given namespaces.
-     * @expectedException Exception
-     * @expectedExceptionMessage Controller class TestDummyController was not found in any listed namespace.
+     *
+     * @throws Exception
      */
     public function testNamespaceProvisioningMissingService()
     {
-        $serviceProvider = new ServiceProvider(array());
-        $serviceProvider->setNamespaces(array());
+        $this->setExpectedException(Exception::class, "Controller class TestDummyController was not found in any listed namespace.");
+
+        $serviceProvider = new ServiceProvider([]);
+        $serviceProvider->setNamespaces([]);
 
         $this->assertInstanceOf(
-            'Vectorface\SnappyRouterTests\Controller\TestDummyController',
+            TestDummyController::class,
             $serviceProvider->getServiceInstance('TestDummyController')
         );
     }
 
     /**
      * Test that we can retrieve a service while in folder provisioning mode.
+     *
+     * @throws Exception
      */
     public function testFolderProvisioning()
     {
-        $serviceProvider = new ServiceProvider(array());
-        $folders = array(realpath(__DIR__.'/../'));
+        $serviceProvider = new ServiceProvider([]);
+        $folders = [realpath(__DIR__.'/../')];
         $serviceProvider->setFolders($folders);
 
         $this->assertInstanceOf(
@@ -135,15 +146,17 @@ class ServiceProviderTest extends TestCase
     /**
      * Test that we get an exception if we cannot find the service in any
      * of the given folders (recursively checking).
-     * @expectedException Exception
-     * @expectedExceptionMessage Controller class NonExistantController not found in any listed folder.
+     *
+     * @throws Exception
      */
     public function testFolderProvisioningMissingService()
     {
-        $serviceProvider = new ServiceProvider(array());
-        $folders = array(realpath(__DIR__.'/../'));
+        $this->setExpectedException(Exception::class, "Controller class NonExistentController not found in any listed folder.");
+
+        $serviceProvider = new ServiceProvider([]);
+        $folders = [realpath(__DIR__.'/../')];
         $serviceProvider->setFolders($folders);
 
-        $serviceProvider->getServiceInstance('NonExistantController');
+        $serviceProvider->getServiceInstance('NonExistentController');
     }
 }

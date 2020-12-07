@@ -2,8 +2,6 @@
 
 namespace Vectorface\SnappyRouter\Request;
 
-use Vectorface\SnappyRouter\Controller\AbstractController;
-
 /**
  * The base class for all requests. Implements the standard RequestInterface.
  * @copyright Copyright (c) 2014, VectorFace, Inc.

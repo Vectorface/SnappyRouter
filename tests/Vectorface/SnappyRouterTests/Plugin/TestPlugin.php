@@ -6,5 +6,4 @@ use Vectorface\SnappyRouter\Plugin\AbstractControllerPlugin;
 
 class TestPlugin extends AbstractControllerPlugin
 {
-
 }

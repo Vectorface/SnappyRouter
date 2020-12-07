@@ -10,5 +10,4 @@ namespace Vectorface\SnappyRouter\Authentication;
  */
 abstract class AbstractAuthenticator implements AuthenticatorInterface
 {
-
 }

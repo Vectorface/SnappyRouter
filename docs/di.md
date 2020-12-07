@@ -49,7 +49,7 @@ class MyDi extends Di
 {
     public function __construct()
     {
-        parent::__construct(array(
+        parent::__construct([
             ...
             'database' => function(Di $di) {
                 return new \PDO(
@@ -59,7 +59,7 @@ class MyDi extends Di
                 );
             },
             ...
-        ));
+        ]);
     }
 }
 ```
@@ -71,12 +71,12 @@ Next specify the DI class in the configuration.
 
 use Vectorface\SnappyRouter\Config\Config;
 
-$config = new Config(array(
+$config = new Config([
     Config::KEY_DI => 'Vendor\\MyNamespace\\Di\\MyDi',
-    Config::KEY_HANDLERS => array(
+    Config::KEY_HANDLERS => [
         ...
-    )
-));
+    ]
+]);
 $router = new Vectorface\SnappyRouter\SnappyRouter($config);
 echo $router->handleRoute();
 ```
@@ -86,15 +86,14 @@ echo $router->handleRoute();
 SnappyRouter also provides a default DI class that can be configured when your
 application bootstraps. For example:
 
-
 ```php
 <?php
 
 use Vectorface\SnappyRouter\Config\Config;
 
-$config = new Config(array(
+$config = new Config([
     ...
-));
+]);
 $router = new Vectorface\SnappyRouter\SnappyRouter($config);
 
 // configure the DI manually

@@ -2,6 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Config;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Config\Config;
 
@@ -14,14 +15,15 @@ class ConfigTest extends TestCase
 {
     /**
      * Demonstrates basic usage of the Config wrapper class.
-     * @test
+     *
+     * @throws Exception
      */
-    public function synopsis()
+    public function testSynopsis()
     {
-        $arrayConfig = array(
+        $arrayConfig = [
             'key1' => 'value1',
             'key2' => 'value2'
-        );
+        ];
 
         // initialize the class from an array
         $config = new Config($arrayConfig);
@@ -50,12 +52,12 @@ class ConfigTest extends TestCase
 
     /**
      * Test that we cannot append to the config class like we would a normal array.
-     * @expectedException \Exception
-     * @expectedExceptionMessage Config values must contain a key.
      */
     public function testExceptionThrownWhenConfigIsAppended()
     {
-        $config = new Config(array());
+        $this->setExpectedException(Exception::class, "Config values must contain a key.");
+
+        $config = new Config([]);
         $config[] = 'new value';
     }
 }

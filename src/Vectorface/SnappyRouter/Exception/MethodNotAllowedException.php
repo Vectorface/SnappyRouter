@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Exception;
 
-use \Exception;
+use Exception;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
 
 /**
@@ -32,7 +32,7 @@ class MethodNotAllowedException extends Exception implements RouterExceptionInte
      * Returns the associated status code with the exception. By default, most exceptions correspond
      * to a server error (HTTP 500). Override this method if you want your exception to generate a
      * different status code.
-     * @return The associated status code.
+     * @return int The associated status code.
      */
     public function getAssociatedStatusCode()
     {

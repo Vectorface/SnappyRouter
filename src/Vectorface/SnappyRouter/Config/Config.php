@@ -2,7 +2,8 @@
 
 namespace Vectorface\SnappyRouter\Config;
 
-use \ArrayAccess;
+use ArrayAccess;
+use Exception;
 
 /**
  * A wrapper object to the SnappyRouter configuration.
@@ -12,29 +13,29 @@ use \ArrayAccess;
 class Config implements ArrayAccess, ConfigInterface
 {
     /** the config key for the list of handlers */
-    const KEY_HANDLERS   = 'handlers';
+    const KEY_HANDLERS = 'handlers';
     /** the config key for the DI provider */
-    const KEY_DI         = 'di';
+    const KEY_DI = 'di';
     /** the config key for the list of handler options */
-    const KEY_OPTIONS    = 'options';
+    const KEY_OPTIONS = 'options';
     /** the config key for a class */
-    const KEY_CLASS      = 'class';
+    const KEY_CLASS = 'class';
     /** the config key for a file */
-    const KEY_FILE       = 'file';
+    const KEY_FILE = 'file';
     /** the config key for the list of services (deprecated) */
-    const KEY_SERVICES   = 'services';
+    const KEY_SERVICES = 'services';
     /** the config key for the list of controllers */
     const KEY_CONTROLLERS = 'services';
     /** the config key for the list of plugins */
-    const KEY_PLUGINS    = 'plugins';
+    const KEY_PLUGINS = 'plugins';
     /** the config key for the list of controller namespaces */
     const KEY_NAMESPACES = 'namespaces';
     /** the config key for the list of controller folders */
-    const KEY_FOLDERS    = 'folders';
+    const KEY_FOLDERS = 'folders';
     /** the config key for the list of tasks */
-    const KEY_TASKS      = 'tasks';
+    const KEY_TASKS = 'tasks';
     /** the config key for debug mode */
-    const KEY_DEBUG      = 'debug';
+    const KEY_DEBUG = 'debug';
 
     // the internal config array
     private $config;
@@ -51,46 +52,47 @@ class Config implements ArrayAccess, ConfigInterface
 
     /**
      * Returns whether or not the given key exists in the config.
-     * @param string $key The key to be checked.
-     * @return Returns true if the key exists and false otherwise.
+     * @param string $offset The key to be checked.
+     * @return bool Returns true if the key exists and false otherwise.
      */
-    public function offsetExists($key)
+    public function offsetExists($offset)
     {
-        return isset($this->config[$key]);
+        return isset($this->config[$offset]);
     }
 
     /**
      * Returns the value associated with the key or null if no value exists.
-     * @param string $key The key to be fetched.
-     * @return Returns the value associated with the key or null if no value exists.
+     * @param string $offset The key to be fetched.
+     * @return bool Returns the value associated with the key or null if no value exists.
      */
-    public function offsetGet($key)
+    public function offsetGet($offset)
     {
-        return $this->offsetExists($key) ? $this->config[$key] : null;
+        return $this->offsetExists($offset) ? $this->config[$offset] : null;
     }
 
     /**
      * Sets the value associated with the given key.
-     * @param string $key The key to be used.
+     *
+     * @param string $offset The key to be used.
      * @param mixed $value The value to be set.
-     * @return void
+     * @throws Exception
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($offset, $value)
     {
-        if (null === $key) {
-            throw new \Exception('Config values must contain a key.');
+        if (null === $offset) {
+            throw new Exception('Config values must contain a key.');
         }
-        $this->config[$key] = $value;
+        $this->config[$offset] = $value;
     }
 
     /**
      * Removes the value set to the given key.
-     * @param string $key The key to unset.
+     * @param string $offset The key to unset.
      * @return void
      */
-    public function offsetUnset($key)
+    public function offsetUnset($offset)
     {
-        unset($this->config[$key]);
+        unset($this->config[$offset]);
     }
 
     /**
@@ -99,7 +101,7 @@ class Config implements ArrayAccess, ConfigInterface
      * @param string $key The key to be used.
      * @param mixed $defaultValue The default value to return if the key currently
      *        has no value associated with it.
-     * @return Returns the value associated with the key or the default value if
+     * @return mixed Returns the value associated with the key or the default value if
      *         no value is associated with the key.
      */
     public function get($key, $defaultValue = null)
@@ -109,13 +111,14 @@ class Config implements ArrayAccess, ConfigInterface
 
     /**
      * Sets the current value associated with the given key.
+     *
      * @param string $key The key to be set.
      * @param mixed $value The value to be set to the key.
-     * @return void
+     * @throws Exception
      */
     public function set($key, $value)
     {
-        return $this->offsetSet($key, $value);
+        $this->offsetSet($key, $value);
     }
 
     /**

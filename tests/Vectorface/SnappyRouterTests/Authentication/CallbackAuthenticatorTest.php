@@ -15,15 +15,15 @@ class CallbackAuthenticatorTest extends TestCase
     public function testAuthenticator()
     {
         $bool = true;
-        $auth = new CallbackAuthenticator(function () use ($bool) {
+        $auth = new CallbackAuthenticator(function() use ($bool) {
             return $bool;
         });
-        $this->assertTrue($auth->authenticate(array('a', 'b')));
+        $this->assertTrue($auth->authenticate(['a', 'b']));
 
         $bool = false;
-        $auth = new CallbackAuthenticator(function () use ($bool) {
+        $auth = new CallbackAuthenticator(function() use ($bool) {
             return $bool;
         });
-        $this->assertFalse($auth->authenticate(array('a', 'b')));
+        $this->assertFalse($auth->authenticate(['a', 'b']));
     }
 }

@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouterTests\Handler;
 
 use PHPUnit\Framework\TestCase;
+use Vectorface\SnappyRouter\Exception\PluginException;
 use Vectorface\SnappyRouter\Handler\DirectScriptHandler;
 
 /**
@@ -14,21 +15,22 @@ class DirectScriptHandlerTest extends TestCase
 {
     /**
      * An overview of how to use the class.
-     * @test
+     *
+     * @throws PluginException
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         // the configuration maps a path like /cgi-bin to this folder
-        $config = array(
-            DirectScriptHandler::KEY_PATH_MAP => array(
+        $config = [
+            DirectScriptHandler::KEY_PATH_MAP => [
                 '/cgi-bin' => __DIR__
-            )
-        );
+            ]
+        ];
         $handler = new DirectScriptHandler($config);
         $path = '/cgi-bin/test_script.php';
         // the file itself exists so we should get back true
         $this->assertTrue(
-            $handler->isAppropriate($path, array(), array(), 'GET')
+            $handler->isAppropriate($path, [], [], 'GET')
         );
         // the test script simply has `echo "Hello world!"`
         $expected = 'Hello world!';
@@ -38,22 +40,24 @@ class DirectScriptHandlerTest extends TestCase
         // appropriate
         $path = '/cgi-bin/script_not_found.php';
         $this->assertFalse(
-            $handler->isAppropriate($path, array(), array(), 'GET')
+            $handler->isAppropriate($path, [], [], 'GET')
         );
     }
 
     /**
      * Tests that the getRequest() method returns null.
+     *
+     * @throws PluginException
      */
     public function testGetRequest()
     {
-        $config = array(
-            DirectScriptHandler::KEY_PATH_MAP => array(
+        $config = [
+            DirectScriptHandler::KEY_PATH_MAP => [
                 '/cgi-bin' => __DIR__
-            )
-        );
+            ]
+        ];
         $handler = new DirectScriptHandler($config);
-        $this->assertTrue($handler->isAppropriate('/cgi-bin/test_script.php', array(), array(), 'GET'));
+        $this->assertTrue($handler->isAppropriate('/cgi-bin/test_script.php', [], [], 'GET'));
         $this->assertNull($handler->getRequest());
     }
 }

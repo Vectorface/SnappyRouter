@@ -37,17 +37,17 @@ Plugins are very easy to implement, simply extend the class
 `Vectorface\SnappyRouter\Plugin\AbstractPlugin` and implement the desired
 methods.
 
-Note that you *do not* need to implement all of the methods. You are free to
+Note that you *do not* need to implement all the methods. You are free to
 implement only the methods that you care about.
 
 Example:
 
-```
+```php
 <?php
 
 namespace Vendor\MyNamespace\Plugin;
 
-use \Exception;
+use Exception;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Plugin\AbstractPlugin;
 
@@ -83,7 +83,7 @@ route is invoked or stopping the route entirely (by throwing an exception).
 
 An example demonstrating interrupting a route based on custom logic.
 
-```
+```php
 <?php
     ...
     public function afterHandlerSelected(AbstractHandler $handler)
@@ -106,7 +106,7 @@ logging, etc.
 
 An example demonstrating a specific call being logged.
 
-```
+```php
 <?php
     ...
     public function afterFullRouteInvoked(AbstractHandler $handler)

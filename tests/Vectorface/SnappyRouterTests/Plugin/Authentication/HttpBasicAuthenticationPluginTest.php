@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Authentication\CallbackAuthenticator;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
+use Vectorface\SnappyRouter\Exception\PluginException;
 use Vectorface\SnappyRouter\Exception\UnauthorizedException;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 use Vectorface\SnappyRouter\Plugin\Authentication\HttpBasicAuthenticationPlugin;
@@ -20,20 +21,22 @@ class HttpBasicAuthenticationPluginTest extends TestCase
 {
     /**
      * Test the HTTPBasicAuthenticationPlugin; All in one test!
+     *
+     * @throws InternalErrorException|UnauthorizedException|PluginException
      */
     public function testBasicHTTPAuth()
     {
-        $ignored = new ControllerHandler(array());
+        $ignored = new ControllerHandler([]);
 
         /* Configure DI */
-        $di = new Di(array('MyCustomAuth' => false));
+        $di = new Di(['MyCustomAuth' => false]);
         Di::setDefault($di);
 
         /* Direct testing. */
-        $plugin = new HttpBasicAuthenticationPlugin(array(
+        $plugin = new HttpBasicAuthenticationPlugin([
             'AuthMechanism' => 'MyCustomAuth',
-            'realm' => 'Authentication Test'
-        ));
+            'realm'         => 'Authentication Test'
+        ]);
 
         try {
             $plugin->afterHandlerSelected($ignored);
@@ -44,7 +47,7 @@ class HttpBasicAuthenticationPluginTest extends TestCase
 
         /* From here on out, use the "Do whatever I say" authenticator. :) */
         $bool = false;
-        $auth = new CallbackAuthenticator(function () use (&$bool) {
+        $auth = new CallbackAuthenticator(function() use (&$bool) {
             return $bool;
         });
         $di->set('MyCustomAuth', $auth);

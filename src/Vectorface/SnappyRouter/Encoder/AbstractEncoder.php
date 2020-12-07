@@ -2,8 +2,6 @@
 
 namespace Vectorface\SnappyRouter\Encoder;
 
-use Vectorface\SnappyRouter\Response\AbstractResponse;
-
 /**
  * An abstract base class for all encoders. Extend this class to implement a
  * custom encoder.
@@ -19,7 +17,7 @@ abstract class AbstractEncoder implements EncoderInterface
      * Constructor for the encoder.
      * @param array $options An array of encoder options.
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         $this->options = (array)$options;
     }

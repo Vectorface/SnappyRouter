@@ -14,7 +14,8 @@ class JsonEncoder extends AbstractEncoder
 {
     /**
      * @param AbstractResponse $response The response to be encoded.
-     * @return (string) Returns the response encoded as a string.
+     * @return string Returns the response encoded as a string.
+     * @throws EncoderException
      */
     public function encode(AbstractResponse $response)
     {
@@ -24,11 +25,11 @@ class JsonEncoder extends AbstractEncoder
         } elseif (is_object($responseObject)) {
             if (method_exists($responseObject, 'jsonSerialize')) {
                 return json_encode($responseObject->jsonSerialize());
-            } else {
-                return json_encode(get_object_vars($responseObject));
             }
-        } else {
-            throw new EncoderException('Unable to encode response as JSON.');
+
+            return json_encode(get_object_vars($responseObject));
         }
+
+        throw new EncoderException('Unable to encode response as JSON.');
     }
 }

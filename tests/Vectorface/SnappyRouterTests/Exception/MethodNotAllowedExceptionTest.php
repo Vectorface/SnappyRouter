@@ -14,13 +14,12 @@ class MethodNotAllowedExceptionTest extends TestCase
 {
     /**
      * An overview of how the class works.
-     * @test
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         $exception = new MethodNotAllowedException(
             'Cannot use GET',
-            array('POST')
+            ['POST']
         );
         $this->assertEquals(405, $exception->getAssociatedStatusCode());
         try {

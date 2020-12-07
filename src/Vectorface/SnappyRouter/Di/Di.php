@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Di;
 
-use \Exception;
+use Exception;
 
 /**
  * A simple store for DI purposes.
@@ -20,10 +20,10 @@ class Di implements DiInterface
      * Constructor for the class.
      * @param array $elementMap An optional initial set of elements to use.
      */
-    public function __construct($elementMap = array())
+    public function __construct($elementMap = [])
     {
-        $this->elementMap = is_array($elementMap) ? $elementMap : array();
-        $this->elements   = array();
+        $this->elementMap = is_array($elementMap) ? $elementMap : [];
+        $this->elements = [];
     }
 
     /**
@@ -31,8 +31,8 @@ class Di implements DiInterface
      * @param string $element The key for the element.
      * @param boolean $useCache An optional flag for whether we can use the
      *        cached version of the element (defaults to true).
-     * @return Returns the associated element.
-     * @throws \Exception Throws an exception if no element is registered for
+     * @return mixed Returns the associated element.
+     * @throws Exception Throws an exception if no element is registered for
      *                    the given key.
      */
     public function get($element, $useCache = true)
@@ -62,23 +62,23 @@ class Di implements DiInterface
     /**
      * Assigns a specific element to the given key. This method will override
      * any previously assigned element for the given key.
-     * @param string $key The key for the specified element.
-     * @param mixed $element The specified element. This can be an instance of the
+     * @param string $element The key for the specified element.
+     * @param mixed $value The specified element. This can be an instance of the
      *        element or a callback to be invoked.
-     * @return Returns $this.
+     * @return self $this.
      */
-    public function set($key, $element)
+    public function set($element, $value)
     {
         // clear the cached element
-        unset($this->elements[$key]);
-        $this->elementMap[$key] = $element;
+        unset($this->elements[$element]);
+        $this->elementMap[$element] = $value;
         return $this;
     }
 
     /**
      * Returns whether or not a given element has been registered.
      * @param string $element The key for the element.
-     * @return Returns true if the element is registered and false otherwise.
+     * @return bool true if the element is registered and false otherwise.
      */
     public function hasElement($element)
     {
@@ -87,7 +87,7 @@ class Di implements DiInterface
 
     /**
      * Returns an array of all registered keys.
-     * @return An array of all registered keys.
+     * @return array An array of all registered keys.
      */
     public function allRegisteredElements()
     {
@@ -110,7 +110,7 @@ class Di implements DiInterface
     /**
      * Sets the current default DI instance..
      * @param DiInterface $instance An instance of DI.
-     * @return Di Returns the new default DI instance.
+     * @return DiInterface Returns the new default DI instance.
      */
     public static function setDefault(DiInterface $instance)
     {

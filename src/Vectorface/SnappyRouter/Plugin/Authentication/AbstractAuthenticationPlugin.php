@@ -46,7 +46,10 @@ abstract class AbstractAuthenticationPlugin extends AbstractPlugin
 
     /**
      * Invoked directly after the router decides which handler will be used.
+     *
      * @param AbstractHandler $handler The handler selected by the router.
+     * @throws InternalErrorException
+     * @throws UnauthorizedException
      */
     public function afterHandlerSelected(AbstractHandler $handler)
     {

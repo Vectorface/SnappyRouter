@@ -2,9 +2,12 @@
 
 namespace Vectorface\SnappyRouter\Di;
 
+use Exception;
+
 /**
  * An interface for any class wishing to provide a dependency injection
  * mechanism.
+ *
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */
@@ -16,7 +19,7 @@ interface DiInterface
      * @param boolean $useCache An optional flag for whether we can use the
      *        cached version of the element (defaults to true).
      * @return mixed Returns the associated element.
-     * @throws \Exception Throws an exception if no element is registered for
+     * @throws Exception Throws an exception if no element is registered for
      *                    the given key.
      */
     public function get($element, $useCache = true);

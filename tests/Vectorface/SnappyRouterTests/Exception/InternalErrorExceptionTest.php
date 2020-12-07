@@ -14,9 +14,8 @@ class InternalErrorExceptionTest extends TestCase
 {
     /**
      * An overview of how to use the exception.
-     * @test
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         $message = 'hello world';
         $exception = new InternalErrorException($message);
