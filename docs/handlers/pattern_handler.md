@@ -13,36 +13,35 @@ An example configuration:
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Handler\PatternMatchHandler;
 
-$config = new Config(array(
-    Config::KEY_HANDLERS => array(
-        'PatternHandler' => array(
-            Config::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handler\\PatternMatchHandler',
-            Config::KEY_OPTIONS => array(
-                PatternMatchHandler::KEY_ROUTES => array(
-                    '/users/{name}/{id:[0-9]+}' => array(
+$config = new Config([
+    Config::KEY_HANDLERS => [
+        'PatternHandler' => [
+            Config::KEY_CLASS => PatternMatchHandler::class,
+            Config::KEY_OPTIONS => [
+                PatternMatchHandler::KEY_ROUTES => [
+                    '/users/{name}/{id:[0-9]+}' => [
                         'get' => function ($routeParams) {
                             // invoked only for GET calls
                         },
                         'post' => function ($routeParams) {
                             // invoked only for POST calls
                         }
-                    ),
+                    ],
                     '/users' => function($routeParams) {
                         // invoked for all HTTP verbs
                     }
-                )
-            )
-        )
-    )
-));
+                ]
+            ]
+        ]
+    ]
+]);
 $router = new Vectorface\SnappyRouter\SnappyRouter($config);
 echo $router->handleRoute();
 ```
 
 ## Specifying Routes
 
-Routes are listed as arrays using regular expressions with named parameters. For
-documentation on the individual patterns see the
+Routes are listed as arrays using regular expressions with named parameters. For the documentation on the individual patterns see the
 [FastRoute library](https://github.com/nikic/FastRoute). The routes must be
 specified in the options of the handler.
 
@@ -55,19 +54,20 @@ A route using the same callback for all HTTP verbs.
 
 ```php
     ...
-    PatternMatchHandler::KEY_ROUTES => array(
+    PatternMatchHandler::KEY_ROUTES => [
         '/api/{version}/{controller}/{action}' => function ($routeParams) {
             // invoked for all HTTP verbs
         }
-    ),
+    ],
     ...
 ```
 
-A route specifiying individual HTTP verbs.
+A route specifying individual HTTP verbs.
+
 ```php
     ...
-    PatternMatchHandler::KEY_ROUTES => array(
-        '/api/{version}/{controller}/{action}' => array(
+    PatternMatchHandler::KEY_ROUTES => [
+        '/api/{version}/{controller}/{action}' => [
             'get' => function ($routeParams) {
                 // handle GET requests
             },
@@ -86,7 +86,7 @@ A route specifiying individual HTTP verbs.
             'head' => function ($routeParams) {
                 // handle HEAD requests
             }
-        )
-    ),
+        ]
+    ],
     ...
 ```

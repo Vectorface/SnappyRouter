@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouterTests\Request;
 
 use PHPUnit\Framework\TestCase;
+use Vectorface\SnappyRouter\Exception\InternalErrorException;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 
 /**
@@ -14,9 +15,8 @@ class HttpRequestTest extends TestCase
 {
     /**
      * An overview of how to use the RPCRequest class.
-     * @test
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         // instantiate the class
         $request = new HttpRequest('MyService', 'MyMethod', 'GET', 'php://memory');
@@ -44,6 +44,8 @@ class HttpRequestTest extends TestCase
 
     /**
      * Tests successful input stream set and fetch cases
+     *
+     * @throws InternalErrorException
      */
     public function testInputStream()
     {
@@ -66,27 +68,37 @@ class HttpRequestTest extends TestCase
 
     /**
      * Tests the input stream functionality where the stream source is not a string or a stream
-     * @expectedException Vectorface\SnappyRouter\Exception\InternalErrorException
+     *
+     * @throws InternalErrorException
      */
     public function testInputStreamIncorrectTypeFailure()
     {
+        $this->setExpectedException(InternalErrorException::class);
+
         $request = new HttpRequest('TestService', 'TestMethod', 'GET', 1);
         $request->getBody();
     }
 
     /**
      * Tests the input stream functionality where the stream source does not exist
-     * @expectedException Vectorface\SnappyRouter\Exception\InternalErrorException
+     *
+     * @throws InternalErrorException
      */
     public function testInputStreamIncorrectFileFailure()
     {
+        $this->setExpectedException(InternalErrorException::class);
+
         $request = new HttpRequest('TestService', 'TestMethod', 'GET', 'file');
         $request->getBody();
     }
 
     /**
      * Tests the various filters.
+     *
      * @dataProvider filtersProvider
+     * @param string $expected
+     * @param string $value
+     * @param string $filters
      */
     public function testInputFilters($expected, $value, $filters)
     {

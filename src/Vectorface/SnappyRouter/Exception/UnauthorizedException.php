@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Exception;
 
-use \Exception;
+use Exception;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
 
 /**

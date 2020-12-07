@@ -2,16 +2,18 @@
 
 namespace Vectorface\SnappyRouter\Handler;
 
-use \Exception;
+use Exception;
 use FastRoute\Dispatcher;
 use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Encoder\EncoderInterface;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
 use Vectorface\SnappyRouter\Encoder\TwigViewEncoder;
+use Vectorface\SnappyRouter\Exception\InternalErrorException;
 use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\Request\HttpRequest;
 use Vectorface\SnappyRouter\Response\AbstractResponse;
 use Vectorface\SnappyRouter\Response\Response;
+use function http_response_code;
 
 /**
  * Handles MVC requests mapping URIs like /controller/action/param1/param2/...
@@ -54,11 +56,13 @@ class ControllerHandler extends PatternMatchHandler
 
     /**
      * Returns true if the handler determines it should handle this request and false otherwise.
+     *
      * @param string $path The URL path for the request.
      * @param array $query The query parameters.
      * @param array $post The post data.
      * @param string $verb The HTTP verb used in the request.
      * @return boolean Returns true if this handler will handle the request and false otherwise.
+     * @throws InternalErrorException
      */
     public function isAppropriate($path, $query, $post, $verb)
     {
@@ -70,7 +74,7 @@ class ControllerHandler extends PatternMatchHandler
         // and fall back to defaults when not present
         $controller = 'index';
         $action = 'index';
-        $this->routeParams = array();
+        $this->routeParams = [];
         $routeInfo = $this->getRouteInfo($verb, $path);
         // ensure the path matches at least one of the routes
         if (Dispatcher::FOUND !== $routeInfo[0]) {
@@ -107,7 +111,10 @@ class ControllerHandler extends PatternMatchHandler
 
     /**
      * Performs the actual routing.
+     *
      * @return string Returns the result of the route.
+     * @throws ResourceNotFoundException
+     * @throws Exception
      */
     public function performRoute()
     {
@@ -115,15 +122,14 @@ class ControllerHandler extends PatternMatchHandler
         $action = null;
         $this->determineControllerAndAction($controller, $action);
         $response = $this->invokeControllerAction($controller, $action);
-        \Vectorface\SnappyRouter\http_response_code($response->getStatusCode());
+        http_response_code($response->getStatusCode());
         return $this->getEncoder()->encode($response);
     }
 
     /**
      * Returns a request object extracted from the request details (path, query, etc). The method
      * isAppropriate() must have returned true, otherwise this method should return null.
-     * @return \Vectorface\SnappyRouter\Request\HttpRequest|null Returns a
-     *         Request object or null if this handler is not appropriate.
+     * @return HttpRequest|null Returns a Request object or null if this handler is not appropriate.
      */
     public function getRequest()
     {
@@ -174,15 +180,17 @@ class ControllerHandler extends PatternMatchHandler
     /**
      * Determines the exact controller instance and action name to be invoked
      * by the request.
+     *
      * @param mixed $controller The controller passed by reference.
      * @param mixed $actionName The action name passed by reference.
+     * @throws ResourceNotFoundException
      */
     private function determineControllerAndAction(&$controller, &$actionName)
     {
         $request = $this->getRequest();
         $this->invokePluginsHook(
             'beforeControllerSelected',
-            array($this, $request)
+            [$this, $request]
         );
 
         $controllerDiKey = $request->getController();
@@ -204,7 +212,7 @@ class ControllerHandler extends PatternMatchHandler
         }
         $this->invokePluginsHook(
             'afterControllerSelected',
-            array($this, $request, $controller, $actionName)
+            [$this, $request, $controller, $actionName]
         );
         $controller->initialize($request, $this);
     }
@@ -219,12 +227,12 @@ class ControllerHandler extends PatternMatchHandler
     {
         $this->invokePluginsHook(
             'beforeActionInvoked',
-            array($this, $this->getRequest(), $controller, $action)
+            [$this, $this->getRequest(), $controller, $action]
         );
         $response = $controller->$action($this->routeParams);
         if (null === $response) {
             // if the action returns null, we simply render the default view
-            $response = array();
+            $response = [];
         } elseif (!is_string($response)) {
             // if they don't return a string, try to use whatever is returned
             // as variables to the view renderer
@@ -243,16 +251,18 @@ class ControllerHandler extends PatternMatchHandler
         }
         $this->invokePluginsHook(
             'afterActionInvoked',
-            array($this, $this->getRequest(), $controller, $action, $response)
+            [$this, $this->getRequest(), $controller, $action, $response]
         );
         return $response;
     }
 
     /**
      * Configures the view encoder based on the current options.
+     *
      * @param array $options The current options.
      * @param string $controller The controller to use for the default view.
      * @param string $action The action to use for the default view.
+     * @throws InternalErrorException
      */
     private function configureViewEncoder($options, $controller, $action)
     {
@@ -276,13 +286,13 @@ class ControllerHandler extends PatternMatchHandler
         $c = self::ROUTE_PATTERN_CONTROLLER;
         $a = self::ROUTE_PATTERN_ACTION;
         $p = self::ROUTE_PATTERN_PARAMS;
-        return array(
-            "/" => self::MATCHES_NOTHING,
-            "/$c" => self::MATCHES_CONTROLLER,
-            "/$c/" => self::MATCHES_CONTROLLER,
-            "/$c/$a" => self::MATCHES_CONTROLLER_AND_ACTION,
-            "/$c/$a/" => self::MATCHES_CONTROLLER_AND_ACTION,
+        return [
+            "/"         => self::MATCHES_NOTHING,
+            "/$c"       => self::MATCHES_CONTROLLER,
+            "/$c/"      => self::MATCHES_CONTROLLER,
+            "/$c/$a"    => self::MATCHES_CONTROLLER_AND_ACTION,
+            "/$c/$a/"   => self::MATCHES_CONTROLLER_AND_ACTION,
             "/$c/$a/$p" => self::MATCHES_CONTROLLER_ACTION_AND_PARAMS
-        );
+        ];
     }
 }

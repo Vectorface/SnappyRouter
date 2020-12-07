@@ -14,9 +14,8 @@ class MethodNotAllowedExceptionTest extends TestCase
 {
     /**
      * An overview of how the class works.
-     * @test
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         $exception = new MethodNotAllowedException(
             'Cannot use GET',

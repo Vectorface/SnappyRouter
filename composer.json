@@ -1,46 +1,44 @@
 {
-    "name": "vectorface/snappy-router",
-    "description": "A quick and snappy routing framework.",
-    "keywords": [
-        "MVC", "routing", "router", "drinking bird"
-    ],
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Daniel Bruce",
-            "email": "dbruce@vectorface.com",
-            "role": "Developer"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Vectorface\\SnappyRouter\\": "./src/Vectorface/SnappyRouter"
-        },
-        "files": [
-            "./src/Vectorface/SnappyRouter/php-5.3-compat.php"
-        ]
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Vectorface\\SnappyRouterTests\\": "./tests/Vectorface/SnappyRouterTests"
-        }
-    },
-    "homepage": "https://github.com/Vectorface/snappy-router",
-    "support": {
-        "issues": "https://github.com/Vectorface/snappy-router/issues",
-        "source": "https://github.com/Vectorface/snappy-router"
-    },
-    "require": {
-        "php": ">=5.3.0",
-        "vectorface/whip": "~0.2",
-        "twig/twig": "~1.0",
-        "danbruce/fast-route":"~0.6",
-        "psr/log": "~1.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^4.8",
-        "squizlabs/php_codesniffer": "1.*",
-        "vectorface/dunit": "~2.0"
+  "name": "vectorface/snappy-router",
+  "description": "A quick and snappy routing framework.",
+  "keywords": [
+    "MVC", "routing", "router", "drinking bird"
+  ],
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Daniel Bruce",
+      "email": "dbruce@vectorface.com",
+      "role": "Developer"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Vectorface\\SnappyRouter\\": "./src/Vectorface/SnappyRouter"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Vectorface\\SnappyRouterTests\\": "./tests/Vectorface/SnappyRouterTests"
+    }
+  },
+  "homepage": "https://github.com/Vectorface/snappy-router",
+  "support": {
+    "issues": "https://github.com/Vectorface/snappy-router/issues",
+    "source": "https://github.com/Vectorface/snappy-router"
+  },
+  "require": {
+    "php": ">=7.0.0",
+    "vectorface/whip": "^0.4",
+    "twig/twig": "^2.14.1",
+    "nikic/fast-route":"^1.0.0",
+    "psr/log": "^1.0",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8",
+    "squizlabs/php_codesniffer": "1.*",
+    "vectorface/dunit": "~2.0"
+  }
 }

@@ -30,7 +30,7 @@ interface HttpRequestInterface
      * @return mixed Returns the data from the GET parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
-    public function getQuery($param, $defaultValue = null, $filters = array());
+    public function getQuery($param, $defaultValue = null, $filters = []);
 
     /**
      * Sets all the QUERY data for the current request.
@@ -47,7 +47,7 @@ interface HttpRequestInterface
      * @return mixed Returns the data from the POST parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
-    public function getPost($param, $defaultValue = null, $filters = array());
+    public function getPost($param, $defaultValue = null, $filters = []);
 
     /**
      * Sets all the POST data for the current request.

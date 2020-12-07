@@ -6,7 +6,7 @@ standard in most other routers such as:
 - Controller/Action based routes
 - Rest-like routes with API versioning
 - Pattern matching routes (based off [nikic/FastRoute](https://github.com/nikic/FastRoute))
-- Direct file invokation (wrap paths to specific files through the router)
+- Direct file invocation (wrap paths to specific files through the router)
 
 SnappyRouter makes it easy to write your own routing handler for any imaginable
 custom routing scheme. It is designed to work with your existing "seasoned"

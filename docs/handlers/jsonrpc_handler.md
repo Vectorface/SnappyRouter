@@ -5,13 +5,13 @@ calling class methods via the
 [JSON-RPC](http://json-rpc.org/wiki/specification) protocol. Version 1.0 and
 2.0 of the protocol should both be fully supported.
 
-Some items of interest about this implementation:
+Some items of interest in this implementation:
 
 * Supports batch calls; Many calls in a single request.
 * Notification calls; Drops responses without a request id.
 * Handles both parameter arrays, and named parameters.
 * Transparently handles both the JSON-RPC 1.0 and 2.0 spec.
-* JSON-RPC 1.0 class hinting *is delibrately not supported*.
+* JSON-RPC 1.0 class hinting *is deliberately not supported*.
 
 ## Why JSON-RPC?
 
@@ -66,23 +66,25 @@ router instance as follows:
 <?php
 
 use Vectorface\SnappyRouter\Config\Config;
+use Vectorface\SnappyRouter\Handler\JsonRpcHandler;
+use Vendor\MyNamespace\RpcServices\Adder;
 
-$config = new Config(array(
-	Config::KEY_HANDLERS => array(
-		'JsonRpcHandler' => array(
-			Config::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handler\\JsonRpcHandler',
-			Config::KEY_OPTIONS => array(
-				Config::KEY_SERVICES => array(
-					'Adder' => 'Vendor\\MyNamespace\\RpcServices\\Adder' // Adder, as above
-				),
-			)
-		)
-	)
-));
+$config = new Config([
+	Config::KEY_HANDLERS => [
+		'JsonRpcHandler' => [
+			Config::KEY_CLASS => JsonRpcHandler::class,
+			Config::KEY_OPTIONS => [
+				Config::KEY_SERVICES => [
+					'Adder' => Adder::class, // Adder, as above
+				],
+			]
+		]
+	]
+]);
 $router = new Vectorface\SnappyRouter\SnappyRouter($config);
 echo $router->handleRoute();
 ```
 
-If the router is called with a URI ending in "Adder(.php)" and a valid JSON-RPC
+If the router is called with a URI ending in `Adder(.php)` and a valid JSON-RPC
 request POSTed for the method "add", the router will response with a JSON-RPC
 encoded response with the sum of the two arguments.

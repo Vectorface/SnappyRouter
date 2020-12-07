@@ -2,12 +2,10 @@
 
 namespace Vectorface\SnappyRouter\Plugin;
 
-use \Exception;
-use Vectorface\SnappyRouter\Controller\AbstractController;
+use Exception;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Di\DiProviderInterface;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
-use Vectorface\SnappyRouter\Request\AbstractRequest;
 
 /**
  * The base class for all plugins. It is recommended to extend this class
@@ -81,24 +79,26 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
      * Sets the controller/action whitelist of this particular plugin. Note that
      * setting a whitelist will remove any previously set blacklists.
      * @param array $whitelist The controller/action whitelist.
-     * @return AbstractPlugin Returns $this.
+     * @return self Returns $this.
      */
     public function setWhitelist($whitelist)
     {
         $this->whitelist = $whitelist;
         $this->blacklist = null;
+        return $this;
     }
 
     /**
      * Sets the controller/action blacklist of this particular plugin. Note that
      * setting a blacklist will remove any previously set whitelists.
      * @param array $blacklist The controller/action blacklist.
-     * @return AbstractPlugin Returns $this.
+     * @return self Returns $this.
      */
     public function setBlacklist($blacklist)
     {
         $this->whitelist = null;
         $this->blacklist = $blacklist;
+        return $this;
     }
 
     /**
@@ -125,8 +125,9 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
             if (is_array($this->whitelist[$controller])) {
                 return in_array($action, $this->whitelist[$controller]);
             }
-            return (self::ALL_ACTIONS === (string)$this->whitelist[$controller]);
+            return self::ALL_ACTIONS === (string)$this->whitelist[$controller];
         }
+
         // if the controller isn't in the blacklist at all, we're good
         if (!isset($this->blacklist[$controller])) {
             return true;
@@ -140,10 +141,12 @@ abstract class AbstractPlugin implements PluginInterface, DiProviderInterface
 
     /**
      * Retrieve an element from the DI container.
+     *
      * @param string $key The DI key.
      * @param boolean $useCache (optional) An optional indicating whether we
      *        should use the cached version of the element (true by default).
      * @return mixed Returns the DI element mapped to that key.
+     * @throws Exception
      */
     public function get($key, $useCache = true)
     {

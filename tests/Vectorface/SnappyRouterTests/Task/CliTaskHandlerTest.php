@@ -4,6 +4,8 @@ namespace Vectorface\SnappyRouterTests\Task;
 
 use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Config\Config;
+use Vectorface\SnappyRouter\Exception\PluginException;
+use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\Handler\CliTaskHandler;
 
 /**
@@ -15,13 +17,14 @@ class CliTaskHandlerTest extends TestCase
 {
     /**
      * An overview of how to use the CliTaskHandler class.
-     * @test
+     *
+     * @throws PluginException
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         $options = array(
             Config::KEY_TASKS => array(
-                'TestTask' => 'Vectorface\SnappyRouterTests\Task\DummyTestTask'
+                'TestTask' => DummyTestTask::class,
             )
         );
         $handler = new CliTaskHandler($options);
@@ -48,14 +51,16 @@ class CliTaskHandlerTest extends TestCase
     /**
      * A test that asserts an exception is thrown if we call an action missing
      * from a registered task.
-     * @expectedException Vectorface\SnappyRouter\Exception\ResourceNotFoundException
-     * @expectedExceptionMessage TestTask task does not have action missingAction.
+     *
+     * @throws PluginException|ResourceNotFoundException
      */
     public function testMissingActionOnTask()
     {
+        $this->setExpectedException(ResourceNotFoundException::class, "TestTask task does not have action missingAction.");
+
         $options = array(
             Config::KEY_TASKS => array(
-                'TestTask' => 'Vectorface\SnappyRouterTests\Task\DummyTestTask'
+                'TestTask' => DummyTestTask::class,
             )
         );
         $handler = new CliTaskHandler($options);

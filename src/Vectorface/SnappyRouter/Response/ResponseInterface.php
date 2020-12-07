@@ -10,14 +10,14 @@ namespace Vectorface\SnappyRouter\Response;
 interface ResponseInterface
 {
     /**
-     * Returns the serializeable response object.
-     * @return mixed The serializeable response object.
+     * Returns the serializable response object.
+     * @return mixed The serializable response object.
      */
     public function getResponseObject();
 
     /**
-     * Sets the serializeable response object.
-     * @param mixed $responseObject The serializeable response object.
+     * Sets the serializable response object.
+     * @param mixed $responseObject The serializable response object.
      * @return ResponseInterface Returns $this.
      */
     public function setResponseObject($responseObject);

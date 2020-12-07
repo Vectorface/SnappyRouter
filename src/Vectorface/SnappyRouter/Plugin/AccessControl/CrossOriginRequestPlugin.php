@@ -20,40 +20,43 @@ class CrossOriginRequestPlugin extends AbstractPlugin
     const HEADER_CLIENT_ORIGIN = 'HTTP_ORIGIN';
 
     /** The HTTP header for allowing cross origin requests */
-    const HEADER_ALLOW_ORIGIN      = 'Access-Control-Allow-Origin';
+    const HEADER_ALLOW_ORIGIN = 'Access-Control-Allow-Origin';
     /** The HTTP header for allowing a list of headers */
-    const HEADER_ALLOW_HEADERS     = 'Access-Control-Allow-Headers';
+    const HEADER_ALLOW_HEADERS = 'Access-Control-Allow-Headers';
     /** The HTTP header for allowing a list of methods */
-    const HEADER_ALLOW_METHODS     = 'Access-Control-Allow-Methods';
+    const HEADER_ALLOW_METHODS = 'Access-Control-Allow-Methods';
     /** The HTTP header for allowing credentials */
     const HEADER_ALLOW_CREDENTIALS = 'Access-Control-Allow-Credentials';
     /** The HTTP header for the max age to cache access control */
-    const HEADER_MAX_AGE           = 'Access-Control-Max-Age';
+    const HEADER_MAX_AGE = 'Access-Control-Max-Age';
 
     /** the config key for the whitelist of allowed services */
     const CONFIG_SERVICE_WHITELIST = 'whitelist';
     /** the config key for the whitelist of allowed origin domains */
     const CONFIG_ORIGIN_WHITELIST = 'ignoreOrigins';
     /** the magic config option to allow all methods on a service */
-    const CONFIG_ALL_METHODS   = 'all';
+    const CONFIG_ALL_METHODS = 'all';
 
     /** A constant indicating how long (in seconds) a user agent should cache
        cross origin preflight response headers */
     const MAX_AGE = 86400; // 1 day
 
     // the array of allowed headers the user agent can send in a cross origin request
-    private static $allowedHeaders = array(
+    private static $allowedHeaders = [
         'accept', 'content-type'
-    );
+    ];
 
     // the array of allowed HTTP verbs that can be used to perform cross origin requests
-    private static $allowedMethods = array(
+    private static $allowedMethods = [
         'GET', 'POST', 'OPTIONS'
-    );
+    ];
 
     /**
      * Invoked directly after the router decides which handler will be used.
+     *
      * @param AbstractHandler $handler The handler selected by the router.
+     * @throws AccessDeniedException
+     * @throws InternalErrorException
      */
     public function afterHandlerSelected(AbstractHandler $handler)
     {
@@ -69,7 +72,7 @@ class CrossOriginRequestPlugin extends AbstractPlugin
             // the CORS plugin only supports handlers with standard requests
             return;
         }
-        $requests = array($request);
+        $requests = [$request];
         if ($handler instanceof BatchRequestHandlerInterface) {
             $requests = $handler->getRequests();
         }
@@ -88,7 +91,10 @@ class CrossOriginRequestPlugin extends AbstractPlugin
     /**
      * Processes the list of requests to check if any should be blocked due
      * to CORS policy.
+     *
      * @param array $requests The array of requests.
+     * @throws AccessDeniedException
+     * @throws InternalErrorException
      */
     private function processRequestsForAccessDenial(array $requests)
     {
@@ -135,10 +141,12 @@ class CrossOriginRequestPlugin extends AbstractPlugin
     /**
      * Returns whether or not the current service/method combination is enabled
      * for cross origin requests.
+     *
      * @param string $service The service requested.
      * @param string|null $method The method requested.
      * @return boolean Returns true if the service/method pair is in the whitelist and
      *         false otherwise.
+     * @throws InternalErrorException
      */
     protected function isServiceEnabledForCrossOrigin($service, $method)
     {
@@ -167,7 +175,7 @@ class CrossOriginRequestPlugin extends AbstractPlugin
             return true;
         }
 
-        $whitelistedServices = (is_array($whitelist[$service])) ? $whitelist[$service] : array();
+        $whitelistedServices = (is_array($whitelist[$service])) ? $whitelist[$service] : [];
         // ensure the method is listed in the list of services
         return in_array($method, $whitelistedServices);
     }
@@ -183,7 +191,7 @@ class CrossOriginRequestPlugin extends AbstractPlugin
             return false;
         }
 
-        $ignoredDomains = array();
+        $ignoredDomains = [];
         if (isset($this->options[self::CONFIG_ORIGIN_WHITELIST])) {
             $ignoredDomains = (array)$this->options[self::CONFIG_ORIGIN_WHITELIST];
         }

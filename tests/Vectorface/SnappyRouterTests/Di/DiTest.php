@@ -2,6 +2,7 @@
 
 namespace Vectorface\SnappyRouterTests\Di;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Di\Di;
 
@@ -9,7 +10,12 @@ class DiTest extends TestCase
 {
     /**
      * Tests the standard set/get methods of the DI.
+     *
      * @dataProvider setAndGetServiceProvider
+     * @param string $key
+     * @param mixed $element
+     * @param string $expected
+     * @throws Exception
      */
     public function testSetAndGetService($key, $element, $expected)
     {
@@ -66,7 +72,7 @@ class DiTest extends TestCase
     {
         Di::clearDefault(); // guard condition
         $di = Di::getDefault(); // get a fresh default
-        $this->assertInstanceOf('Vectorface\SnappyRouter\Di\Di', $di);
+        $this->assertInstanceOf(Di::class, $di);
 
         Di::setDefault($di);
         $this->assertEquals($di, Di::getDefault());
@@ -75,11 +81,11 @@ class DiTest extends TestCase
     /**
      * Tests the exception is thrown when we ask for a service that has not
      * been registered.
-     * @expectedException \Exception
-     * @expectedExceptionMessage No element registered for key: TestElement
      */
     public function testMissingServiceThrowsException()
     {
+        $this->setExpectedException(Exception::class, "No element registered for key: TestElement");
+
         $di = new Di();
         $di->get('TestElement');
     }

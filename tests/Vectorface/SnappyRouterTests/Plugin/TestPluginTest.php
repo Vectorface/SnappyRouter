@@ -9,9 +9,8 @@ class TestPluginTest extends TestCase
 {
     /**
      * A demonstrate of a simple test plugin.
-     * @test
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         $options = array();
         $plugin = new TestPlugin($options);

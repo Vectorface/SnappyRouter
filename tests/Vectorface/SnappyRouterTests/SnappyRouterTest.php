@@ -2,11 +2,10 @@
 
 namespace Vectorface\SnappyRouterTests;
 
+use Exception;
+use Psr\Log\NullLogger;
 use Vectorface\SnappyRouter\SnappyRouter;
 use Vectorface\SnappyRouter\Config\Config;
-use Vectorface\SnappyRouter\Di\Di;
-use Vectorface\SnappyRouter\Plugin\PluginInterface;
-use Vectorface\SnappyRouter\Handler\AbstractHandler;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 
 use PHPUnit\Framework\TestCase;
@@ -18,6 +17,34 @@ use PHPUnit\Framework\TestCase;
  */
 class SnappyRouterTest extends TestCase
 {
+    /**
+     * An overview of how to use the SnappyRouter class.
+     *
+     * @throws Exception
+     */
+    public function testSynopsis()
+    {
+        // an example configuration of the router
+        $config = $this->getStandardConfig();
+        // instantiate the router
+        $router = new SnappyRouter(new Config($config));
+        // configure a logger, if insight into router behavior is desired
+        $router->setLogger(new NullLogger());
+
+        // an example MVC request
+        $_SERVER['REQUEST_URI'] = '/Test/test';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_GET['param'] = 'value';
+        $response = $router->handleRoute('apache2handler');
+
+        $expectedResponse = 'This is a test service.';
+        $this->assertEquals($expectedResponse, $response);
+
+        unset($_SERVER['REQUEST_URI']);
+        $_GET = array();
+        $_POST = array();
+    }
+
     /**
      * Returns a standard router config array.
      * @return array A standard router config.
@@ -59,34 +86,9 @@ class SnappyRouterTest extends TestCase
     }
 
     /**
-     * An overview of how to use the SnappyRouter class.
-     * @test
-     */
-    public function synopsis()
-    {
-        // an example configuration of the router
-        $config = $this->getStandardConfig();
-        // instantiate the router
-        $router = new SnappyRouter(new Config($config));
-        // configure a logger, if insight into router behavior is desired
-        $router->setLogger(new \Psr\Log\NullLogger());
-
-        // an example MVC request
-        $_SERVER['REQUEST_URI'] = '/Test/test';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $_GET['param'] = 'value';
-        $response = $router->handleRoute('apache2handler');
-
-        $expectedResponse = 'This is a test service.';
-        $this->assertEquals($expectedResponse, $response);
-
-        unset($_SERVER['REQUEST_URI']);
-        $_GET = array();
-        $_POST = array();
-    }
-
-    /**
      * Tests that the router handles a generic exception.
+     *
+     * @throws Exception
      */
     public function testGenericException()
     {
@@ -104,6 +106,8 @@ class SnappyRouterTest extends TestCase
 
     /**
      * Tests that an empty config array results in no handler being found.
+     *
+     * @throws Exception
      */
     public function testNoHandlerFoundException()
     {
@@ -121,14 +125,16 @@ class SnappyRouterTest extends TestCase
 
     /**
      * Tests that an exception is thrown if a handler class does not exist.
-     * @expectedException Exception
-     * @expectedExceptionMessage Cannot instantiate instance of Vectorface\SnappyRouter\Handler\NonexistantHandler
+     *
+     * @throws Exception
      */
     public function testInvalidHandlerClass()
     {
+        $this->setExpectedException(Exception::class, "Cannot instantiate instance of Vectorface\SnappyRouter\Handler\NonexistentHandler");
+
         $config = $this->getStandardConfig();
         $config[Config::KEY_HANDLERS]['InvalidHandler'] = array(
-            'class' => 'Vectorface\SnappyRouter\Handler\NonexistantHandler'
+            'class' => 'Vectorface\SnappyRouter\Handler\NonexistentHandler'
         );
         $router = new SnappyRouter(new Config($config));
 
@@ -143,6 +149,8 @@ class SnappyRouterTest extends TestCase
 
     /**
      * Tests that the CLI routing functionality works.
+     *
+     * @throws Exception
      */
     public function testStandardCliRoute()
     {
@@ -165,6 +173,8 @@ class SnappyRouterTest extends TestCase
 
     /**
      * Tests a CLI route that throws an exception.
+     *
+     * @throws Exception
      */
     public function testCliRouteWithException()
     {
@@ -188,6 +198,8 @@ class SnappyRouterTest extends TestCase
     /**
      * Tests that a CLI route with no appropriate handlers throws an
      * exception.
+     *
+     * @throws Exception
      */
     public function testCliRouteWithNoHandler()
     {

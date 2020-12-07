@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Authentication;
 
-use \Closure;
+use Closure;
 
 /**
  * Authenticator implementation that leaves the authentication up to a Closure.

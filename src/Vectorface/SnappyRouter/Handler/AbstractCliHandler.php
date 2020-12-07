@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouter\Handler;
 
 use Vectorface\SnappyRouter\Config\Config;
+use Vectorface\SnappyRouter\Exception\PluginException;
 
 /**
  * The base class for all handlers for CLI routes.
@@ -13,7 +14,9 @@ abstract class AbstractCliHandler extends AbstractHandler
 {
     /**
      * Constructor for the class.
+     *
      * @param array $options An array of options for the plugin.
+     * @throws PluginException
      */
     public function __construct($options)
     {
@@ -28,8 +31,7 @@ abstract class AbstractCliHandler extends AbstractHandler
      * Determines whether the current handler is appropriate for the given
      * path components.
      * @param array $components The path components as an array.
-     * @return boolean Returns true if the handler is appropriate and false
-     *         otherwise.
+     * @return boolean Returns true if the handler is appropriate and false otherwise.
      */
     abstract public function isAppropriate($components);
 

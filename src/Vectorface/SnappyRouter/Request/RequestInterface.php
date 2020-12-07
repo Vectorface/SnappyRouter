@@ -2,8 +2,11 @@
 
 namespace Vectorface\SnappyRouter\Request;
 
+use Vectorface\SnappyRouter\Controller\AbstractController;
+
 /**
  * The standard interface for requests.
+ *
  * @copyright Copyright (c) 2014, VectorFace, Inc.
  * @author Dan Bruce <dbruce@vectorface.com>
  */

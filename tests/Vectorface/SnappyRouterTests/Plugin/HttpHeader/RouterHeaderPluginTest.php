@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouterTests\Plugin\HttpHeader;
 
 use PHPUnit\Framework\TestCase;
+use Vectorface\SnappyRouter\Exception\PluginException;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 use Vectorface\SnappyRouter\Plugin\HttpHeader\RouterHeaderPlugin;
 
@@ -15,12 +16,13 @@ class RouterHeaderPluginTest extends TestCase
 {
     /**
      * An overview of how to use the plugin.
-     * @test
+     *
+     * @throws PluginException
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         $handler = new ControllerHandler(array());
         $plugin = new RouterHeaderPlugin(array());
-        $this->assertNull($plugin->afterhandlerSelected($handler));
+        $plugin->afterhandlerSelected($handler);
     }
 }

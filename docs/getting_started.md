@@ -69,8 +69,8 @@ Create the file `tutorial/composer.json` with the following contents:
         }
     },
     "require": {
-        "php": ">=5.3.0",
-        "vectorface/snappy-router": "dev-master"
+        "php": ">=7.0.0",
+        "vectorface/snappy-router": "v0.3.0"
     }
 }
 ```
@@ -90,27 +90,28 @@ require_once __DIR__.'/../vendor/autoload.php';
 
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
+use Vectorface\SnappyTutorial\Models\TutorialDi;
 
-$config = new Config(array(
-    Config::KEY_DI => 'Vectorface\\SnappyTutorial\\Models\\TutorialDi',
-    Config::KEY_HANDLERS => array(
-        'PageHandler' => array(
-            Config::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handler\\ControllerHandler',
-            Config::KEY_OPTIONS => array(
+$config = new Config([
+    Config::KEY_DI => TutorialDi::class,
+    Config::KEY_HANDLERS => [
+        'PageHandler' => [
+            Config::KEY_CLASS => ControllerHandler::class,
+            Config::KEY_OPTIONS => [
                 Config::KEY_NAMESPACES => 'Vectorface\\SnappyTutorial\\Controllers',
                 ControllerHandler::KEY_BASE_PATH => '/tutorial',
-                ControllerHandler::KEY_VIEWS => array(
+                ControllerHandler::KEY_VIEWS => [
                     ControllerHandler::KEY_VIEWS_PATH => realpath(__DIR__.'/../app/Views')
-                )
-            )
-        )
-    )
-));
+                ]
+            ]
+        ]
+    ]
+]);
 $router = new Vectorface\SnappyRouter\SnappyRouter($config);
 echo $router->handleRoute();
 ```
 
-For simplicity we include the configuration settings directly in
+For simplicity, we include the configuration settings directly in
 `public/index.php`. It is probably a better practice to store these settings
 in a separate config file and include it in the index. For example:
 
@@ -134,7 +135,7 @@ the database adapter, cache adapters, mail senders, etc.
 For this tutorial, we specify a class to use for DI. Create the file
 `app/Models/TutorialDi.php` with the following contents:
 
-```
+```php
 <?php // app/Models/TutorialDi.php
 
 namespace Vectorface\SnappyTutorial\Models;
@@ -151,11 +152,11 @@ class TutorialDi extends Di
 
     protected function getDiArray()
     {
-        return array(
+        return [
             'projectTitle' => function(Di $di) {
                 return 'SnappyRouter Tutorial';
             }
-        );
+        ];
     }
 }
 ```
@@ -164,7 +165,7 @@ This container registers only the `projectTitle` key.
 
 ## Controllers and Views
 
-We will setup an `IndexController` that extends our own abstract controller.
+We will set up an `IndexController` that extends our own abstract controller.
 It is good practice to always include your own base controller on top of
 `Vectorface\SnappyRouter\Controller\AbstractController` to provide common logic
 across all your controllers.
@@ -203,9 +204,9 @@ class IndexController extends BaseController
 {
     public function indexAction()
     {
-        return array(
+        return [
             'content' => 'Hello SnappyRouter!'
-        );
+        ];
     }
 }
 ```

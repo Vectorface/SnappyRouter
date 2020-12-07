@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouterTests\Handler;
 
 use PHPUnit\Framework\TestCase;
+use Vectorface\SnappyRouter\Exception\PluginException;
 use Vectorface\SnappyRouter\Handler\DirectScriptHandler;
 
 /**
@@ -14,9 +15,10 @@ class DirectScriptHandlerTest extends TestCase
 {
     /**
      * An overview of how to use the class.
-     * @test
+     *
+     * @throws PluginException
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         // the configuration maps a path like /cgi-bin to this folder
         $config = array(
@@ -44,6 +46,8 @@ class DirectScriptHandlerTest extends TestCase
 
     /**
      * Tests that the getRequest() method returns null.
+     *
+     * @throws PluginException
      */
     public function testGetRequest()
     {

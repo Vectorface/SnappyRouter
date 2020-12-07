@@ -46,15 +46,15 @@ class ExampleController extends AbstractController
                     exit();
                 } else {
                     // pass the login errors back to the template
-                    return array(
+                    return [
                         'loginErrors' => $authService->getErrors()
-                    );
+                    ];
                 }
             }
             // pass the login errors back to the template
-            return array(
-                'loginErrors' => array('Missing username or password.')
-            );
+            return [
+                'loginErrors' => ['Missing username or password.']
+            ];
         }
     }
 }
@@ -68,21 +68,21 @@ and an example configuration for this handler:
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 
-$config = new Config(array(
-    Config::KEY_HANDLERS => array(
-        'MvcHandler' => array(
-            Config::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handler\\ControllerHandler',
-            Config::KEY_OPTIONS => array(
-                Config::KEY_NAMESPACES => array(
+$config = new Config([
+    Config::KEY_HANDLERS => [
+        'MvcHandler' => [
+            Config::KEY_CLASS => ControllerHandler::class,
+            Config::KEY_OPTIONS => [
+                Config::KEY_NAMESPACES => [
                     'Vendor\\MyNamespace\\Controllers'
-                ),
-                ControllerHandler::KEY_VIEWS => array(
+                ],
+                ControllerHandler::KEY_VIEWS => [
                     ControllerHandler::KEY_VIEWS_PATH => '/home/user/project/views'
-                )
-            )
-        )
-    )
-));
+                ]
+            ]
+        ]
+    ]
+]);
 $router = new Vectorface\SnappyRouter\SnappyRouter($config);
 echo $router->handleRoute();
 ```
@@ -111,10 +111,10 @@ The base path is specified in the handler options like such:
 
 ```php
     ...
-    Config::KEY_OPTIONS => array(
+    Config::KEY_OPTIONS => [
         ControllerHandler::KEY_BASE_PATH => '/my/base/path';
         ...
-    ),
+    ],
     ...
 ```
 
@@ -127,20 +127,20 @@ configuration. Controllers are listed in the `options` key within the handler.
 
 The list of controllers can be explicitly given as a key/value pair. The key for
 the controller must match the convention `"${NAME}Controller"` and the value
-must be a valid PHP class or an array with specific fields (depending on whether
+must be a valid PHP class, or an array with specific fields (depending on whether
 your controllers are namespaced).
 
 Example for namespaced controllers:
 
 ```php
     ...
-    Config::KEY_OPTIONS => array(
-        Config::KEY_CONTROLLERS => array(
+    Config::KEY_OPTIONS => [
+        Config::KEY_CONTROLLERS => [
             'ExampleController' => 'Vendor\\MyNamespace\\Controllers\\ExampleController',
             'AnotherController' => 'Vendor\\MyNamespace\\Controllers\\AnotherController',
             ...
-        )
-    ),
+        ]
+    ],
     ...
 ```
 
@@ -148,14 +148,14 @@ Example for non namespaced controllers:
 
 ```php
     ...
-    Config::KEY_OPTIONS => array(
-        Config::KEY_CONTROLLERS => array(
-            'ExampleController' => array(
+    Config::KEY_OPTIONS => [
+        Config::KEY_CONTROLLERS => [
+            'ExampleController' => [
                 Config::KEY_CLASS => '\ExampleController',
                 Config::KEY_FILE  => '/home/user/project/controllers/ExampleController.php'
-            )
-        )
-    ),
+            ]
+        ]
+    ],
     ...
 ```
 
@@ -166,13 +166,13 @@ SnappyRouter to use to autodetect the appropriate controller class.
 
 ```php
     ...
-    Config::KEY_OPTIONS => array(
-        Config::KEY_NAMESPACES => array(
+    Config::KEY_OPTIONS => [
+        Config::KEY_NAMESPACES => [
             'Vendor\\MyNamespace\\Controllers',
             'Vendor\\AnotherNamespace\\Controllers',
             ...
-        )
-    ),
+        ]
+    ],
     ...
 ```
 
@@ -185,13 +185,13 @@ to check (recursively) for a PHP file matching `${NAME}Controller.php`.
 
 ```php
     ...
-    Config::KEY_OPTIONS => array(
-        Config::KEY_FOLDERS => array(
+    Config::KEY_OPTIONS => [
+        Config::KEY_FOLDERS => [
             '/home/user/project/app/controllers',
             '/home/user/project/app/moreControllers',
             ...
-        )
-    ),
+        ]
+    ],
     ...
 ```
 
@@ -207,7 +207,6 @@ controller subclasses this class, you can access the current request through
 
 Example demonstrating how to check if the request made was a `POST` request
 and to get the variables from the form.
-
 
 ```php
 <?php
@@ -231,7 +230,7 @@ and to get the variables from the form.
 
         // handle stuff
         ...
-        return array('MyObject' => $object');
+        return ['MyObject' => $object];
     }
     ...
 ```
@@ -273,7 +272,7 @@ the value to an integer:
     // integer
     $id = max(0, $this->request->getQuery('id', 0, 'int'));
     // alternatively the filters can be specified as an array
-    $id = max(0, $this->request->getQuery('id', 0, array('int')));
+    $id = max(0, $this->request->getQuery('id', 0, ['int']));
     ...
 ```
 
@@ -283,7 +282,7 @@ trimmed and fully converted to lower case.
 ```php
     ...
     // usernames are trimmed and stored in lower case for case insensitivity
-    $username = $this->getPost('username', '', array('trim', 'lower'));
+    $username = $this->getPost('username', '', ['trim', 'lower']);
     ...
 ```
 
@@ -332,18 +331,18 @@ for more details.
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 
-$config = new Config(array(
-    Config::KEY_HANDLERS => array(
-        'MyHandler' => array(
-            Config::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handler\\ControllerHandler',
-            Config::KEY_OPTIONS => array(
-                ControllerHandler::KEY_VIEWS => array(
+$config = new Config([
+    Config::KEY_HANDLERS => [
+        'MyHandler' => [
+            Config::KEY_CLASS => ControllerHandler::class,
+            Config::KEY_OPTIONS => [
+                ControllerHandler::KEY_VIEWS => [
                     ControllerHandler::KEY_VIEWS_PATH => '/path/to/views/folder'
-                )
-            )
-        )
-    )
-));
+                ]
+            ]
+        ]
+    ]
+]);
 $router = new Vectorface\SnappyRouter\SnappyRouter($config);
 echo $router->handleRoute();
 ```
@@ -395,12 +394,11 @@ Hello {{ username|e }}.
 Alternatively, if a controller action returns an associative array, the keys
 and values get bound to variables in the view. For example:
 
-
 ```php
     ...
     public function loginAction()
     {
-        return array('username' => 'Fred');
+        return ['username' => 'Fred'];
     }
     ...
 ```
@@ -419,7 +417,7 @@ For example:
     public function loginAction()
     {
         return $this->renderView(
-            array('username' => 'Fred'),
+            ['username' => 'Fred'],
             'login.twig'
         );
     }

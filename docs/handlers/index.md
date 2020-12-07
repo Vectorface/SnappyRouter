@@ -77,7 +77,7 @@ web request handler, it is recommended to extend
 ```php
 <?php
 
-namespace Vendor\MyNamespace\Handler\MyCustomHandler;
+namespace Vendor\MyNamespace\Handler;
 
 use Vectorface\SnappyRouter\Handler\AbstractRequestHandler;
 
@@ -115,17 +115,18 @@ and specify the handler in your config:
 <?php
 
 use Vectorface\SnappyRouter\Config\Config;
+use Vendor\MyNamespace\Handler\MyCustomHandler;
 
-$config = new Config(array(
-    Config::KEY_HANDLERS => array(
-        'MyHandler' => array(
-            Config::KEY_CLASS => 'Vendor\\MyNamespace\\Handler\\MyCustomHandler',
-            Config::KEY_OPTIONS => array(
+$config = new Config([
+    Config::KEY_HANDLERS => [
+        'MyHandler' => [
+            Config::KEY_CLASS => MyCustomHandler::class,
+            Config::KEY_OPTIONS => [
                 // an array of options
-            )
-        )
-    )
-));
+            ]
+        ]
+    ]
+]);
 $router = new Vectorface\SnappyRouter\SnappyRouter($config);
 echo $router->handleRoute();
 ```

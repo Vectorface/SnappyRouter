@@ -2,6 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Plugin\Authentication;
 
+use Vectorface\SnappyRouter\Exception\InternalErrorException;
 use Vectorface\SnappyRouter\Exception\UnauthorizedException;
 use Vectorface\SnappyRouter\Handler\AbstractHandler;
 
@@ -36,7 +37,10 @@ class HttpBasicAuthenticationPlugin extends AbstractAuthenticationPlugin
 
     /**
      * Invoked directly after the router decides which handler will be used.
+     *
      * @param AbstractHandler $handler The handler selected by the router.
+     * @throws UnauthorizedException
+     * @throws InternalErrorException
      */
     public function afterHandlerSelected(AbstractHandler $handler)
     {
@@ -56,7 +60,7 @@ class HttpBasicAuthenticationPlugin extends AbstractAuthenticationPlugin
     public function getCredentials()
     {
         if (isset($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) {
-            return array($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+            return [$_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']];
         }
         return false;
     }

@@ -2,11 +2,15 @@
 
 namespace Vectorface\SnappyRouterTests\Handler;
 
-use \Exception;
-use \ReflectionClass;
+use Exception;
+use ReflectionClass;
 use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Config\Config;
+use Vectorface\SnappyRouter\Exception\EncoderException;
+use Vectorface\SnappyRouter\Exception\PluginException;
+use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\Handler\JsonRpcHandler;
+use Vectorface\SnappyRouterTests\Controller\TestDummyController;
 
 /**
  * A test for the JsonRpcHandler class.
@@ -33,13 +37,14 @@ class JsonRpcHandlerTest extends TestCase
 
     /**
      * An overview of how to use the JsonRpcHandler class.
-     * @test
+     *
+     * @throws PluginException|EncoderException|ResourceNotFoundException
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         $options = array(
             Config::KEY_CONTROLLERS => array(
-                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+                'TestController' => TestDummyController::class,
             )
         );
         $handler = new JsonRpcHandler($options);
@@ -86,13 +91,15 @@ class JsonRpcHandlerTest extends TestCase
 
     /**
      * Tests various edge cases of the JsonRpcHandler::isAppropriate method.
+     *
+     * @throws PluginException
      */
     public function testIsAppropriate()
     {
         /* Without a base path, only the last path element is used to map the controller/service */
         $options = array(
             Config::KEY_CONTROLLERS => array(
-                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+                'TestController' => TestDummyController::class,
             )
         );
         $handler = new JsonRpcHandler($options);
@@ -105,7 +112,7 @@ class JsonRpcHandlerTest extends TestCase
         $options = array(
             JsonRpcHandler::KEY_BASE_PATH => 'x/y/z',
             Config::KEY_CONTROLLERS => array(
-                'Test/TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+                'Test/TestController' => TestDummyController::class,
             )
         );
         $handler = new JsonRpcHandler($options);
@@ -115,12 +122,14 @@ class JsonRpcHandlerTest extends TestCase
 
     /**
      * Tests the edge cases of the JsonRpcHandler::performRoute method.
+     *
+     * @throws EncoderException|PluginException|ResourceNotFoundException
      */
     public function testPerformRoute()
     {
         $options = array(
             Config::KEY_CONTROLLERS => array(
-                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+                'TestController' => TestDummyController::class,
             )
         );
         $handler = new JsonRpcHandler($options);
@@ -143,6 +152,8 @@ class JsonRpcHandlerTest extends TestCase
 
     /**
      * Tests the method JsonRpcHandler::handleException.
+     *
+     * @throws PluginException
      */
     public function testHandleException()
     {
@@ -160,11 +171,13 @@ class JsonRpcHandlerTest extends TestCase
     /**
      * Tests that a request to a service that doesn't exist returns a 404
      * response.
-     * @expectedException Vectorface\SnappyRouter\Exception\ResourceNotFoundException
-     * @expectedExceptionMessage No such service: nonexistent
+     *
+     * @throws EncoderException|PluginException|ResourceNotFoundException
      */
     public function testServiceNotFound()
     {
+        $this->setExpectedException(ResourceNotFoundException::class, "No such service: nonexistent");
+
         $handler = new JsonRpcHandler(array());
         $this->setRequestPayload($handler, array('method' => 'someMethod', 'id' => '1'));
         $this->assertTrue($handler->isAppropriate('/nonexistent', array(), array(), 'POST'));

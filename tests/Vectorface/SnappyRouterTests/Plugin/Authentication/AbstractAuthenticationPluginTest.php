@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Authentication\CallbackAuthenticator;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
+use Vectorface\SnappyRouter\Exception\PluginException;
 use Vectorface\SnappyRouter\Exception\UnauthorizedException;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 
@@ -21,6 +22,8 @@ class AbstractAuthenticationPluginTest extends TestCase
 {
     /**
      * Authentication of service requests happens by intercepting preInvoke; Validate that.
+     *
+     * @throws InternalErrorException|UnauthorizedException|PluginException
      */
     public function testAfterHandlerInvoked()
     {

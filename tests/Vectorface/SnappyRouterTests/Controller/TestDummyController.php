@@ -2,7 +2,6 @@
 
 namespace Vectorface\SnappyRouterTests\Controller;
 
-use \Exception;
 use Vectorface\SnappyRouter\Controller\AbstractController;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
 

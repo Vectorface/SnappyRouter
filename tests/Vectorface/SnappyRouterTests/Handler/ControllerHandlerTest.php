@@ -2,11 +2,17 @@
 
 namespace Vectorface\SnappyRouterTests\Handler;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
+use Vectorface\SnappyRouter\Di\Di;
+use Vectorface\SnappyRouter\Exception\InternalErrorException;
+use Vectorface\SnappyRouter\Exception\PluginException;
+use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\SnappyRouter;
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
+use Vectorface\SnappyRouterTests\Controller\TestDummyController;
 
 /**
  * Tests the ControllerHandler.
@@ -17,15 +23,17 @@ class ControllerHandlerTest extends TestCase
 {
     /**
      * An overview of how to use the ControllerHandler.
-     * @test
+     *
+     * @throws PluginException|InternalErrorException
+     * @throws Exception
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         $options = array(
             ControllerHandler::KEY_BASE_PATH => '/',
             Config::KEY_CONTROLLERS => array(
-                'ControllerController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController',
-                'IndexController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+                'ControllerController' => TestDummyController::class,
+                'IndexController' => TestDummyController::class,
             )
         );
         $handler = new ControllerHandler($options);
@@ -65,11 +73,13 @@ class ControllerHandlerTest extends TestCase
 
     /**
      * Tests the handler returns false for a route to an unknown controller.
-     * @expectedException Vectorface\SnappyRouter\Exception\ResourceNotFoundException
-     * @expectedExceptionMessage No such controller found "TestController".
+     *
+     * @throws InternalErrorException|PluginException|ResourceNotFoundException
      */
-    public function testRouteToNonExistantController()
+    public function testRouteToNonExistentController()
     {
+        $this->setExpectedException(ResourceNotFoundException::class, 'No such controller found "TestController".');
+
         $options = array();
         $handler = new ControllerHandler($options);
 
@@ -81,14 +91,16 @@ class ControllerHandlerTest extends TestCase
     /**
      * Tests that an exception is thrown if we try to route to a controller
      * action that does not exist.
-     * @expectedException Vectorface\SnappyRouter\Exception\ResourceNotFoundException
-     * @expectedExceptionMessage TestController does not have method notexistsAction
+     *
+     * @throws InternalErrorException|PluginException|ResourceNotFoundException
      */
-    public function testRouteToNonExistantControllerAction()
+    public function testRouteToNonExistentControllerAction()
     {
+        $this->setExpectedException(ResourceNotFoundException::class, 'TestController does not have method notexistsAction');
+
         $options = array(
             Config::KEY_CONTROLLERS => array(
-                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+                'TestController' => TestDummyController::class
             )
         );
         $handler = new ControllerHandler($options);
@@ -102,48 +114,54 @@ class ControllerHandlerTest extends TestCase
     /**
      * Tests that an exception is thrown if the handler has a plugin missing
      * the class field.
-     * @expectedException Vectorface\SnappyRouter\Exception\PluginException
-     * @expectedExceptionMessage Invalid or missing class for plugin TestPlugin
+     *
+     * @throws PluginException
      */
     public function testMissingClassOnPlugin()
     {
+        $this->setExpectedException(PluginException::class, 'Invalid or missing class for plugin TestPlugin');
+
         $options = array(
             Config::KEY_PLUGINS => array(
                 'TestPlugin' => array()
             )
         );
-        new ControllerHandler($options);
+        return new ControllerHandler($options);
     }
 
     /**
-     * Tests that an exception is thrown if the handler lists a non-existant
+     * Tests that an exception is thrown if the handler lists a non-existent
      * plugin class.
-     * @expectedException Vectorface\SnappyRouter\Exception\PluginException
-     * @expectedExceptionMessage Invalid or missing class for plugin TestPlugin
+     *
+     * @throws PluginException
      */
     public function testInvalidClassOnPlugin()
     {
+        $this->setExpectedException(PluginException::class, 'Invalid or missing class for plugin TestPlugin');
+
         $options = array(
             Config::KEY_PLUGINS => array(
                 'TestPlugin' => array(
-                    'class' => 'Vectorface\\SnappyRouter\\Plugin\\NonExistantPlugin'
+                    'class' => 'Vectorface\\SnappyRouter\\Plugin\\NonExistentPlugin'
                 )
             )
         );
-        new ControllerHandler($options);
+        return new ControllerHandler($options);
     }
 
     /**
      * Tests that an invalid view configuration throws an exception.
-     * @expectedException Vectorface\SnappyRouter\Exception\InternalErrorException
-     * @expectedExceptionMessage View environment missing views path.
+     *
+     * @throws PluginException|InternalErrorException
      */
     public function testInvalidViewConfiguration()
     {
+        $this->setExpectedException(InternalErrorException::class, 'View environment missing views path.');
+
         $options = array(
             ControllerHandler::KEY_BASE_PATH => '/',
             Config::KEY_CONTROLLERS => array(
-                'ControllerController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController',
+                'ControllerController' => TestDummyController::class,
             ),
             ControllerHandler::KEY_VIEWS => array()
         );
@@ -154,17 +172,19 @@ class ControllerHandlerTest extends TestCase
     /**
      * Tests that the default action of a controller is to render a default
      * view from the view engine.
+     *
+     * @throws Exception
      */
     public function testRenderDefaultView()
     {
         $routerOptions = array(
-            Config::KEY_DI => 'Vectorface\\SnappyRouter\\Di\\Di',
+            Config::KEY_DI => Di::class,
             Config::KEY_HANDLERS => array(
                 'ControllerHandler' => array(
-                    Config::KEY_CLASS => 'Vectorface\\SnappyRouter\\Handler\\ControllerHandler',
+                    Config::KEY_CLASS => ControllerHandler::class,
                     Config::KEY_OPTIONS => array(
                         Config::KEY_CONTROLLERS => array(
-                            'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+                            'TestController' => TestDummyController::class,
                         ),
                         ControllerHandler::KEY_VIEWS => array(
                             ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
@@ -184,12 +204,14 @@ class ControllerHandlerTest extends TestCase
     /**
      * Tests that when an action returns a string, the string is rendered
      * without going through the view engine.
+     *
+     * @throws InternalErrorException|PluginException|ResourceNotFoundException
      */
     public function testActionReturnsString()
     {
         $options = array(
             Config::KEY_CONTROLLERS => array(
-                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+                'TestController' => TestDummyController::class,
             ),
             ControllerHandler::KEY_VIEWS => array(
                 ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
@@ -203,6 +225,8 @@ class ControllerHandlerTest extends TestCase
     /**
      * Tests that when an action returns an array, the twig view is rendered
      * with the array values as the variables in the view.
+     *
+     * @throws InternalErrorException|PluginException|ResourceNotFoundException
      */
     public function testActionReturnsArray()
     {
@@ -221,6 +245,8 @@ class ControllerHandlerTest extends TestCase
 
     /**
      * Tests that an action can render a different view that its default.
+     *
+     * @throws InternalErrorException|PluginException|ResourceNotFoundException
      */
     public function testActionRendersNonDefaultView()
     {
@@ -239,14 +265,16 @@ class ControllerHandlerTest extends TestCase
 
     /**
      * Tests that an exception is thrown if we "renderView" with a NullEncoder
-     * @expectedException Exception
-     * @expectedExceptionMessage The current encoder does not support the render view method.
+     *
+     * @throws InternalErrorException|PluginException|ResourceNotFoundException
      */
     public function testExceptionForNullEncoderRenderView()
     {
+        $this->setExpectedException(Exception::class, 'The current encoder does not support the render view method.');
+
         $options = array(
             Config::KEY_CONTROLLERS => array(
-                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+                'TestController' => TestDummyController::class
             ),
             ControllerHandler::KEY_VIEWS => array(
                 ControllerHandler::KEY_VIEWS_PATH => __DIR__.'/../Controller/Views'
@@ -260,6 +288,8 @@ class ControllerHandlerTest extends TestCase
 
     /**
      * Tests that we can use namespace provisioning to retrieve a controller.
+     *
+     * @throws InternalErrorException|PluginException|ResourceNotFoundException
      */
     public function testNamespaceProvisioning()
     {
@@ -278,6 +308,8 @@ class ControllerHandlerTest extends TestCase
 
     /**
      * Tests that we can use folder provisioning to retrieve a controller.
+     *
+     * @throws InternalErrorException|PluginException|ResourceNotFoundException
      */
     public function testFolderProvisioning()
     {

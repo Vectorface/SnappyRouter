@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Authentication\CallbackAuthenticator;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
+use Vectorface\SnappyRouter\Exception\PluginException;
 use Vectorface\SnappyRouter\Exception\UnauthorizedException;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 use Vectorface\SnappyRouter\Plugin\Authentication\HttpBasicAuthenticationPlugin;
@@ -20,6 +21,8 @@ class HttpBasicAuthenticationPluginTest extends TestCase
 {
     /**
      * Test the HTTPBasicAuthenticationPlugin; All in one test!
+     *
+     * @throws InternalErrorException|UnauthorizedException|PluginException
      */
     public function testBasicHTTPAuth()
     {

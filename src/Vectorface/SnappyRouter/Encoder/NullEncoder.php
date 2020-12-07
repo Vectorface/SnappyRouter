@@ -19,8 +19,8 @@ class NullEncoder extends AbstractEncoder
     {
         if (is_string($response->getResponseObject())) {
             return $response->getResponseObject();
-        } else {
-            return '';
         }
+
+        return '';
     }
 }

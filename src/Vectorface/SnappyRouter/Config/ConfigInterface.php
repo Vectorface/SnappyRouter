@@ -16,7 +16,7 @@ interface ConfigInterface
      * @param string $key The key to be used.
      * @param mixed $defaultValue The default value to return if the key currently
      *        has no value associated with it.
-     * @return Returns the value associated with the key or the default value if
+     * @return mixed Returns the value associated with the key or the default value if
      *         no value is associated with the key.
      */
     public function get($key, $defaultValue = null);

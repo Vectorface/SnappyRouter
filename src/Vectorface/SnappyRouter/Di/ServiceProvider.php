@@ -2,9 +2,9 @@
 
 namespace Vectorface\SnappyRouter\Di;
 
-use \Exception;
+use Exception;
 use Vectorface\SnappyRouter\Config\Config;
-use Vectorface\SnappyRouter\Exception\ServiceNotRegisteredException;
+use Vectorface\SnappyRouter\Controller\AbstractController;
 
 /**
  * A service provider providing dependency injection capabilities to the
@@ -14,28 +14,27 @@ use Vectorface\SnappyRouter\Exception\ServiceNotRegisteredException;
  */
 class ServiceProvider extends Di
 {
-
     /** The default mode. Retrieve services from an explicit list. */
     const PROVISIONING_MODE_SERVICE_LIST = 1;
     /** The mode for retrieving services from a list of namespaces. */
-    const PROVISIONING_MODE_NAMESPACES   = 2;
+    const PROVISIONING_MODE_NAMESPACES = 2;
     /** The mode for retrieving services from a folder recursively. */
-    const PROVISIONING_MODE_FOLDERS      = 3;
+    const PROVISIONING_MODE_FOLDERS = 3;
 
     /** The Di key for storing the list of registered namespaces */
     const KEY_NAMESPACES = 'serviceNamespaces';
     /** The Di key for storing the list of folders to scan for controllers */
-    const KEY_FOLDERS    = 'serviceFolders';
+    const KEY_FOLDERS = 'serviceFolders';
 
     // the private provisioning mode
     private $provisioningMode = self::PROVISIONING_MODE_SERVICE_LIST;
 
     // a cache of service instances
-    private $instanceCache = array();
+    private $instanceCache = [];
 
     /**
      * Returns the array of all services.
-     * @return The array of all services.
+     * @return array The array of all services.
      */
     public function getServices()
     {
@@ -45,8 +44,8 @@ class ServiceProvider extends Di
     /**
      * Returns the specified service path for the given key.
      * @param string $key The key to lookup.
-     * @return Returns the path to the specified service for the given key.
-     * @throws ServiceNotFoundForKeyException Throws this exception if the key isn't associated
+     * @return string Returns the path to the specified service for the given key.
+     * @throws Exception Throws this exception if the key isn't associated
      * with any registered service.
      */
     public function getService($key)
@@ -58,7 +57,7 @@ class ServiceProvider extends Di
      * Specifies the mapping between the given key and service.
      * @param string $key The key to assign.
      * @param mixed $service The service to be assigned to the key.
-     * @return Returns $this.
+     * @return self Returns $this.
      */
     public function setService($key, $service)
     {
@@ -73,7 +72,7 @@ class ServiceProvider extends Di
      * @param boolean $useCache An optional flag indicating whether we should
      *        use the cache. True by default.
      * @return AbstractController Returns an instance of the specified service.
-     * @throws ServiceNotFoundForKeyException Throws this exception if the key isn't associated
+     * @throws Exception Throws this exception if the key isn't associated
      * with any registered service.
      */
     public function getServiceInstance($key, $useCache = true)
@@ -125,6 +124,10 @@ class ServiceProvider extends Di
     /**
      * Returns an instance of the specified controller from the list of
      * namespaces.
+     *
+     * @param $controllerClass
+     * @return mixed
+     * @throws Exception
      */
     private function getServiceFromNamespaces($controllerClass)
     {
@@ -134,40 +137,44 @@ class ServiceProvider extends Di
                 return new $fullClass();
             }
         }
-        throw new Exception('Controller class '.$controllerClass.' was not found in any listed namespace.');
+        throw new Exception("Controller class $controllerClass was not found in any listed namespace.");
     }
 
     /**
      * Returns an instance of the specified controller from the list of
      * namespaces.
+     *
      * @param string $controllerClass The controller class file we are looking for.
      * @return AbstractController Returns an instance of the controller.
+     * @throws Exception
      */
     private function getServiceFromFolder($controllerClass)
     {
         foreach ($this->get(self::KEY_FOLDERS) as $folder) {
-            $path = $this->findFileInFolderRecursively($controllerClass.'.php', $folder);
+            $path = $this->findFileInFolderRecursively("{$controllerClass}.php", $folder);
             if (false !== $path) {
                 require_once $path;
                 return new $controllerClass();
             }
         }
-        throw new Exception('Controller class '.$controllerClass.' not found in any listed folder.');
+        throw new Exception("Controller class $controllerClass not found in any listed folder.");
     }
 
     /**
      * Returns an instance of the specified controller using the existing the
      * explicitly specified services list.
+     *
      * @param string $controllerClass The controller class we are resolving.
      * @return AbstractController Returns an instance of the controller.
+     * @throws Exception
      */
     private function getServiceFromServiceList($controllerClass)
     {
         // default provisioning mode uses a hardcoded list of services
         $serviceClass = $this->get($controllerClass);
         if (is_string($serviceClass) && !class_exists($serviceClass)) {
-                require_once $serviceClass;
-                $serviceClass = $controllerClass;
+            require_once $serviceClass;
+            $serviceClass = $controllerClass;
         } elseif (is_array($serviceClass)) {
             if (isset($serviceClass[Config::KEY_FILE])) {
                 require_once $serviceClass[Config::KEY_FILE];

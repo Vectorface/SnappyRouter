@@ -14,9 +14,8 @@ class JsonRpcRequestTest extends TestCase
 {
     /**
      * An overview of how to use the JsonRpcRequest class.
-     * @test
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         /* Handles JSON-RPC 1.0 requests. */
         $request = new JsonRpcRequest('MyService', (object)array(

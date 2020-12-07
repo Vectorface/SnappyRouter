@@ -2,11 +2,12 @@
 
 namespace Vectorface\SnappyRouter\Handler;
 
-use \Exception;
+use Exception;
 use Vectorface\SnappyRouter\Config\Config;
 use Vectorface\SnappyRouter\Di\Di;
 use Vectorface\SnappyRouter\Di\DiProviderInterface;
 use Vectorface\SnappyRouter\Di\ServiceProvider;
+use Vectorface\SnappyRouter\Encoder\EncoderInterface;
 use Vectorface\SnappyRouter\Encoder\NullEncoder;
 use Vectorface\SnappyRouter\Exception\PluginException;
 
@@ -28,17 +29,19 @@ abstract class AbstractHandler implements DiProviderInterface
 
     /**
      * Constructor for the class.
+     *
      * @param array $options An array of options for the plugin.
+     * @throws PluginException
      */
     public function __construct($options)
     {
         $this->options = $options;
-        $this->plugins = array();
+        $this->plugins = [];
         if (isset($options[Config::KEY_PLUGINS])) {
             $this->setPlugins((array)$options[Config::KEY_PLUGINS]);
         }
         // configure the service provider
-        $services = array();
+        $services = [];
         if (isset($options[Config::KEY_CONTROLLERS])) {
             $services = (array)$options[Config::KEY_CONTROLLERS];
         }
@@ -60,10 +63,12 @@ abstract class AbstractHandler implements DiProviderInterface
 
     /**
      * Retrieve an element from the DI container.
+     *
      * @param string $key The DI key.
      * @param boolean $useCache (optional) An optional indicating whether we
      *        should use the cached version of the element (true by default).
      * @return mixed Returns the DI element mapped to that key.
+     * @throws Exception
      */
     public function get($key, $useCache = true)
     {
@@ -100,12 +105,14 @@ abstract class AbstractHandler implements DiProviderInterface
 
     /**
      * Sets the current list of plugins.
+     *
      * @param array $plugins The array of plugins.
      * @return AbstractHandler Returns $this.
+     * @throws PluginException
      */
     public function setPlugins($plugins)
     {
-        $this->plugins = array();
+        $this->plugins = [];
         foreach ($plugins as $key => $plugin) {
             $pluginClass = $plugin;
             if (is_array($plugin)) {
@@ -116,7 +123,7 @@ abstract class AbstractHandler implements DiProviderInterface
                 }
                 $pluginClass = $plugin[Config::KEY_CLASS];
             }
-            $options = array();
+            $options = [];
             if (isset($plugin[Config::KEY_OPTIONS])) {
                 $options = (array)$plugin[Config::KEY_OPTIONS];
             }
@@ -126,10 +133,15 @@ abstract class AbstractHandler implements DiProviderInterface
         return $this;
     }
 
-    // sorts the list of plugins according to their execution order
+    /**
+     * Sorts the list of plugins according to their execution order
+     *
+     * @param array $plugins
+     * @return array
+     */
     private function sortPlugins($plugins)
     {
-        usort($plugins, function ($a, $b) {
+        usort($plugins, function($a, $b) {
             return $a->getExecutionOrder() - $b->getExecutionOrder();
         });
         return $plugins;
@@ -144,7 +156,7 @@ abstract class AbstractHandler implements DiProviderInterface
     {
         foreach ($this->getPlugins() as $plugin) {
             if (method_exists($plugin, $hook)) {
-                call_user_func_array(array($plugin, $hook), $args);
+                call_user_func_array([$plugin, $hook], $args);
             }
         }
     }
@@ -170,8 +182,7 @@ abstract class AbstractHandler implements DiProviderInterface
      * error handling logic. The returned value will be serialized by the
      * handler's encoder.
      * @param Exception $e The exception that was thrown.
-     * @return Returns a serializable value that will be encoded and returned
-     *         to the client.
+     * @return string Returns a serializable value that will be encoded and returned to the client.
      */
     public function handleException(Exception $e)
     {

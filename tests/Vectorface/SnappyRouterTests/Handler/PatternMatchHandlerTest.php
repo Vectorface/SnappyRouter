@@ -3,6 +3,7 @@
 namespace Vectorface\SnappyRouterTests\Handler;
 
 use PHPUnit\Framework\TestCase;
+use Vectorface\SnappyRouter\Exception\PluginException;
 use Vectorface\SnappyRouter\Handler\PatternMatchHandler;
 
 /**
@@ -14,9 +15,10 @@ class PatternMatchHandlerTest extends TestCase
 {
     /**
      * Demonstrates how to use the PatternMatchHandler class.
-     * @test
+     *
+     * @throws PluginException
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         $config = array(
             'routes' => array(
@@ -44,6 +46,8 @@ class PatternMatchHandlerTest extends TestCase
 
     /**
      * Tests that the cached route handler works as well.
+     *
+     * @throws PluginException
      */
     public function testCachedRouteHandler()
     {
@@ -75,6 +79,8 @@ class PatternMatchHandlerTest extends TestCase
 
     /**
      * Tests that the getRequest() method returns null.
+     *
+     * @throws PluginException
      */
     public function testGetRequest()
     {

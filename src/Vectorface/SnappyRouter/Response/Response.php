@@ -9,13 +9,12 @@ namespace Vectorface\SnappyRouter\Response;
  */
 class Response extends AbstractResponse
 {
-
-    private $responseObject; // the serializeable response object
+    private $responseObject; // the serializable response object
     private $statusCode; // the http response code
 
     /**
-     * Returns the serializeable response object.
-     * @return mixed The serializeable response object.
+     * Returns the serializable response object.
+     * @return mixed The serializable response object.
      */
     public function getResponseObject()
     {
@@ -23,8 +22,8 @@ class Response extends AbstractResponse
     }
 
     /**
-     * Sets the serializeable response object.
-     * @param mixed $responseObject The serializeable response object.
+     * Sets the serializable response object.
+     * @param mixed $responseObject The serializable response object.
      * @return ResponseInterface Returns $this.
      */
     public function setResponseObject($responseObject)

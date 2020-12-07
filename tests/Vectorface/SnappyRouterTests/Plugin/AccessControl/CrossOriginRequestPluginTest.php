@@ -5,10 +5,12 @@ namespace Vectorface\SnappyRouterTests\Plugin\AccessControl;
 use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Exception\AccessDeniedException;
 use Vectorface\SnappyRouter\Exception\InternalErrorException;
+use Vectorface\SnappyRouter\Exception\PluginException;
 use Vectorface\SnappyRouter\Handler\ControllerHandler;
 use Vectorface\SnappyRouter\Handler\PatternMatchHandler;
 use Vectorface\SnappyRouter\Handler\JsonRpcHandler;
 use Vectorface\SnappyRouter\Plugin\AccessControl\CrossOriginRequestPlugin;
+use Vectorface\SnappyRouterTests\Controller\TestDummyController;
 use Vectorface\SnappyRouterTests\Handler\JsonRpcHandlerTest;
 
 /**
@@ -20,9 +22,10 @@ class CrossOriginRequestPluginTest extends TestCase
 {
     /**
      * An overview of how to use the plugin.
-     * @test
+     *
+     * @throws AccessDeniedException|InternalErrorException|PluginException
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         // make it appear that we are generating a cross origin request
         $_SERVER['HTTP_ORIGIN'] = 'cross.example.com';
@@ -46,13 +49,15 @@ class CrossOriginRequestPluginTest extends TestCase
 
         // if the plugin allows the cross origin request then no exception
         // should be thrown
-        $this->assertNull($plugin->afterHandlerSelected($handler));
+        $plugin->afterHandlerSelected($handler);
         // a bit of cleanup
         unset($_SERVER['HTTP_ORIGIN']);
     }
 
     /**
      * Tests that a non-cross origin request simply bypasses the plugin.
+     *
+     * @throws AccessDeniedException|InternalErrorException|PluginException
      */
     public function testNonCrossOriginRequests()
     {
@@ -72,11 +77,11 @@ class CrossOriginRequestPluginTest extends TestCase
 
         // this request should not be a cross origin one so no exception should
         // be thrown
-        $this->assertNull($plugin->afterHandlerSelected($handler));
+        $plugin->afterHandlerSelected($handler);
 
         // set the origin to a domain in the ignored whitelist
         $_SERVER['HTTP_ORIGIN'] = 'www.example.com';
-        $this->assertNull($plugin->afterHandlerSelected($handler));
+        $plugin->afterHandlerSelected($handler);
         // cleanup
         unset($_SERVER['HTTP_ORIGIN']);
     }
@@ -84,6 +89,8 @@ class CrossOriginRequestPluginTest extends TestCase
     /**
      * Tests that we get an exception if the whitelist is missing from the
      * plugin configuration.
+     *
+     * @throws AccessDeniedException|InternalErrorException|PluginException
      */
     public function testMissingWhitelistGeneratesException()
     {
@@ -103,6 +110,8 @@ class CrossOriginRequestPluginTest extends TestCase
 
     /**
      * Tests that access is denied to a service not listed in the whitelist.
+     *
+     * @throws InternalErrorException
      */
     public function testAccessDeniedToServiceMissingFromWhitelist()
     {
@@ -124,6 +133,8 @@ class CrossOriginRequestPluginTest extends TestCase
     /**
      * Tests that access is denied to an action not listed in the whitelist of
      * the controller.
+     *
+     * @throws PluginException|InternalErrorException
      */
     public function testAccessDeniedToActionMissingFromWhitelist()
     {
@@ -147,6 +158,8 @@ class CrossOriginRequestPluginTest extends TestCase
     /**
      * Tests that the whitelist can be the string 'all' instead of an array
      * allowing access to any service.
+     *
+     * @throws InternalErrorException|PluginException
      */
     public function testWhitelistingAllActions()
     {
@@ -168,6 +181,8 @@ class CrossOriginRequestPluginTest extends TestCase
 
     /**
      * Test that the plugin doesn't break with the PatternMatchHandler.
+     *
+     * @throws InternalErrorException|PluginException
      */
     public function testCompatibilityWithPatternMatchHandler()
     {
@@ -196,6 +211,8 @@ class CrossOriginRequestPluginTest extends TestCase
 
     /**
      * Test that the plugin doesn't break with the PatternMatchHandler.
+     *
+     * @throws InternalErrorException|PluginException
      */
     public function testCompatibilityWithJsonRpcHandler()
     {
@@ -204,7 +221,7 @@ class CrossOriginRequestPluginTest extends TestCase
         // some dummy variables that are needed by the plugin
         $config = array(
             'controllers' => array(
-                'TestController' => 'Vectorface\\SnappyRouterTests\\Controller\\TestDummyController'
+                'TestController' => TestDummyController::class,
             )
         );
         $handler = new JsonRpcHandler($config);

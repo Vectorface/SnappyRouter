@@ -2,7 +2,10 @@
 
 namespace Vectorface\SnappyRouterTests\Encoder;
 
+use stdClass;
+use Vectorface\SnappyRouter\Encoder\AbstractEncoder;
 use Vectorface\SnappyRouter\Encoder\JsonEncoder;
+use Vectorface\SnappyRouter\Exception\EncoderException;
 use Vectorface\SnappyRouter\Response\Response;
 
 /**
@@ -14,7 +17,7 @@ class JsonEncoderTest extends AbstractEncoderTest
 {
     /**
      * Returns the encoder to be tested.
-     * @return \Vectorface\SnappyRouter\Encoder\AbstractEncoder Returns an instance of an encoder.
+     * @return AbstractEncoder Returns an instance of an encoder.
      */
     public function getEncoder()
     {
@@ -26,7 +29,7 @@ class JsonEncoderTest extends AbstractEncoderTest
      */
     public function encodeProvider()
     {
-        $testObject = new \stdClass();
+        $testObject = new stdClass();
         $testObject->id = 1234;
         return array(
             array(
@@ -55,11 +58,13 @@ class JsonEncoderTest extends AbstractEncoderTest
     /**
      * Tests that we get an exception if we attempt to encode something that
      * is not serializable as JSON.
-     * @expectedException Vectorface\SnappyRouter\Exception\EncoderException
-     * @expectedExceptionMessage Unable to encode response as JSON.
+     *
+     * @throws EncoderException
      */
     public function testNonSerializableEncode()
     {
+        $this->setExpectedException(EncoderException::class, "Unable to encode response as JSON.");
+
         $encoder = new JsonEncoder();
         $resource = fopen(__FILE__, 'r'); // resources can't be serialized
         $encoder->encode(new Response($resource));

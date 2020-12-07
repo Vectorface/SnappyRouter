@@ -16,9 +16,8 @@ class JsonRpcResponseTest extends TestCase
 {
     /**
      * An overview of how to use the JsonRpcResponse class.
-     * @test
      */
-    public function synopsis()
+    public function testSynopsis()
     {
         /* Needs to be based on a related request */
         $request = new JsonRpcRequest('MyService', (object)array(

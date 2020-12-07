@@ -7,6 +7,10 @@ use Vectorface\SnappyRouter\Task\AbstractTask;
 
 class DummyTestTask extends AbstractTask
 {
+    /**
+     * @return mixed
+     * @throws Exception
+     */
     public function testMethod()
     {
         $options = $this->getOptions();
@@ -15,6 +19,9 @@ class DummyTestTask extends AbstractTask
         return $this->get('response');
     }
 
+    /**
+     * @throws Exception
+     */
     public function throwsException()
     {
         throw new Exception('An exception was thrown.');

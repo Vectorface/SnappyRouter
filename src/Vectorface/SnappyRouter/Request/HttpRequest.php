@@ -28,14 +28,14 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
     const INPUT_METHOD_BODY = 'BODY';
 
     // mappings between magic filter strings and the filter functions
-    private static $filterCallbacks = array(
-        'int' => 'intval',
-        'float' => 'floatval',
-        'trim' => 'trim',
-        'lower' => 'strtolower',
-        'upper' => 'strtoupper',
-        'squeeze' => array(__CLASS__, 'squeeze')
-    );
+    private static $filterCallbacks = [
+        'int'     => 'intval',
+        'float'   => 'floatval',
+        'trim'    => 'trim',
+        'lower'   => 'strtolower',
+        'upper'   => 'strtoupper',
+        'squeeze' => [self::class, 'squeeze'],
+    ];
 
     /**
      * Constructor for a request.
@@ -50,11 +50,11 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
         $this->setVerb($verb);
         $this->setStream($stream);
 
-        $this->input = array(
-            self::INPUT_METHOD_QUERY  => array(),
-            self::INPUT_METHOD_POST   => array(),
-            self::INPUT_METHOD_BODY   => null
-        );
+        $this->input = [
+            self::INPUT_METHOD_QUERY => [],
+            self::INPUT_METHOD_POST  => [],
+            self::INPUT_METHOD_BODY  => null,
+        ];
     }
 
     /**
@@ -95,7 +95,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      */
     public function isGet()
     {
-        return ('GET' === strtoupper($this->getVerb()));
+        return 'GET' === strtoupper($this->getVerb());
     }
 
     /**
@@ -105,7 +105,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      */
     public function isPost()
     {
-        return ('POST' === strtoupper($this->getVerb()));
+        return 'POST' === strtoupper($this->getVerb());
     }
 
     /**
@@ -116,7 +116,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      * @return mixed Returns the data from the GET parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
-    public function getQuery($param, $defaultValue = null, $filters = array())
+    public function getQuery($param, $defaultValue = null, $filters = [])
     {
         return $this->fetchInputValue(
             $this->input[self::INPUT_METHOD_QUERY],
@@ -145,7 +145,7 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      * @return mixed Returns the data from the POST parameter after being filtered (or
      *         the default value if the parameter is not present)
      */
-    public function getPost($param, $defaultValue = null, $filters = array())
+    public function getPost($param, $defaultValue = null, $filters = [])
     {
         return $this->fetchInputValue(
             $this->input[self::INPUT_METHOD_POST],
@@ -168,7 +168,9 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
 
     /**
      * Returns the input stream data for the current request
+     *
      * @return string The input stream data
+     * @throws InternalErrorException
      */
     public function getBody()
     {
@@ -226,8 +228,8 @@ class HttpRequest extends AbstractRequest implements HttpRequestInterface
      */
     private function fetchInputValue($array, $param, $defaultValue, $filters)
     {
-        $value = isset($array[$param]) ? $array[$param] : $defaultValue;
-        return $this->applyInputFilters($value, is_array($filters) ? $filters : array($filters));
+        $value = $array[$param] ?? $defaultValue;
+        return $this->applyInputFilters($value, is_array($filters) ? $filters : [$filters]);
     }
 
     /**

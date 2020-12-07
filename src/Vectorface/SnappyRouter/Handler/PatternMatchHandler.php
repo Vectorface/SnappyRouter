@@ -4,6 +4,9 @@ namespace Vectorface\SnappyRouter\Handler;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Vectorface\SnappyRouter\Request\HttpRequest;
+use function FastRoute\cachedDispatcher;
+use function FastRoute\simpleDispatcher;
 
 /**
  * A handler for matching route patterns and mapping to a method.
@@ -25,13 +28,13 @@ class PatternMatchHandler extends AbstractRequestHandler
     private $routeParams;
 
     /** All supported HTTP verbs */
-    private static $allHttpVerbs = array(
+    private static $allHttpVerbs = [
         'GET',
         'POST',
         'PUT',
         'DELETE',
         'OPTIONS'
-    );
+    ];
 
     /** The route information from FastRoute */
     private $routeInfo;
@@ -51,7 +54,7 @@ class PatternMatchHandler extends AbstractRequestHandler
             return false;
         }
         $this->callback = $routeInfo[1];
-        $this->routeParams = isset($routeInfo[2]) ? $routeInfo[2] : array();
+        $this->routeParams = $routeInfo[2] ?? [];
         return true;
     }
 
@@ -79,7 +82,7 @@ class PatternMatchHandler extends AbstractRequestHandler
     protected function getRoutes()
     {
         $options = $this->getOptions();
-        return isset($options[self::KEY_ROUTES]) ? $options[self::KEY_ROUTES] : array();
+        return $options[self::KEY_ROUTES] ?? [];
     }
 
     /**
@@ -94,8 +97,7 @@ class PatternMatchHandler extends AbstractRequestHandler
     /**
      * Returns a request object extracted from the request details (path, query, etc). The method
      * isAppropriate() must have returned true, otherwise this method should return null.
-     * @return \Vectorface\SnappyRouter\Request\HttpRequest|null Returns a
-     *         Request object or null if this handler is not appropriate.
+     * @return HttpRequest|null Returns a Request object or null if this handler is not appropriate.
      */
     public function getRequest()
     {
@@ -105,12 +107,12 @@ class PatternMatchHandler extends AbstractRequestHandler
     /**
      * Returns an instance of the FastRoute dispatcher.
      * @param array $routes The array of specified routes.
-     * @return FastRoute\Dispatcher The dispatcher to use.
+     * @return Dispatcher The dispatcher to use.
      */
     private function getDispatcher($routes)
     {
         $verbs = self::$allHttpVerbs;
-        $f = function (RouteCollector $collector) use ($routes, $verbs) {
+        $f = function(RouteCollector $collector) use ($routes, $verbs) {
             foreach ($routes as $pattern => $route) {
                 if (is_array($route)) {
                     foreach ($route as $verb => $callback) {
@@ -125,15 +127,14 @@ class PatternMatchHandler extends AbstractRequestHandler
         };
 
         $options = $this->getOptions();
-        $cacheData = array();
+        $cacheData = [];
         if (isset($options[self::KEY_CACHE])) {
             $cacheData = (array)$options[self::KEY_CACHE];
         }
 
         if (empty($cacheData)) {
-            return \FastRoute\simpleDispatcher($f);
-        } else {
-            return \FastRoute\cachedDispatcher($f, $cacheData);
+            return simpleDispatcher($f);
         }
+        return cachedDispatcher($f, $cacheData);
     }
 }

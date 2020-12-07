@@ -2,7 +2,7 @@
 
 namespace Vectorface\SnappyRouter\Handler;
 
-use \Exception;
+use Exception;
 use Vectorface\SnappyRouter\Exception\ResourceNotFoundException;
 use Vectorface\SnappyRouter\Task\TaskInterface;
 
@@ -17,13 +17,12 @@ class CliTaskHandler extends AbstractCliHandler
      * Determines whether the current handler is appropriate for the given
      * path components.
      * @param array $components The path components as an array.
-     * @return boolean Returns true if the handler is appropriate and false
-     *         otherwise.
+     * @return boolean Returns true if the handler is appropriate and false otherwise.
      */
     public function isAppropriate($components)
     {
         $components = array_values(array_filter(array_map('trim', $components), 'strlen'));
-        $this->options = array();
+        $this->options = [];
         if (count($components) < 5) {
             return false;
         }
@@ -46,7 +45,10 @@ class CliTaskHandler extends AbstractCliHandler
 
     /**
      * Performs the actual routing.
+     *
      * @return mixed Returns the result of the route.
+     * @throws ResourceNotFoundException
+     * @throws Exception
      */
     public function performRoute()
     {

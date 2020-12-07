@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpIllegalPsrClassPathInspection */
+
 // @codingStandardsIgnoreStart
 use Vectorface\SnappyRouter\Controller\AbstractController;
 
