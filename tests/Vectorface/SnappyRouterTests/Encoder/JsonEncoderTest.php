@@ -63,7 +63,8 @@ class JsonEncoderTest extends AbstractEncoderTest
      */
     public function testNonSerializableEncode()
     {
-        $this->setExpectedException(EncoderException::class, "Unable to encode response as JSON.");
+        $this->expectException(EncoderException::class);
+        $this->expectExceptionMessage("Unable to encode response as JSON.");
 
         $encoder = new JsonEncoder();
         $resource = fopen(__FILE__, 'r'); // resources can't be serialized

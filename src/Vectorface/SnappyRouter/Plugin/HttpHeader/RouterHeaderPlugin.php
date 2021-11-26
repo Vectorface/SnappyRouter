@@ -18,7 +18,7 @@ class RouterHeaderPlugin extends AbstractPlugin
      */
     public function afterHandlerSelected(AbstractHandler $handler)
     {
-        parent::afterhandlerSelected($handler);
+        parent::afterHandlerSelected($handler);
         @header('X-Router: SnappyRouter');
     }
 }

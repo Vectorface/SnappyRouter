@@ -29,7 +29,7 @@
     "source": "https://github.com/Vectorface/snappy-router"
   },
   "require": {
-    "php": ">=7.0.0",
+    "php": ">=7.3.0",
     "vectorface/whip": "^0.4",
     "twig/twig": "^2.0",
     "nikic/fast-route":"^1.0.0",
@@ -37,9 +37,8 @@
     "ext-json": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^4.8",
-    "squizlabs/php_codesniffer": "1.*",
-    "vectorface/dunit": "~2.0"
+    "phpunit/phpunit": "^9.5.10",
+    "squizlabs/php_codesniffer": "1.*"
   },
   "scripts": {
     "test": [

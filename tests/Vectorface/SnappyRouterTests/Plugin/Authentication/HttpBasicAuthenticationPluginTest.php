@@ -1,6 +1,6 @@
 <?php
 
-namespace casino\Tests\engine\ServiceRouter\Plugin\Authentication;
+namespace Vectorface\SnappyRouterTests\Plugin\Authentication;
 
 use PHPUnit\Framework\TestCase;
 use Vectorface\SnappyRouter\Authentication\CallbackAuthenticator;

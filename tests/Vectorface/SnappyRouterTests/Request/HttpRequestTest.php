@@ -73,7 +73,7 @@ class HttpRequestTest extends TestCase
      */
     public function testInputStreamIncorrectTypeFailure()
     {
-        $this->setExpectedException(InternalErrorException::class);
+        $this->expectException(InternalErrorException::class);
 
         $request = new HttpRequest('TestService', 'TestMethod', 'GET', 1);
         $request->getBody();
@@ -86,7 +86,7 @@ class HttpRequestTest extends TestCase
      */
     public function testInputStreamIncorrectFileFailure()
     {
-        $this->setExpectedException(InternalErrorException::class);
+        $this->expectException(InternalErrorException::class);
 
         $request = new HttpRequest('TestService', 'TestMethod', 'GET', 'file');
         $request->getBody();

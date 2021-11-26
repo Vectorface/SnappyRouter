@@ -115,7 +115,8 @@ class ServiceProviderTest extends TestCase
      */
     public function testNamespaceProvisioningMissingService()
     {
-        $this->setExpectedException(Exception::class, "Controller class TestDummyController was not found in any listed namespace.");
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Controller class TestDummyController was not found in any listed namespace.");
 
         $serviceProvider = new ServiceProvider([]);
         $serviceProvider->setNamespaces([]);
@@ -151,7 +152,8 @@ class ServiceProviderTest extends TestCase
      */
     public function testFolderProvisioningMissingService()
     {
-        $this->setExpectedException(Exception::class, "Controller class NonExistentController not found in any listed folder.");
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Controller class NonExistentController not found in any listed folder.");
 
         $serviceProvider = new ServiceProvider([]);
         $folders = [realpath(__DIR__.'/../')];

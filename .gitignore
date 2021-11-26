@@ -5,3 +5,4 @@ composer.phar
 coverage/
 site/
 vendor/
+.phpunit.result.cache

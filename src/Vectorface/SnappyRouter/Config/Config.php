@@ -55,6 +55,7 @@ class Config implements ArrayAccess, ConfigInterface
      * @param string $offset The key to be checked.
      * @return bool Returns true if the key exists and false otherwise.
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->config[$offset]);
@@ -65,6 +66,7 @@ class Config implements ArrayAccess, ConfigInterface
      * @param string $offset The key to be fetched.
      * @return bool Returns the value associated with the key or null if no value exists.
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->offsetExists($offset) ? $this->config[$offset] : null;
@@ -77,6 +79,7 @@ class Config implements ArrayAccess, ConfigInterface
      * @param mixed $value The value to be set.
      * @throws Exception
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (null === $offset) {
@@ -90,6 +93,7 @@ class Config implements ArrayAccess, ConfigInterface
      * @param string $offset The key to unset.
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->config[$offset]);
