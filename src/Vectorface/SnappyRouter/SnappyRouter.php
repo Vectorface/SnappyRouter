@@ -127,7 +127,7 @@ class SnappyRouter
      *
      * @param bool $isCli True for CLI handlers, false otherwise.
      * @param array $handlerParams An array parameters required by the handler.
-     * @return AbstractHandler Returns the handler to be used for the route.
+     * @return string Returns the result of the route.
      */
     private function invokeHandler($isCli, $handlerParams)
     {
@@ -232,7 +232,7 @@ class SnappyRouter
     {
         // setup the DI layer
         $diClass = $this->config->get(Config::KEY_DI);
-        if (class_exists($diClass)) {
+        if ($diClass && class_exists($diClass)) {
             $di = new $diClass();
             if ($di instanceof DiInterface) {
                 Di::setDefault($di);
@@ -263,9 +263,9 @@ class SnappyRouter
                 $handlerClass = $handlerDetails[Config::KEY_CLASS];
             }
 
-            if (!class_exists($handlerClass)) {
+            if ($handlerClass && !class_exists($handlerClass)) {
                 throw new Exception(
-                    'Cannot instantiate instance of '.$handlerClass
+                    "Cannot instantiate instance of $handlerClass"
                 );
             }
             $this->handlers[] = new $handlerClass($options);
