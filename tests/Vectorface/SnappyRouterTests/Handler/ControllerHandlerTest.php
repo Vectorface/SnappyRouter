@@ -78,7 +78,8 @@ class ControllerHandlerTest extends TestCase
      */
     public function testRouteToNonExistentController()
     {
-        $this->setExpectedException(ResourceNotFoundException::class, 'No such controller found "TestController".');
+        $this->expectException(ResourceNotFoundException::class);
+        $this->expectExceptionMessage('No such controller found "TestController".');
 
         $options = [];
         $handler = new ControllerHandler($options);
@@ -96,7 +97,8 @@ class ControllerHandlerTest extends TestCase
      */
     public function testRouteToNonExistentControllerAction()
     {
-        $this->setExpectedException(ResourceNotFoundException::class, 'TestController does not have method notexistsAction');
+        $this->expectException(ResourceNotFoundException::class);
+        $this->expectExceptionMessage('TestController does not have method notexistsAction');
 
         $options = [
             Config::KEY_CONTROLLERS => [
@@ -119,7 +121,8 @@ class ControllerHandlerTest extends TestCase
      */
     public function testMissingClassOnPlugin()
     {
-        $this->setExpectedException(PluginException::class, 'Invalid or missing class for plugin TestPlugin');
+        $this->expectException(PluginException::class);
+        $this->expectExceptionMessage('Invalid or missing class for plugin TestPlugin');
 
         $options = [
             Config::KEY_PLUGINS => [
@@ -137,7 +140,8 @@ class ControllerHandlerTest extends TestCase
      */
     public function testInvalidClassOnPlugin()
     {
-        $this->setExpectedException(PluginException::class, 'Invalid or missing class for plugin TestPlugin');
+        $this->expectException(PluginException::class);
+        $this->expectExceptionMessage('Invalid or missing class for plugin TestPlugin');
 
         $options = [
             Config::KEY_PLUGINS => [
@@ -156,7 +160,8 @@ class ControllerHandlerTest extends TestCase
      */
     public function testInvalidViewConfiguration()
     {
-        $this->setExpectedException(InternalErrorException::class, 'View environment missing views path.');
+        $this->expectException(InternalErrorException::class);
+        $this->expectExceptionMessage('View environment missing views path.');
 
         $options = [
             ControllerHandler::KEY_BASE_PATH => '/',
@@ -270,7 +275,8 @@ class ControllerHandlerTest extends TestCase
      */
     public function testExceptionForNullEncoderRenderView()
     {
-        $this->setExpectedException(Exception::class, 'The current encoder does not support the render view method.');
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('The current encoder does not support the render view method.');
 
         $options = [
             Config::KEY_CONTROLLERS => [

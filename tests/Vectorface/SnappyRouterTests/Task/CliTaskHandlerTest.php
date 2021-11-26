@@ -56,7 +56,8 @@ class CliTaskHandlerTest extends TestCase
      */
     public function testMissingActionOnTask()
     {
-        $this->setExpectedException(ResourceNotFoundException::class, "TestTask task does not have action missingAction.");
+        $this->expectException(ResourceNotFoundException::class);
+        $this->expectExceptionMessage("TestTask task does not have action missingAction.");
 
         $options = [
             Config::KEY_TASKS => [

@@ -176,7 +176,8 @@ class JsonRpcHandlerTest extends TestCase
      */
     public function testServiceNotFound()
     {
-        $this->setExpectedException(ResourceNotFoundException::class, "No such service: nonexistent");
+        $this->expectException(ResourceNotFoundException::class);
+        $this->expectExceptionMessage("No such service: nonexistent");
 
         $handler = new JsonRpcHandler([]);
         $this->setRequestPayload($handler, ['method' => 'someMethod', 'id' => '1']);

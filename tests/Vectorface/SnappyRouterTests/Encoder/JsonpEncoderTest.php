@@ -46,7 +46,8 @@ class JsonpEncoderTest extends AbstractEncoderTest
      */
     public function testMissingClientMethodThrowsException()
     {
-        $this->setExpectedException(Exception::class, "Client method missing from plugin options.");
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Client method missing from plugin options.");
 
         new JsonpEncoder([]);
     }

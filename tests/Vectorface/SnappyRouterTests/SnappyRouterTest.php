@@ -130,7 +130,8 @@ class SnappyRouterTest extends TestCase
      */
     public function testInvalidHandlerClass()
     {
-        $this->setExpectedException(Exception::class, "Cannot instantiate instance of Vectorface\SnappyRouter\Handler\NonexistentHandler");
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Cannot instantiate instance of Vectorface\SnappyRouter\Handler\NonexistentHandler");
 
         $config = $this->getStandardConfig();
         $config[Config::KEY_HANDLERS]['InvalidHandler'] = [

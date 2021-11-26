@@ -84,7 +84,8 @@ class DiTest extends TestCase
      */
     public function testMissingServiceThrowsException()
     {
-        $this->setExpectedException(Exception::class, "No element registered for key: TestElement");
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("No element registered for key: TestElement");
 
         $di = new Di();
         $di->get('TestElement');

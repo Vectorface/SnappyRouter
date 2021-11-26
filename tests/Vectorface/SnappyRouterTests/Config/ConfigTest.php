@@ -55,7 +55,8 @@ class ConfigTest extends TestCase
      */
     public function testExceptionThrownWhenConfigIsAppended()
     {
-        $this->setExpectedException(Exception::class, "Config values must contain a key.");
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Config values must contain a key.");
 
         $config = new Config([]);
         $config[] = 'new value';

@@ -23,6 +23,7 @@ class RouterHeaderPluginTest extends TestCase
     {
         $handler = new ControllerHandler([]);
         $plugin = new RouterHeaderPlugin([]);
-        $plugin->afterhandlerSelected($handler);
+        $plugin->afterHandlerSelected($handler);
+        $this->assertEquals(1000, $plugin->getExecutionOrder());
     }
 }
