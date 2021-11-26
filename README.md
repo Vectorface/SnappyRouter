@@ -1,4 +1,5 @@
-#SnappyRouter
+# SnappyRouter
+
 [![Build Status](https://travis-ci.org/Vectorface/SnappyRouter.svg?branch=master)](https://travis-ci.org/Vectorface/SnappyRouter)
 [![Code Coverage](https://scrutinizer-ci.com/g/Vectorface/SnappyRouter/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Vectorface/SnappyRouter/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Vectorface/SnappyRouter/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Vectorface/SnappyRouter/?branch=master)
@@ -11,7 +12,7 @@ standard in most other routers such as:
 - Controller/Action based routes
 - Rest-like routes with API versioning
 - Pattern matching routes (based off [nikic/FastRoute](https://github.com/nikic/FastRoute))
-- Direct file invokation (wrap paths to specific files through the router)
+- Direct file invocation (wrap paths to specific files through the router)
 
 SnappyRouter makes it easy to write your own routing handler for any imaginable
 custom routing scheme.
