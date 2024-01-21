@@ -122,7 +122,9 @@ class ControllerHandler extends PatternMatchHandler
         $action = null;
         $this->determineControllerAndAction($controller, $action);
         $response = $this->invokeControllerAction($controller, $action);
-        http_response_code($response->getStatusCode());
+        if (!headers_sent()) {
+            http_response_code($response->getStatusCode());
+        }
         return $this->getEncoder()->encode($response);
     }
 
