@@ -186,7 +186,9 @@ class SnappyRouter
             if ($exception instanceof RouterExceptionInterface) {
                 $responseCode = $exception->getAssociatedStatusCode();
             }
-            http_response_code($responseCode);
+            if (!headers_sent()) {
+                http_response_code($responseCode);
+            }
         }
         return $exception->getMessage();
     }
