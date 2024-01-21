@@ -47,7 +47,9 @@ abstract class AbstractRequestHandler extends AbstractHandler
         if ($e instanceof RouterExceptionInterface) {
             $responseCode = $e->getAssociatedStatusCode();
         }
-        http_response_code($responseCode);
+        if (!headers_sent()) {
+            http_response_code($responseCode);
+        }
         return parent::handleException($e);
     }
 
