@@ -31,7 +31,6 @@ class JsonRpcHandlerTest extends TestCase
 
         $refCls = new ReflectionClass($handler);
         $prop = $refCls->getProperty('stdin');
-        $prop->setAccessible(true);
         $prop->setValue($handler, $tmpfile);
     }
 

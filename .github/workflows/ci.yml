@@ -8,6 +8,13 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }}
@@ -16,11 +23,11 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['8.1', '8.2', '8.3', '8.4']
+        php-versions: ['8.1', '8.2', '8.3', '8.4', '8.5', '8.6']
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup PHP, with composer and extensions
         uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
@@ -33,7 +40,7 @@ jobs:
 
       - name: Get composer cache directory
         id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
       - name: Setup problem matchers
         run: |
@@ -41,14 +48,18 @@ jobs:
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
       - name: Cache composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v6
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+          # composer.lock is not committed for this library, so key on composer.json
+          key: ${{ runner.os }}-php${{ matrix.php-versions }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-php${{ matrix.php-versions }}-composer-
 
       - name: Install Composer dependencies
-        run: composer install --prefer-dist
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Audit Composer dependencies
+        run: composer audit
 
       - name: Test with phpunit
         run: composer test
