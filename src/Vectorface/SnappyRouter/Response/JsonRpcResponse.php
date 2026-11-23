@@ -17,10 +17,10 @@ class JsonRpcResponse extends Response
      * Construct a Response from JSON-RPC style result, error, and JSON-RPC request.
      *
      * @param mixed $result The result of the remote procedure call.
-     * @param Exception $error The error, as an exception. (Requires code and message.)
-     * @param JsonRpcRequest $request The request that led to the generation of this response.
+     * @param Exception|null $error The error, as an exception. (Requires code and message.)
+     * @param JsonRpcRequest|null $request The request that led to the generation of this response.
      */
-    public function __construct($result, Exception $error = null, JsonRpcRequest $request = null)
+    public function __construct($result, ?Exception $error = null, ?JsonRpcRequest $request = null)
     {
         $response = new stdClass();
 
